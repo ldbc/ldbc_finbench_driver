@@ -4,9 +4,7 @@ TODO
 
 ## Design Doc
 
-### Main Entry
-
-The main entry of this project is in `driver/Driver`. 
+TODO
 
 ## Quick Start
 
