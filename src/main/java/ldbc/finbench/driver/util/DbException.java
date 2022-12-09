@@ -1,26 +1,20 @@
 package ldbc.finbench.driver.util;
 
-public class DbException extends Exception
-{
-    private static final long serialVersionUID = 6646883591588721475L;
+public class DbException extends Exception {
 
-    public DbException(String message )
-    {
-        super( message );
+    public DbException(String message) {
+        super(message);
     }
 
-    public DbException()
-    {
+    public DbException() {
         super();
     }
 
-    public DbException(String message, Throwable cause )
-    {
-        super( message, cause );
+    public DbException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public DbException(Throwable cause )
-    {
-        super( cause );
+    public DbException(Throwable cause) {
+        super(cause);
     }
 }

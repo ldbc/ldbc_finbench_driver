@@ -3,7 +3,8 @@ package ldbc.finbench.driver.log;
 import ldbc.finbench.driver.formatter.SimpleDetailedWorkloadMetricsFormatter;
 import ldbc.finbench.driver.formatter.SimpleSummaryWorkloadMetricsFormatter;
 import ldbc.finbench.driver.formatter.WorkloadMetricsFormatter;
-import ldbc.finbench.driver.runtime.metrics.*;
+import ldbc.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
+import ldbc.finbench.driver.runtime.metrics.WorkloadStatusSnapshot;
 import ldbc.finbench.driver.util.time.TemporalUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,11 +14,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class Log4jLoggingService implements LoggingService
-{
-    private static final DecimalFormat OPERATION_COUNT_FORMATTER = new DecimalFormat( "###,###,###,###" );
-    private static final DecimalFormat THROUGHPUT_FORMATTER = new DecimalFormat( "###,###,###,##0.00" );
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat( "YYYY/MM/dd HH:mm:ss Z" );
+public class Log4jLoggingService implements LoggingService {
+    private static final DecimalFormat OPERATION_COUNT_FORMATTER = new DecimalFormat("###,###,###,###");
+    private static final DecimalFormat THROUGHPUT_FORMATTER = new DecimalFormat("###,###,###,##0.00");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss Z");
 
     private final Logger logger;
     private final TemporalUtil temporalUtil;
@@ -25,9 +25,8 @@ public class Log4jLoggingService implements LoggingService
     private final WorkloadMetricsFormatter summaryWorkloadMetricsFormatter;
     private final WorkloadMetricsFormatter detailedWorkloadMetricsFormatter;
 
-    Log4jLoggingService(String source, TemporalUtil temporalUtil, boolean detailedStatus )
-    {
-        this.logger = LogManager.getLogger( source );
+    Log4jLoggingService(String source, TemporalUtil temporalUtil, boolean detailedStatus) {
+        this.logger = LogManager.getLogger(source);
         this.temporalUtil = temporalUtil;
         this.detailedStatus = detailedStatus;
         this.summaryWorkloadMetricsFormatter = new SimpleSummaryWorkloadMetricsFormatter();
@@ -35,47 +34,43 @@ public class Log4jLoggingService implements LoggingService
     }
 
     @Override
-    public void info( String message )
-    {
-        logger.info( message );
+    public void info(String message) {
+        logger.info(message);
     }
 
     @Override
     public void status(
             WorkloadStatusSnapshot status,
             RecentThroughputAndDuration recentThroughputAndDuration,
-            long completionTimeAsMilli )
-    {
+            long completionTimeAsMilli) {
         String statusString;
         statusString = (detailedStatus) ?
-                       formatWithCt(
-                               status.operationCount(),
-                               status.runDurationAsMilli(),
-                               status.durationSinceLastMeasurementAsMilli(),
-                               status.throughput(),
-                               recentThroughputAndDuration.throughput(),
-                               recentThroughputAndDuration.duration(),
-                               completionTimeAsMilli ) :
-                       formatWithoutCt(
-                               status.operationCount(),
-                               status.runDurationAsMilli(),
-                               status.durationSinceLastMeasurementAsMilli(),
-                               status.throughput(),
-                               recentThroughputAndDuration.throughput(),
-                               recentThroughputAndDuration.duration() );
-        logger.info( statusString );
+                formatWithCt(
+                        status.operationCount(),
+                        status.runDurationAsMilli(),
+                        status.durationSinceLastMeasurementAsMilli(),
+                        status.throughput(),
+                        recentThroughputAndDuration.throughput(),
+                        recentThroughputAndDuration.duration(),
+                        completionTimeAsMilli) :
+                formatWithoutCt(
+                        status.operationCount(),
+                        status.runDurationAsMilli(),
+                        status.durationSinceLastMeasurementAsMilli(),
+                        status.throughput(),
+                        recentThroughputAndDuration.throughput(),
+                        recentThroughputAndDuration.duration());
+        logger.info(statusString);
     }
 
     @Override
-    public void summaryResult( WorkloadResultsSnapshot workloadResultsSnapshot )
-    {
-        logger.info( "\n" + summaryWorkloadMetricsFormatter.format( workloadResultsSnapshot ) );
+    public void summaryResult(WorkloadResultsSnapshot workloadResultsSnapshot) {
+        logger.info("\n" + summaryWorkloadMetricsFormatter.format(workloadResultsSnapshot));
     }
 
     @Override
-    public void detailedResult( WorkloadResultsSnapshot workloadResultsSnapshot )
-    {
-        logger.info( "\n" + detailedWorkloadMetricsFormatter.format( workloadResultsSnapshot ) );
+    public void detailedResult(WorkloadResultsSnapshot workloadResultsSnapshot) {
+        logger.info("\n" + detailedWorkloadMetricsFormatter.format(workloadResultsSnapshot));
     }
 
     private String formatWithoutCt(
@@ -84,8 +79,7 @@ public class Log4jLoggingService implements LoggingService
             long durationSinceLastMeasurementAsMilli,
             double throughput,
             double recentThroughput,
-            long recentDurationAsMilli )
-    {
+            long recentDurationAsMilli) {
         return format(
                 operationCount,
                 runDurationAsMilli,
@@ -93,7 +87,7 @@ public class Log4jLoggingService implements LoggingService
                 throughput,
                 recentThroughput,
                 recentDurationAsMilli,
-                null ).toString();
+                null).toString();
     }
 
     private String formatWithCt(
@@ -103,8 +97,7 @@ public class Log4jLoggingService implements LoggingService
             double throughput,
             double recentThroughput,
             long recentDurationAsMilli,
-            long ctAsMilli )
-    {
+            long ctAsMilli) {
         return format(
                 operationCount,
                 runDurationAsMilli,
@@ -112,7 +105,7 @@ public class Log4jLoggingService implements LoggingService
                 throughput,
                 recentThroughput,
                 recentDurationAsMilli,
-                ctAsMilli ).toString();
+                ctAsMilli).toString();
     }
 
     private StringBuffer format(
@@ -122,26 +115,24 @@ public class Log4jLoggingService implements LoggingService
             double throughput,
             double recentThroughput,
             long recentDurationAsMilli,
-            Long ctAsMilli )
-    {
+            Long ctAsMilli) {
         StringBuffer sb = new StringBuffer()
-                .append( DATE_FORMAT.format( new Date() ) ).append( " " )
-                .append( "Runtime [" )
-                .append( (-1 == runDurationAsMilli)
-                         ? "--"
-                         : temporalUtil.milliDurationToString( runDurationAsMilli ) ).append( "], " )
-                .append( "Operations [" ).append( OPERATION_COUNT_FORMATTER.format( operationCount ) ).append( "], " )
-                .append( "Last [" )
-                .append( (-1 == durationSinceLastMeasurementAsMilli)
-                         ? "--"
-                         : temporalUtil.milliDurationToString( durationSinceLastMeasurementAsMilli ) ).append( "], " )
-                .append( "Throughput" )
-                .append( " (Total) [" ).append( THROUGHPUT_FORMATTER.format( throughput ) ).append( "]" )
-                .append( " (Last " ).append( TimeUnit.MILLISECONDS.toSeconds( recentDurationAsMilli ) )
-                .append( "s) [" ).append( THROUGHPUT_FORMATTER.format( recentThroughput ) ).append( "]" );
-        if ( null != ctAsMilli )
-        {
-            sb.append( ", CT: " + ((-1 == ctAsMilli) ? "--" : temporalUtil.milliTimeToDateTimeString( ctAsMilli )) );
+                .append(DATE_FORMAT.format(new Date())).append(" ")
+                .append("Runtime [")
+                .append((-1 == runDurationAsMilli)
+                        ? "--"
+                        : temporalUtil.milliDurationToString(runDurationAsMilli)).append("], ")
+                .append("Operations [").append(OPERATION_COUNT_FORMATTER.format(operationCount)).append("], ")
+                .append("Last [")
+                .append((-1 == durationSinceLastMeasurementAsMilli)
+                        ? "--"
+                        : temporalUtil.milliDurationToString(durationSinceLastMeasurementAsMilli)).append("], ")
+                .append("Throughput")
+                .append(" (Total) [").append(THROUGHPUT_FORMATTER.format(throughput)).append("]")
+                .append(" (Last ").append(TimeUnit.MILLISECONDS.toSeconds(recentDurationAsMilli))
+                .append("s) [").append(THROUGHPUT_FORMATTER.format(recentThroughput)).append("]");
+        if (null != ctAsMilli) {
+            sb.append(", CT: " + ((-1 == ctAsMilli) ? "--" : temporalUtil.milliTimeToDateTimeString(ctAsMilli)));
         }
         return sb;
     }

@@ -1,26 +1,20 @@
 package ldbc.finbench.driver.util.time;
 
-public class TemporalException extends RuntimeException
-{
-    private static final long serialVersionUID = 8844396756042772132L;
+public class TemporalException extends RuntimeException {
 
-    public TemporalException( String message )
-    {
-        super( message );
+    public TemporalException(String message) {
+        super(message);
     }
 
-    public TemporalException()
-    {
+    public TemporalException() {
         super();
     }
 
-    public TemporalException( String message, Throwable cause )
-    {
-        super( message, cause );
+    public TemporalException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public TemporalException( Throwable cause )
-    {
-        super( cause );
+    public TemporalException(Throwable cause) {
+        super(cause);
     }
 }

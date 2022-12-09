@@ -48,11 +48,11 @@ public interface DriverConfiguration {
 
     String toPropertiesString() throws DriverConfigurationException;
 
-    Map<String,String> asMap();
+    Map<String, String> asMap();
 
-    DriverConfiguration applyArgs( DriverConfiguration newConfiguration ) throws DriverConfigurationException;
+    DriverConfiguration applyArgs(DriverConfiguration newConfiguration) throws DriverConfigurationException;
 
-    DriverConfiguration applyArg( String argument, String newValue ) throws DriverConfigurationException;
+    DriverConfiguration applyArg(String argument, String newValue) throws DriverConfigurationException;
 
-    DriverConfiguration applyArgs( Map<String,String> newMap ) throws DriverConfigurationException;
+    DriverConfiguration applyArgs(Map<String, String> newMap) throws DriverConfigurationException;
 }

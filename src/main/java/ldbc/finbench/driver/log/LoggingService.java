@@ -3,8 +3,7 @@ package ldbc.finbench.driver.log;
 import ldbc.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
 import ldbc.finbench.driver.runtime.metrics.WorkloadStatusSnapshot;
 
-public interface LoggingService
-{
+public interface LoggingService {
     void info(String message);
 
     void status(WorkloadStatusSnapshot workloadStatusSnapshot,

@@ -9,8 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
 
-public class OperationTypeMetricsManager
-{
+public class OperationTypeMetricsManager {
     private static final String METRIC_RUNTIME = "Runtime";
 
     private final TemporalUtil temporalUtil = new TemporalUtil();
@@ -24,53 +23,47 @@ public class OperationTypeMetricsManager
             String name,
             TimeUnit unit,
             long highestExpectedRuntimeDurationAsNano,
-            LoggingServiceFactory loggingServiceFactory )
-    {
+            LoggingServiceFactory loggingServiceFactory) {
         this.name = name;
         this.unit = unit;
         this.highestExpectedRuntimeDurationAsNano = highestExpectedRuntimeDurationAsNano;
-        loggingService = loggingServiceFactory.loggingServiceFor( getClass().getSimpleName() );
+        loggingService = loggingServiceFactory.loggingServiceFor(getClass().getSimpleName());
         this.runTimeMetric = new ContinuousMetricManager(
                 METRIC_RUNTIME,
                 unit,
-                unit.convert( highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS ),
+                unit.convert(highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS),
                 4
         );
     }
 
-    void measure( long runDurationAsNano ) throws MetricsCollectionException
-    {
+    void measure(long runDurationAsNano) throws MetricsCollectionException {
         //
         // Measure operation runtime
         //
-        if ( runDurationAsNano > highestExpectedRuntimeDurationAsNano )
-        {
+        if (runDurationAsNano > highestExpectedRuntimeDurationAsNano) {
             String errMsg = format(
                     "Error recording runtime - reported value exceeds maximum allowed. Time " +
-                    "reported as maximum.\n"
-                    + "Reported: %s %s / %s\n"
-                    + "For: %s\n"
-                    + "Maximum: %s %s / %s",
+                            "reported as maximum.\n"
+                            + "Reported: %s %s / %s\n"
+                            + "For: %s\n"
+                            + "Maximum: %s %s / %s",
                     runDurationAsNano,
                     TimeUnit.NANOSECONDS.name(),
-                    temporalUtil.nanoDurationToString( runDurationAsNano ),
+                    temporalUtil.nanoDurationToString(runDurationAsNano),
                     name,
                     highestExpectedRuntimeDurationAsNano,
                     TimeUnit.NANOSECONDS.name(),
-                    temporalUtil.nanoDurationToString( highestExpectedRuntimeDurationAsNano )
+                    temporalUtil.nanoDurationToString(highestExpectedRuntimeDurationAsNano)
             );
-            loggingService.info( errMsg );
+            loggingService.info(errMsg);
             runDurationAsNano = highestExpectedRuntimeDurationAsNano;
         }
 
-        long runtimeInAppropriateUnit = unit.convert( runDurationAsNano, TimeUnit.NANOSECONDS );
+        long runtimeInAppropriateUnit = unit.convert(runDurationAsNano, TimeUnit.NANOSECONDS);
 
-        try
-        {
-            runTimeMetric.addMeasurement( runtimeInAppropriateUnit );
-        }
-        catch ( Throwable e )
-        {
+        try {
+            runTimeMetric.addMeasurement(runtimeInAppropriateUnit);
+        } catch (Throwable e) {
             String errMsg = format(
                     "Error encountered adding runtime: %s %s / %s %s\nTo: %s\nHighest expected value: %s %s / %s %s",
                     runDurationAsNano,
@@ -80,38 +73,33 @@ public class OperationTypeMetricsManager
                     name,
                     highestExpectedRuntimeDurationAsNano,
                     TimeUnit.NANOSECONDS.name(),
-                    unit.convert( highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS ),
+                    unit.convert(highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS),
                     unit.name()
             );
-            throw new MetricsCollectionException( errMsg, e );
+            throw new MetricsCollectionException(errMsg, e);
         }
     }
 
-    public OperationMetricsSnapshot snapshot()
-    {
-        return new OperationMetricsSnapshot( name, unit, count(), runTimeMetric.snapshot() );
+    public OperationMetricsSnapshot snapshot() {
+        return new OperationMetricsSnapshot(name, unit, count(), runTimeMetric.snapshot());
     }
 
-    public String name()
-    {
+    public String name() {
         return name;
     }
 
-    public long count()
-    {
+    public long count() {
         return runTimeMetric.snapshot().count();
     }
 
-    public static class OperationMetricsNameComparator implements Comparator<OperationMetricsSnapshot>
-    {
+    public static class OperationMetricsNameComparator implements Comparator<OperationMetricsSnapshot> {
         private static final String EMPTY_STRING = "";
 
         @Override
-        public int compare( OperationMetricsSnapshot metrics1, OperationMetricsSnapshot metrics2 )
-        {
+        public int compare(OperationMetricsSnapshot metrics1, OperationMetricsSnapshot metrics2) {
             String metrics1Name = (metrics1.name() == null) ? EMPTY_STRING : metrics1.name();
             String metrics2Name = (metrics2.name() == null) ? EMPTY_STRING : metrics2.name();
-            return metrics1Name.compareTo( metrics2Name );
+            return metrics1Name.compareTo(metrics2Name);
         }
     }
 }

@@ -1,37 +1,31 @@
-package org.ldbcouncil.snb.driver.csv.charseeker;
+package ldbc.finbench.driver.csv.charseeker;
 
-public class CharSeekerParams
-{
+public class CharSeekerParams {
     private final int bufferSize;
     private final char columnDelimiter;
     private final char arrayDelimiter;
     private final char tupleDelimiter;
 
-    public CharSeekerParams( int bufferSize, char columnDelimiter, char arrayDelimiter, char tupleDelimiter )
-    {
+    public CharSeekerParams(int bufferSize, char columnDelimiter, char arrayDelimiter, char tupleDelimiter) {
         this.bufferSize = bufferSize;
         this.columnDelimiter = columnDelimiter;
         this.arrayDelimiter = arrayDelimiter;
         this.tupleDelimiter = tupleDelimiter;
     }
 
-    public int bufferSize()
-    {
+    public int bufferSize() {
         return bufferSize;
     }
 
-    public char columnDelimiter()
-    {
+    public char columnDelimiter() {
         return columnDelimiter;
     }
 
-    public char arrayDelimiter()
-    {
+    public char arrayDelimiter() {
         return arrayDelimiter;
     }
 
-    public char tupleDelimiter()
-    {
+    public char tupleDelimiter() {
         return tupleDelimiter;
     }
 }
