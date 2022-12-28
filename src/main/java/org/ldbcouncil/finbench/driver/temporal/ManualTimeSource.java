@@ -1,4 +1,4 @@
-package org.ldbcouncil.finbench.driver.util.time;
+package org.ldbcouncil.finbench.driver.temporal;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;

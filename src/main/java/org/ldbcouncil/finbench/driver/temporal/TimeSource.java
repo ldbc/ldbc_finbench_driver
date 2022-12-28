@@ -1,4 +1,4 @@
-package org.ldbcouncil.finbench.driver.util.time;
+package org.ldbcouncil.finbench.driver.temporal;
 
 public interface TimeSource {
     // Avoid object creation where possible

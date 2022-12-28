@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import org.ldbcouncil.finbench.driver.runtime.metrics.OperationMetricsSnapshot;
 import org.ldbcouncil.finbench.driver.runtime.metrics.OperationTypeMetricsManager;
 import org.ldbcouncil.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
-import org.ldbcouncil.finbench.driver.util.time.TemporalUtil;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 
 import java.text.DecimalFormat;
 import java.util.Collections;

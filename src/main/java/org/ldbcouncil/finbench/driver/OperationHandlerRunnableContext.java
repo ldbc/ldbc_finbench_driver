@@ -6,14 +6,13 @@ import org.ldbcouncil.finbench.driver.runtime.metrics.MetricsCollectionException
 import org.ldbcouncil.finbench.driver.runtime.metrics.MetricsService;
 import org.ldbcouncil.finbench.driver.runtime.scheduling.Spinner;
 import org.ldbcouncil.finbench.driver.runtime.scheduling.SpinnerCheck;
-import org.ldbcouncil.finbench.driver.util.time.TimeSource;
+import org.ldbcouncil.finbench.driver.temporal.TimeSource;
 import stormpot.Poolable;
 import stormpot.Slot;
 
 import static java.lang.String.format;
 
-public class OperationHandlerRunnableContext implements Runnable, Poolable
-{
+public class OperationHandlerRunnableContext implements Runnable, Poolable {
     // set by OperationHandlerRunnerFactory
     private Slot slot = null;
 
@@ -36,38 +35,30 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable
 
     private ResultReporter.SimpleResultReporter resultReporter = null;
 
-    final void setSlot( Slot slot )
-    {
+    final void setSlot(Slot slot) {
         this.slot = slot;
     }
 
-    public final void init( TimeSource timeSource,
-            Spinner spinner,
-            Operation operation,
-            CompletionTimeWriter completionTimeWriter,
-            ConcurrentErrorReporter errorReporter,
-            MetricsService metricsService ) throws OperationException
-    {
-        if ( initialized )
-        {
-            throw new OperationException( format( "%s can not be initialized twice", getClass().getSimpleName() ) );
+    public final void init(TimeSource timeSource,
+                           Spinner spinner,
+                           Operation operation,
+                           CompletionTimeWriter completionTimeWriter,
+                           ConcurrentErrorReporter errorReporter,
+                           MetricsService metricsService) throws OperationException {
+        if (initialized) {
+            throw new OperationException(format("%s can not be initialized twice", getClass().getSimpleName()));
         }
-        if ( null == this.timeSource )
-        {
+        if (null == this.timeSource) {
             this.timeSource = timeSource;
             this.spinner = spinner;
             this.errorReporter = errorReporter;
-            if ( null == resultReporter )
-            {
-                this.resultReporter = new ResultReporter.SimpleResultReporter( errorReporter );
+            if (null == resultReporter) {
+                this.resultReporter = new ResultReporter.SimpleResultReporter(errorReporter);
             }
-            try
-            {
+            try {
                 this.metricsServiceWriter = metricsService.getWriter();
-            }
-            catch ( MetricsCollectionException e )
-            {
-                throw new OperationException( "Error while retrieving metrics writer", e );
+            } catch (MetricsCollectionException e) {
+                throw new OperationException("Error while retrieving metrics writer", e);
             }
         }
         this.operation = operation;
@@ -76,38 +67,31 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable
         this.initialized = true;
     }
 
-    final void setOperationHandler( OperationHandler operationHandler )
-    {
+    final void setOperationHandler(OperationHandler operationHandler) {
         this.operationHandler = operationHandler;
     }
 
-    final void setDbConnectionState( DbConnectionState dbConnectionState )
-    {
+    final void setDbConnectionState(DbConnectionState dbConnectionState) {
         this.dbConnectionState = dbConnectionState;
     }
 
-    public final void setBeforeExecuteCheck( SpinnerCheck check )
-    {
+    public final void setBeforeExecuteCheck(SpinnerCheck check) {
         beforeExecuteCheck = check;
     }
 
-    public final Operation operation()
-    {
+    public final Operation operation() {
         return operation;
     }
 
-    public final OperationHandler operationHandler()
-    {
+    public final OperationHandler operationHandler() {
         return operationHandler;
     }
 
-    public final DbConnectionState dbConnectionState()
-    {
+    public final DbConnectionState dbConnectionState() {
         return dbConnectionState;
     }
 
-    public final ResultReporter resultReporter()
-    {
+    public final ResultReporter resultReporter() {
         return resultReporter;
     }
 
@@ -121,34 +105,27 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable
      * @return an OperationResultReport if Operation execution was successful, otherwise null
      */
     @Override
-    public void run()
-    {
-        if ( !initialized )
-        {
-            errorReporter.reportError( this, "Handler was executed before being initialized" );
+    public void run() {
+        if (!initialized) {
+            errorReporter.reportError(this, "Handler was executed before being initialized");
             return;
         }
-        try
-        {
-            if ( !spinner.waitForScheduledStartTime( operation, beforeExecuteCheck ) )
-            {
+        try {
+            if (!spinner.waitForScheduledStartTime(operation, beforeExecuteCheck)) {
                 // TODO something more elaborate here? see comments in Spinner
                 // TODO should probably report failed operation
                 // Spinner result indicates operation should not be processed
                 return;
             }
-            resultReporter.setActualStartTimeAsMilli( timeSource.nowAsMilli() );
+            resultReporter.setActualStartTimeAsMilli(timeSource.nowAsMilli());
             long startOfLatencyMeasurementAsNano = timeSource.nanoSnapshot();
-            operationHandler.executeOperation( operation, dbConnectionState, resultReporter );
+            operationHandler.executeOperation(operation, dbConnectionState, resultReporter);
             long endOfLatencyMeasurementAsNano = timeSource.nanoSnapshot();
-            resultReporter.setRunDurationAsNano( endOfLatencyMeasurementAsNano - startOfLatencyMeasurementAsNano );
-            if ( null == resultReporter().result() )
-            {
-                errorReporter.reportError( this, format( "Operation result is null\nOperation: %s", operation ) );
-            }
-            else
-            {
-                completionTimeWriter.submitCompletedTime( operation.timeStamp() );
+            resultReporter.setRunDurationAsNano(endOfLatencyMeasurementAsNano - startOfLatencyMeasurementAsNano);
+            if (null == resultReporter().result()) {
+                errorReporter.reportError(this, format("Operation result is null\nOperation: %s", operation));
+            } else {
+                completionTimeWriter.submitCompletedTime(operation.timeStamp());
                 metricsServiceWriter.submitOperationResult(
                         operation.type(),
                         operation.scheduledStartTimeAsMilli(),
@@ -158,42 +135,36 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable
                         operation.timeStamp()
                 );
             }
-        }
-        catch ( Throwable e )
-        {
-            String errMsg = format( "Error encountered\n%s\n%s",
+        } catch (Throwable e) {
+            String errMsg = format("Error encountered\n%s\n%s",
                     operation,
-                    ConcurrentErrorReporter.stackTraceToString( e ) );
-            errorReporter.reportError( this, errMsg );
+                    ConcurrentErrorReporter.stackTraceToString(e));
+            errorReporter.reportError(this, errMsg);
         }
     }
 
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return "OperationHandlerRunner\n" +
-               "    -> resultReporter=" + resultReporter + "\n" +
-               "    -> slot=" + slot + "\n" +
-               "    -> operation=" + operation + "\n" +
-               "    -> beforeExecuteCheck=" + beforeExecuteCheck + "\n" +
-               "    -> operationHandler=" + operationHandler + "\n" +
-               "    -> initialized=" + initialized;
+                "    -> resultReporter=" + resultReporter + "\n" +
+                "    -> slot=" + slot + "\n" +
+                "    -> operation=" + operation + "\n" +
+                "    -> beforeExecuteCheck=" + beforeExecuteCheck + "\n" +
+                "    -> operationHandler=" + operationHandler + "\n" +
+                "    -> initialized=" + initialized;
     }
 
-    public final void cleanup()
-    {
+    public final void cleanup() {
         release();
     }
 
     // Note, this should not really be public API, it is from the StormPot Poolable interface
     @Override
-    public final void release()
-    {
+    public final void release() {
         initialized = false;
-        if ( null != slot )
-        {
-            slot.release( this );
+        if (null != slot) {
+            slot.release(this);
         }
     }
 }

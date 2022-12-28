@@ -1,4 +1,4 @@
-package org.ldbcouncil.finbench.driver.util.time;
+package org.ldbcouncil.finbench.driver.temporal;
 
 public class SystemTimeSource implements TimeSource {
 

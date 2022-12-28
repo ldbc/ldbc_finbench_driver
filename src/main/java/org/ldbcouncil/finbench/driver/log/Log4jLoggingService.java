@@ -5,7 +5,7 @@ import org.ldbcouncil.finbench.driver.formatter.SimpleSummaryWorkloadMetricsForm
 import org.ldbcouncil.finbench.driver.formatter.WorkloadMetricsFormatter;
 import org.ldbcouncil.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
 import org.ldbcouncil.finbench.driver.runtime.metrics.WorkloadStatusSnapshot;
-import org.ldbcouncil.finbench.driver.util.time.TemporalUtil;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -2,6 +2,8 @@ package org.ldbcouncil.finbench.driver;
 
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 
+import static java.lang.String.format;
+
 public interface ResultReporter {
     <OTHER_RESULT_TYPE> void report(
             int resultCode,

@@ -5,7 +5,7 @@ import com.google.common.collect.Sets;
 import org.ldbcouncil.finbench.driver.constant.DriverModeEnum;
 import org.ldbcouncil.finbench.driver.driver.Driver;
 import org.ldbcouncil.finbench.driver.util.MapUtils;
-import org.ldbcouncil.finbench.driver.util.time.TemporalUtil;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 import org.ldbcouncil.finbench.driver.workloads.simple.SimpleWorkload;
 import org.ldbcouncil.finbench.driver.workloads.simple.db.SimpleDb;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcFinBenchTransactionWorkload;

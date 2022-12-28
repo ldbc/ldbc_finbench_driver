@@ -10,20 +10,18 @@ import org.HdrHistogram.Histogram;
 import java.util.HashMap;
 import java.util.Map;
 
-class ResultsLogValidationSummaryCalculator
-{
+class ResultsLogValidationSummaryCalculator {
     private final Histogram delays;
-    private final Map<String,Histogram> delaysPerType;
-    private final Map<String,Long> delaysAboveThresholdPerType;
+    private final Map<String, Histogram> delaysPerType;
+    private final Map<String, Long> delaysAboveThresholdPerType;
     private final long maxDelayAsMilli;
     private final long excessiveDelayThresholdAsMilli;
     private long delaysAboveThreshold;
 
-    ResultsLogValidationSummaryCalculator( long maxDelayAsMilli, long excessiveDelayThresholdAsMilli )
-    {
+    ResultsLogValidationSummaryCalculator(long maxDelayAsMilli, long excessiveDelayThresholdAsMilli) {
         this.maxDelayAsMilli = maxDelayAsMilli;
         this.excessiveDelayThresholdAsMilli = excessiveDelayThresholdAsMilli;
-        this.delays = new Histogram( 1, Math.max( 2, maxDelayAsMilli ), 5 );
+        this.delays = new Histogram(1, Math.max(2, maxDelayAsMilli), 5);
         this.delaysPerType = new HashMap<>();
         this.delaysAboveThresholdPerType = new HashMap<>();
         this.delaysAboveThreshold = 0;
@@ -31,56 +29,52 @@ class ResultsLogValidationSummaryCalculator
 
     /**
      * Stores the operation in Histogram object if the delay exceeded the threshold.
+     *
      * @param operationType The operation type
-     * @param delayAsMilli The delay in milliseconds for the operation
+     * @param delayAsMilli  The delay in milliseconds for the operation
      */
-    void recordDelay( String operationType, long delayAsMilli )
-    {
-        delays.recordValue( delayAsMilli );
+    void recordDelay(String operationType, long delayAsMilli) {
+        delays.recordValue(delayAsMilli);
 
-        Histogram delayForType = delaysPerType.get( operationType );
-        if ( null == delayForType )
-        {
-            delayForType = new Histogram( 1, Math.max( 2, maxDelayAsMilli ), 5 );
-            delaysPerType.put( operationType, delayForType );
+        Histogram delayForType = delaysPerType.get(operationType);
+        if (null == delayForType) {
+            delayForType = new Histogram(1, Math.max(2, maxDelayAsMilli), 5);
+            delaysPerType.put(operationType, delayForType);
         }
-        delayForType.recordValue( delayAsMilli );
+        delayForType.recordValue(delayAsMilli);
 
-        Long delaysAboveThresholdForType = delaysAboveThresholdPerType.get( operationType );
-        if ( null == delaysAboveThresholdForType )
-        {
+        Long delaysAboveThresholdForType = delaysAboveThresholdPerType.get(operationType);
+        if (null == delaysAboveThresholdForType) {
             delaysAboveThresholdForType = 0L;
-            delaysAboveThresholdPerType.put( operationType, delaysAboveThresholdForType );
+            delaysAboveThresholdPerType.put(operationType, delaysAboveThresholdForType);
         }
-        if ( delayAsMilli > excessiveDelayThresholdAsMilli )
-        {
+        if (delayAsMilli > excessiveDelayThresholdAsMilli) {
             delaysAboveThreshold++;
-            delaysAboveThresholdPerType.put( operationType, delaysAboveThresholdForType + 1 );
+            delaysAboveThresholdPerType.put(operationType, delaysAboveThresholdForType + 1);
         }
     }
 
     /**
      * Creates a summary with statistics of the delays
+     *
      * @return ResultsLogValidationSummary object
      */
-    ResultsLogValidationSummary snapshot()
-    {
-        Map<String,Long> minDelayAsMilliPerType = new HashMap<>();
-        Map<String,Long> maxDelayAsMilliPerType = new HashMap<>();
-        Map<String,Long> meanDelayAsMilliPerType = new HashMap<>();
-        for ( String operationType : delaysPerType.keySet() )
-        {
+    ResultsLogValidationSummary snapshot() {
+        Map<String, Long> minDelayAsMilliPerType = new HashMap<>();
+        Map<String, Long> maxDelayAsMilliPerType = new HashMap<>();
+        Map<String, Long> meanDelayAsMilliPerType = new HashMap<>();
+        for (String operationType : delaysPerType.keySet()) {
             minDelayAsMilliPerType.put(
                     operationType,
-                    delaysPerType.get( operationType ).getMinValue()
+                    delaysPerType.get(operationType).getMinValue()
             );
             maxDelayAsMilliPerType.put(
                     operationType,
-                    delaysPerType.get( operationType ).getMaxValue()
+                    delaysPerType.get(operationType).getMaxValue()
             );
             meanDelayAsMilliPerType.put(
                     operationType,
-                    Math.round( Math.ceil( delaysPerType.get( operationType ).getMean() ) )
+                    Math.round(Math.ceil(delaysPerType.get(operationType).getMean()))
             );
         }
         return new ResultsLogValidationSummary(
@@ -89,7 +83,7 @@ class ResultsLogValidationSummaryCalculator
                 delaysAboveThresholdPerType,
                 delays.getMinValue(),
                 delays.getMaxValue(),
-                Math.round( delays.getMean() ),
+                Math.round(delays.getMean()),
                 minDelayAsMilliPerType,
                 maxDelayAsMilliPerType,
                 meanDelayAsMilliPerType

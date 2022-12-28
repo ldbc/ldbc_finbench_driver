@@ -3,8 +3,8 @@ package org.ldbcouncil.finbench.driver.generator;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.apache.commons.math3.random.Well19937c;
-import org.ldbcouncil.finbench.driver.util.time.SystemTimeSource;
-import org.ldbcouncil.finbench.driver.util.time.TimeSource;
+import org.ldbcouncil.finbench.driver.temporal.SystemTimeSource;
+import org.ldbcouncil.finbench.driver.temporal.TimeSource;
 
 public class RandomDataGeneratorFactory {
 

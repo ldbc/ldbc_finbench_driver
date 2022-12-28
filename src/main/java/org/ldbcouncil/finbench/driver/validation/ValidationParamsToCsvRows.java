@@ -9,94 +9,82 @@ import org.ldbcouncil.finbench.driver.generator.GeneratorException;
 import java.io.IOException;
 import java.util.Iterator;
 
-public class ValidationParamsToCsvRows implements Iterator<String[]>
-{
+import static java.lang.String.format;
+
+public class ValidationParamsToCsvRows implements Iterator<String[]> {
     private final Iterator<ValidationParam> validationParams;
     private final Workload workload;
     private final boolean performSerializationMarshallingChecks;
     ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    public ValidationParamsToCsvRows( Iterator<ValidationParam> validationParams,
-            Workload workload,
-            boolean performSerializationMarshallingChecks )
-    {
+
+    public ValidationParamsToCsvRows(Iterator<ValidationParam> validationParams,
+                                     Workload workload,
+                                     boolean performSerializationMarshallingChecks) {
         this.validationParams = validationParams;
         this.workload = workload;
         this.performSerializationMarshallingChecks = performSerializationMarshallingChecks;
     }
 
     @Override
-    public boolean hasNext()
-    {
+    public boolean hasNext() {
         return validationParams.hasNext();
     }
 
     @Override
-    public String[] next()
-    {
+    public String[] next() {
         ValidationParam validationParam = validationParams.next();
         Operation operation = validationParam.operation();
         Object operationResult = validationParam.operationResult();
 
         String serializedOperation;
-        try
-        {
+        try {
             serializedOperation = OBJECT_MAPPER.writeValueAsString(operation);
-        }
-        catch ( IOException e )
-        {
+        } catch (IOException e) {
             throw new GeneratorException(
                     format(
                             "Workload(%s) unable to serialize operation\n"
-                            + "Operation: %s",
-                            operation ),
-                    e );
+                                    + "Operation: %s",
+                            operation),
+                    e);
         }
 
         String serializedOperationResult;
-        try
-        {
+        try {
             serializedOperationResult = OBJECT_MAPPER.writeValueAsString(operationResult);
-        }
-        catch ( JsonProcessingException e )
-        {
+        } catch (JsonProcessingException e) {
             throw new GeneratorException(
                     format(
                             "Error serializing operation result\n"
-                            + "Operation: %s\n"
-                            + "Operation Result: %s",
-                            operation, operationResult ),
-                    e );
+                                    + "Operation: %s\n"
+                                    + "Operation Result: %s",
+                            operation, operationResult),
+                    e);
         }
 
         // Assert that serialization/marshalling is performed correctly
-        if ( performSerializationMarshallingChecks )
-        {
+        if (performSerializationMarshallingChecks) {
             Object marshaledOperationResult = null;
-            try
-            {
-                marshaledOperationResult = operation.deserializeResult( serializedOperationResult );
-            }
-            catch (IOException e )
-            {
+            try {
+                marshaledOperationResult = operation.deserializeResult(serializedOperationResult);
+            } catch (IOException e) {
                 throw new GeneratorException(
-                        format( ""
-                                + "Error marshalling serialized operation result\n"
-                                + "Operation: %s\n"
-                                + "Operation Result: %s\n"
-                                + "Serialized Result: %s",
-                                operation, operationResult, serializedOperationResult ),
-                        e );
+                        format(""
+                                        + "Error marshalling serialized operation result\n"
+                                        + "Operation: %s\n"
+                                        + "Operation Result: %s\n"
+                                        + "Serialized Result: %s",
+                                operation, operationResult, serializedOperationResult),
+                        e);
             }
-            if (!marshaledOperationResult.equals( operationResult ) )
-            {
+            if (!marshaledOperationResult.equals(operationResult)) {
                 throw new GeneratorException(
-                        format( ""
-                                + "Operation result and serialized-then-marshaled operation result do not equal\n"
-                                + "Operation: %s\n"
-                                + "Actual Result: %s\n"
-                                + "Serialized Result: %s\n"
-                                + "Marshaled Result: %s",
-                                operation, operationResult, serializedOperationResult, marshaledOperationResult )
+                        format(""
+                                        + "Operation result and serialized-then-marshaled operation result do not equal\n"
+                                        + "Operation: %s\n"
+                                        + "Actual Result: %s\n"
+                                        + "Serialized Result: %s\n"
+                                        + "Marshaled Result: %s",
+                                operation, operationResult, serializedOperationResult, marshaledOperationResult)
                 );
             }
         }
@@ -105,8 +93,7 @@ public class ValidationParamsToCsvRows implements Iterator<String[]>
     }
 
     @Override
-    public void remove()
-    {
-        throw new UnsupportedOperationException( "remove() not supported by " + getClass().getName() );
+    public void remove() {
+        throw new UnsupportedOperationException("remove() not supported by " + getClass().getName());
     }
 }
