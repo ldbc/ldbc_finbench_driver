@@ -2,7 +2,7 @@ package org.ldbcouncil.finbench.driver.runtime.metrics;
 
 import org.ldbcouncil.finbench.driver.log.LoggingService;
 import org.ldbcouncil.finbench.driver.log.LoggingServiceFactory;
-import org.ldbcouncil.finbench.driver.util.time.TemporalUtil;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;

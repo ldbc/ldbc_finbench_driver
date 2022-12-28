@@ -19,19 +19,20 @@
         <commons.io.version>2.4</commons.io.version>
         <org.javatuples.version>1.2</org.javatuples.version>
         <log4j.version>2.19.0</log4j.version>
-<!--        <commmons.collections.version>4.4</commmons.collections.version>-->
+        <!--        <commmons.collections.version>4.4</commmons.collections.version>-->
         <common.math.version>3.2</common.math.version>
         <guava.version>18.0</guava.version>
+        <stormpot.version>2.4</stormpot.version>
         <jackson.api.version>2.13.2</jackson.api.version>
         <hdrhistogram.version>1.2.1</hdrhistogram.version>
     </properties>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.commons</groupId>-->
-<!--            <artifactId>commons-collections4</artifactId>-->
-<!--            <version>${commmons.collections.version}</version>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.apache.commons</groupId>-->
+        <!--            <artifactId>commons-collections4</artifactId>-->
+        <!--            <version>${commmons.collections.version}</version>-->
+        <!--        </dependency>-->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -67,11 +68,11 @@
             <artifactId>jackson-core</artifactId>
             <version>${jackson.api.version}</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.apache.commons</groupId>-->
-<!--            <artifactId>commons-collections4</artifactId>-->
-<!--            <version>${commmons.collections.version}</version>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.github.chrisvest</groupId>
+            <artifactId>stormpot</artifactId>
+            <version>${stormpot.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
@@ -91,13 +92,13 @@
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/finbench-mvn</altDeploymentRepository>
-                </configuration>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <artifactId>maven-deploy-plugin</artifactId>-->
+            <!--                <version>2.8.1</version>-->
+            <!--                <configuration>-->
+            <!--                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/finbench-mvn</altDeploymentRepository>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -110,11 +111,11 @@
     </build>
 
 
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/finbench-mvn</url>
-        </repository>
-    </distributionManagement>
+    <!--    <distributionManagement>-->
+    <!--        <repository>-->
+    <!--            <id>internal.repo</id>-->
+    <!--            <name>Temporary Staging Repository</name>-->
+    <!--            <url>file://${project.build.directory}/finbench-mvn</url>-->
+    <!--        </repository>-->
+    <!--    </distributionManagement>-->
 </project>

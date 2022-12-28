@@ -1,6 +1,6 @@
 package org.ldbcouncil.finbench.driver.log;
 
-import org.ldbcouncil.finbench.driver.util.time.TemporalUtil;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 
 /**
  * The logging instance entry for FinBench.
