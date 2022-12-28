@@ -6,7 +6,7 @@ import org.ldbcouncil.finbench.driver.runtime.metrics.MetricsCollectionException
 import org.ldbcouncil.finbench.driver.runtime.metrics.MetricsService;
 import org.ldbcouncil.finbench.driver.runtime.scheduling.Spinner;
 import org.ldbcouncil.finbench.driver.runtime.scheduling.SpinnerCheck;
-import org.ldbcouncil.finbench.driver.temporal.TimeSource;
+import org.ldbcouncil.finbench.driver.util.time.TimeSource;
 import stormpot.Poolable;
 import stormpot.Slot;
 

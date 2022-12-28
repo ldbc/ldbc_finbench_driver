@@ -1,4 +1,4 @@
-package org.ldbcouncil.finbench.driver.configuration;
+package org.ldbcouncil.finbench.driver.control;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import static java.lang.String.format;
 
-public class AllDriverConfiguration implements DriverConfiguration {
+public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private static final TemporalUtil TEMPORAL_UTIL = new TemporalUtil();
     private static final DecimalFormat INTEGRAL_FORMAT = new DecimalFormat("###,###,###,###,###");
     private static final DecimalFormat FLOAT_FORMAT = new DecimalFormat("###,###,###,###,##0.0000000");
@@ -208,7 +208,7 @@ public class AllDriverConfiguration implements DriverConfiguration {
         return defaultParamsMap;
     }
 
-    public static AllDriverConfiguration fromArgs(String[] args) throws DriverConfigurationException {
+    public static ConsoleAndFileDriverConfiguration fromArgs(String[] args) throws DriverConfigurationException {
         try {
             Map<String, String> paramsMap = parseArgs(args, OPTIONS);
             return fromParamsMap(paramsMap);
@@ -220,35 +220,35 @@ public class AllDriverConfiguration implements DriverConfiguration {
     public static List<String> checkMissingParams(DriverConfiguration configuration) {
         List<String> missingParams = new ArrayList<>();
         if (null == configuration.workloadClassName()) {
-            missingParams.add(AllDriverConfiguration.WORKLOAD_ARG);
+            missingParams.add(ConsoleAndFileDriverConfiguration.WORKLOAD_ARG);
         }
         DriverModeEnum mode = DriverModeEnum.valueOf(configuration.mode());
         switch (mode) {
             case create_statistics:
                 if (0 == configuration.operationCount()) {
-                    missingParams.add(AllDriverConfiguration.OPERATION_COUNT_ARG);
+                    missingParams.add(ConsoleAndFileDriverConfiguration.OPERATION_COUNT_ARG);
                 }
                 break;
             case validate_database:
                 if (null == configuration.dbClassName()) {
-                    missingParams.add(AllDriverConfiguration.DB_ARG);
+                    missingParams.add(ConsoleAndFileDriverConfiguration.DB_ARG);
                 }
                 break;
             case create_validation:
             case execute_benchmark:
             default: // Execute benchmark is default behaviour
                 if (null == configuration.dbClassName()) {
-                    missingParams.add(AllDriverConfiguration.DB_ARG);
+                    missingParams.add(ConsoleAndFileDriverConfiguration.DB_ARG);
                 }
                 if (0 == configuration.operationCount()) {
-                    missingParams.add(AllDriverConfiguration.OPERATION_COUNT_ARG);
+                    missingParams.add(ConsoleAndFileDriverConfiguration.OPERATION_COUNT_ARG);
                 }
                 break;
         }
         return missingParams;
     }
 
-    public static AllDriverConfiguration fromDefaults(
+    public static ConsoleAndFileDriverConfiguration fromDefaults(
             String databaseClassName,
             String workloadClassName,
             long operationCount) throws DriverConfigurationException {
@@ -264,7 +264,7 @@ public class AllDriverConfiguration implements DriverConfiguration {
         }
     }
 
-    public static AllDriverConfiguration fromParamsMap(Map<String, String> paramsMap)
+    public static ConsoleAndFileDriverConfiguration fromParamsMap(Map<String, String> paramsMap)
             throws DriverConfigurationException {
         try {
             paramsMap = convertLongKeysToShortKeys(paramsMap);
@@ -296,7 +296,7 @@ public class AllDriverConfiguration implements DriverConfiguration {
             boolean ignoreScheduledStartTimes =
                     Boolean.parseBoolean(paramsMap.get(IGNORE_SCHEDULED_START_TIMES_ARG));
             boolean flushLog = Boolean.parseBoolean(paramsMap.get(FLUSH_LOG_ARG));
-            return new AllDriverConfiguration(
+            return new ConsoleAndFileDriverConfiguration(
                     paramsMap,
                     mode,
                     name,
@@ -684,27 +684,27 @@ public class AllDriverConfiguration implements DriverConfiguration {
     private final long skipCount;
     private final boolean flushLog;
 
-    public AllDriverConfiguration(Map<String, String> paramsMap,
-                                  String mode,
-                                  String name,
-                                  String dbClassName,
-                                  String workloadClassName,
-                                  long operationCount,
-                                  int threadCount,
-                                  int statusDisplayIntervalAsSeconds,
-                                  TimeUnit timeUnit,
-                                  String resultDirPath,
-                                  double timeCompressionRatio,
-                                  int validationParametersSize,
-                                  boolean validationSerializationCheck,
-                                  boolean recordDelayedOperations,
-                                  String databaseValidationFilePath,
-                                  long spinnerSleepDurationAsMilli,
-                                  boolean printHelp,
-                                  boolean ignoreScheduledStartTimes,
-                                  long warmupCount,
-                                  long skipCount,
-                                  boolean flushLog) {
+    public ConsoleAndFileDriverConfiguration(Map<String, String> paramsMap,
+                                             String mode,
+                                             String name,
+                                             String dbClassName,
+                                             String workloadClassName,
+                                             long operationCount,
+                                             int threadCount,
+                                             int statusDisplayIntervalAsSeconds,
+                                             TimeUnit timeUnit,
+                                             String resultDirPath,
+                                             double timeCompressionRatio,
+                                             int validationParametersSize,
+                                             boolean validationSerializationCheck,
+                                             boolean recordDelayedOperations,
+                                             String databaseValidationFilePath,
+                                             long spinnerSleepDurationAsMilli,
+                                             boolean printHelp,
+                                             boolean ignoreScheduledStartTimes,
+                                             long warmupCount,
+                                             long skipCount,
+                                             boolean flushLog) {
         if (null == paramsMap) {
             paramsMap = new HashMap<>();
         }
@@ -853,7 +853,7 @@ public class AllDriverConfiguration implements DriverConfiguration {
 
     @Override
     public String helpString() {
-        return AllDriverConfiguration.commandlineHelpString();
+        return ConsoleAndFileDriverConfiguration.commandlineHelpString();
     }
 
     @Override
@@ -999,7 +999,7 @@ public class AllDriverConfiguration implements DriverConfiguration {
                 Boolean.parseBoolean(newParamsMapWithShortKeys.get(FLUSH_LOG_ARG)) :
                 flushLog;
 
-        return new AllDriverConfiguration(
+        return new ConsoleAndFileDriverConfiguration(
                 newOtherParams,
                 newMode,
                 newName,
@@ -1309,7 +1309,7 @@ public class AllDriverConfiguration implements DriverConfiguration {
             return false;
         }
 
-        AllDriverConfiguration that = (AllDriverConfiguration) o;
+        ConsoleAndFileDriverConfiguration that = (ConsoleAndFileDriverConfiguration) o;
 
         if (mode != that.mode) {
             return false;

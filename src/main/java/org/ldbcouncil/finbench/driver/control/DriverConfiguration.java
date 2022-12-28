@@ -1,4 +1,4 @@
-package org.ldbcouncil.finbench.driver.configuration;
+package org.ldbcouncil.finbench.driver.control;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

@@ -1,4 +1,4 @@
-package org.ldbcouncil.finbench.driver.configuration;
+package org.ldbcouncil.finbench.driver.control;
 
 public class DriverOption {
     String argName;
