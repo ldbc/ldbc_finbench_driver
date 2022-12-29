@@ -1,10 +1,6 @@
 package org.ldbcouncil.finbench.driver.runtime.coordination;
 
-import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-import org.ldbcouncil.finbench.driver.runtime.DefaultQueues;
-import org.ldbcouncil.finbench.driver.runtime.QueueEventSubmitter;
-import org.ldbcouncil.finbench.driver.runtime.scheduling.Spinner;
-import org.ldbcouncil.finbench.driver.temporal.TimeSource;
+import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,8 +11,11 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
+import org.ldbcouncil.finbench.driver.runtime.DefaultQueues;
+import org.ldbcouncil.finbench.driver.runtime.QueueEventSubmitter;
+import org.ldbcouncil.finbench.driver.runtime.scheduling.Spinner;
+import org.ldbcouncil.finbench.driver.temporal.TimeSource;
 
 public class ThreadedQueuedCompletionTimeService implements CompletionTimeService {
     private static final long SHUTDOWN_WAIT_TIMEOUT_AS_MILLI = TimeUnit.SECONDS.toMillis(10);
@@ -39,9 +38,9 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
         this.sharedCtReference = new AtomicLong(-1);
         this.sharedWriteEventCountReference = new AtomicLong(0);
         threadedQueuedCompletionTimeServiceThread = new ThreadedQueuedCompletionTimeServiceThread(
-                completionTimeEventQueue,
-                errorReporter,
-                sharedCtReference);
+            completionTimeEventQueue,
+            errorReporter,
+            sharedCtReference);
         threadedQueuedCompletionTimeServiceThread.start();
     }
 
@@ -60,10 +59,10 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
             try {
                 writerId = future.get(futureTimeoutDurationAsMilli, TimeUnit.MILLISECONDS);
                 CompletionTimeWriter writer = new ThreadedQueuedCompletionTimeWriter(
-                        writerId,
-                        sharedIsShuttingDownReference,
-                        sharedWriteEventCountReference,
-                        queueEventSubmitter);
+                    writerId,
+                    sharedIsShuttingDownReference,
+                    sharedWriteEventCountReference,
+                    queueEventSubmitter);
                 writers.add(writer);
                 return writer;
             } catch (TimeoutException e) {
@@ -76,7 +75,7 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
     }
 
     @Override
-    synchronized public Future<Long> completionTimeAsMilliFuture() throws CompletionTimeException {
+    public synchronized Future<Long> completionTimeAsMilliFuture() throws CompletionTimeException {
         try {
             CompletionTimeFuture future = new CompletionTimeFuture(timeSource);
             queueEventSubmitter.submitEventToQueue(CompletionTimeEvent.completionTimeFuture(future));
@@ -98,7 +97,7 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
     }
 
     @Override
-    synchronized public void shutdown() throws CompletionTimeException {
+    public synchronized void shutdown() throws CompletionTimeException {
         if (sharedIsShuttingDownReference.get()) {
             return;
         }
@@ -108,7 +107,7 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
         long shutdownTimeoutTimeAsMilli = timeSource.nowAsMilli() + SHUTDOWN_WAIT_TIMEOUT_AS_MILLI;
         try {
             queueEventSubmitter
-                    .submitEventToQueue(CompletionTimeEvent.terminateService(sharedWriteEventCountReference.get()));
+                .submitEventToQueue(CompletionTimeEvent.terminateService(sharedWriteEventCountReference.get()));
         } catch (InterruptedException e) {
             throw new CompletionTimeException("Encountered error while writing TERMINATE event to queue");
         }
@@ -149,7 +148,7 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
             try {
                 sharedWriteEventCountReference.incrementAndGet();
                 queueEventSubmitter.submitEventToQueue(
-                        CompletionTimeEvent.writeInitiatedTime(writerId, timeAsMilli));
+                    CompletionTimeEvent.writeInitiatedTime(writerId, timeAsMilli));
             } catch (Exception e) {
                 String errMsg = format("Error submitting initiated time for Time[%s]", timeAsMilli);
                 throw new CompletionTimeException(errMsg, e);
@@ -161,7 +160,7 @@ public class ThreadedQueuedCompletionTimeService implements CompletionTimeServic
             try {
                 sharedWriteEventCountReference.incrementAndGet();
                 queueEventSubmitter.submitEventToQueue(
-                        CompletionTimeEvent.writeCompletedTime(writerId, timeAsMilli));
+                    CompletionTimeEvent.writeCompletedTime(writerId, timeAsMilli));
             } catch (Exception e) {
                 String errMsg = format("Error submitting completed time for Time[%s]", timeAsMilli);
                 throw new CompletionTimeException(errMsg, e);

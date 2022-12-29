@@ -46,13 +46,10 @@ public abstract class Bucket<T> {
             }
             NumberRangeBucket<T1> other = (NumberRangeBucket) obj;
             if (range == null) {
-                if (other.range != null) {
-                    return false;
-                }
-            } else if (!range.equals(other.range)) {
-                return false;
+                return other.range == null;
+            } else {
+                return range.equals(other.range);
             }
-            return true;
         }
 
     }
@@ -60,12 +57,12 @@ public abstract class Bucket<T> {
     public static class DiscreteBucket<T2 extends Object> extends Bucket<T2> {
         private final T2 thing;
 
-        public static <Type> DiscreteBucket<Type> create(Type thing) {
-            return new DiscreteBucket<Type>(thing);
-        }
-
         public DiscreteBucket(T2 thing) {
             this.thing = thing;
+        }
+
+        public static <Type> DiscreteBucket<Type> create(Type thing) {
+            return new DiscreteBucket<Type>(thing);
         }
 
         public T2 getId() {
@@ -103,13 +100,10 @@ public abstract class Bucket<T> {
             }
             DiscreteBucket<T2> other = (DiscreteBucket) obj;
             if (thing == null) {
-                if (other.thing != null) {
-                    return false;
-                }
-            } else if (!thing.equals(other.thing)) {
-                return false;
+                return other.thing == null;
+            } else {
+                return thing.equals(other.thing);
             }
-            return true;
         }
 
     }

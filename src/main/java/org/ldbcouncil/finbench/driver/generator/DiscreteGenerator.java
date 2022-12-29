@@ -1,12 +1,11 @@
 package org.ldbcouncil.finbench.driver.generator;
 
+import static java.lang.String.format;
+
 import com.google.common.collect.Lists;
+import java.util.List;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.ldbcouncil.finbench.driver.util.Tuple2;
-
-import java.util.List;
-
-import static java.lang.String.format;
 
 public class DiscreteGenerator<GENERATE_TYPE> extends Generator<GENERATE_TYPE> {
     private final Tuple2<Double, GENERATE_TYPE>[] itemProbabilities;
@@ -14,7 +13,7 @@ public class DiscreteGenerator<GENERATE_TYPE> extends Generator<GENERATE_TYPE> {
     private final RandomDataGenerator random;
 
     DiscreteGenerator(RandomDataGenerator random, Iterable<Tuple2<Double, GENERATE_TYPE>> itemProbabilities) {
-        if (false == itemProbabilities.iterator().hasNext()) {
+        if (!itemProbabilities.iterator().hasNext()) {
             throw new GeneratorException("DiscreteMultiGenerator cannot be empty");
         }
 
@@ -41,10 +40,10 @@ public class DiscreteGenerator<GENERATE_TYPE> extends Generator<GENERATE_TYPE> {
         }
 
         String errMsg = format("randomValue=%s\nprobabilitiesSum=%s\nitems=%s\n", randomValue, probabilitiesSum,
-                itemProbabilities.toString());
+            itemProbabilities.toString());
         throw new GeneratorException(format(
-                "Unexpected Error - failed to select next discrete element - should never get to this line\n%s",
-                errMsg));
+            "Unexpected Error - failed to select next discrete element - should never get to this line\n%s",
+            errMsg));
     }
 
     @Override

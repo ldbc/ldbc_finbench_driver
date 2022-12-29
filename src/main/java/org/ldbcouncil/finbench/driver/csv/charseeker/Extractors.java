@@ -1,10 +1,10 @@
 package org.ldbcouncil.finbench.driver.csv.charseeker;
 
+import static java.lang.reflect.Modifier.isStatic;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
-
-import static java.lang.reflect.Modifier.isStatic;
 
 /**
  * Common implementations of {@link Extractor}. Since array values can have a delimiter of user choice this isn't
@@ -42,6 +42,19 @@ import static java.lang.reflect.Modifier.isStatic;
  * {@link Extractor#toString() toString} value is used as key for lookup in {@link #valueOf(String)}.
  */
 public class Extractors {
+    private static final char[] BOOLEAN_MATCH;
+    private static final char[] BOOLEAN_TRUE_CHARACTERS;
+
+    static {
+        BOOLEAN_MATCH = new char[Boolean.TRUE.toString().length()];
+        Boolean.TRUE.toString().getChars(0, BOOLEAN_MATCH.length, BOOLEAN_MATCH, 0);
+    }
+
+    static {
+        BOOLEAN_TRUE_CHARACTERS = new char[Boolean.TRUE.toString().length()];
+        Boolean.TRUE.toString().getChars(0, BOOLEAN_TRUE_CHARACTERS.length, BOOLEAN_TRUE_CHARACTERS, 0);
+    }
+
     private final Map<String, Extractor<?>> instances = new HashMap<>();
     private final Extractor<String> string;
     private final LongExtractor long_;
@@ -100,6 +113,67 @@ public class Extractors {
         } catch (IllegalAccessException e) {
             throw new Error("Bug in reflection code gathering all extractors");
         }
+    }
+
+    private static long extractLong(char[] data, int offset, int length) {
+        if (length == 0) {
+            throw new NumberFormatException("For input string \"" + String.valueOf(data, offset, length) + "\"");
+        }
+
+        long result = 0;
+        int i = 0;
+        boolean negate = false;
+        if (data[offset] == '-') {
+            negate = true;
+            i++;
+        }
+        for (; i < length; i++) {
+            result = result * 10 + digit(data[offset + i]);
+        }
+        return negate ? -result : result;
+    }
+
+    private static int digit(char ch) {
+        int digit = ch - '0';
+        if ((digit < 0) || (digit > 9)) {
+            throw new NumberFormatException(
+                "Invalid digit character " + digit + " '" + (char) digit + "' where the original char was '" + ch
+                    + "'");
+        }
+        return digit;
+    }
+
+    private static boolean extractBoolean(char[] data, int offset, int length) {
+        if (BOOLEAN_TRUE_CHARACTERS.length != length) {
+            return false;
+        }
+        for (int i = 0; i < length; i++) {
+            if (data[offset + i] != BOOLEAN_TRUE_CHARACTERS[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static int safeCastLongToInt(long value) {
+        if (value > Integer.MAX_VALUE) {
+            throw new UnsupportedOperationException("Not supported a.t.m");
+        }
+        return (int) value;
+    }
+
+    private static short safeCastLongToShort(long value) {
+        if (value > Short.MAX_VALUE) {
+            throw new UnsupportedOperationException("Not supported a.t.m");
+        }
+        return (short) value;
+    }
+
+    private static byte safeCastLongToByte(long value) {
+        if (value > Byte.MAX_VALUE) {
+            throw new UnsupportedOperationException("Not supported a.t.m");
+        }
+        return (byte) value;
     }
 
     public void add(Extractor<?> extractor) {
@@ -187,7 +261,7 @@ public class Extractors {
         return intTupleArray;
     }
 
-    private static abstract class AbstractExtractor<T> implements Extractor<T> {
+    private abstract static class AbstractExtractor<T> implements Extractor<T> {
         private final String toString;
 
         AbstractExtractor(String toString) {
@@ -326,13 +400,6 @@ public class Extractors {
         }
     }
 
-    private static final char[] BOOLEAN_MATCH;
-
-    static {
-        BOOLEAN_MATCH = new char[Boolean.TRUE.toString().length()];
-        Boolean.TRUE.toString().getChars(0, BOOLEAN_MATCH.length, BOOLEAN_MATCH, 0);
-    }
-
     public static class BooleanExtractor extends AbstractExtractor<Boolean> {
         private boolean value;
 
@@ -426,7 +493,7 @@ public class Extractors {
         }
     }
 
-    private static abstract class ArrayExtractor<T> extends AbstractExtractor<T> {
+    private abstract static class ArrayExtractor<T> extends AbstractExtractor<T> {
         protected final char arrayDelimiter;
         protected T value;
 
@@ -639,9 +706,11 @@ public class Extractors {
         }
 
         private void extractInnerTuple(char[] data, int offset, int length, int outerArrayIndex) {
-            for (int innerTupleIndex = 0, charIndex = 0; innerTupleIndex < innerTupleLength; innerTupleIndex++, charIndex++) {
+            for (int innerTupleIndex = 0, charIndex = 0; innerTupleIndex < innerTupleLength;
+                 innerTupleIndex++, charIndex++) {
                 int numberOfChars = charsToNextInnerTupleDelimiter(data, offset + charIndex, length - charIndex);
-                value[outerArrayIndex][innerTupleIndex] = safeCastLongToInt(extractLong(data, offset + charIndex, numberOfChars));
+                value[outerArrayIndex][innerTupleIndex] =
+                    safeCastLongToInt(extractLong(data, offset + charIndex, numberOfChars));
                 charIndex += numberOfChars;
             }
         }
@@ -704,72 +773,5 @@ public class Extractors {
                 charIndex += numberOfChars;
             }
         }
-    }
-
-    private static long extractLong(char[] data, int offset, int length) {
-        if (length == 0) {
-            throw new NumberFormatException("For input string \"" + String.valueOf(data, offset, length) + "\"");
-        }
-
-        long result = 0;
-        int i = 0;
-        boolean negate = false;
-        if (data[offset] == '-') {
-            negate = true;
-            i++;
-        }
-        for (; i < length; i++) {
-            result = result * 10 + digit(data[offset + i]);
-        }
-        return negate ? -result : result;
-    }
-
-    private static int digit(char ch) {
-        int digit = ch - '0';
-        if ((digit < 0) || (digit > 9)) {
-            throw new NumberFormatException("Invalid digit character " + digit + " '" + (char) digit +
-                    "' where the original char was '" + ch + "'");
-        }
-        return digit;
-    }
-
-    private static final char[] BOOLEAN_TRUE_CHARACTERS;
-
-    static {
-        BOOLEAN_TRUE_CHARACTERS = new char[Boolean.TRUE.toString().length()];
-        Boolean.TRUE.toString().getChars(0, BOOLEAN_TRUE_CHARACTERS.length, BOOLEAN_TRUE_CHARACTERS, 0);
-    }
-
-    private static boolean extractBoolean(char[] data, int offset, int length) {
-        if (BOOLEAN_TRUE_CHARACTERS.length != length) {
-            return false;
-        }
-        for (int i = 0; i < length; i++) {
-            if (data[offset + i] != BOOLEAN_TRUE_CHARACTERS[i]) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static int safeCastLongToInt(long value) {
-        if (value > Integer.MAX_VALUE) {
-            throw new UnsupportedOperationException("Not supported a.t.m");
-        }
-        return (int) value;
-    }
-
-    private static short safeCastLongToShort(long value) {
-        if (value > Short.MAX_VALUE) {
-            throw new UnsupportedOperationException("Not supported a.t.m");
-        }
-        return (short) value;
-    }
-
-    private static byte safeCastLongToByte(long value) {
-        if (value > Byte.MAX_VALUE) {
-            throw new UnsupportedOperationException("Not supported a.t.m");
-        }
-        return (byte) value;
     }
 }

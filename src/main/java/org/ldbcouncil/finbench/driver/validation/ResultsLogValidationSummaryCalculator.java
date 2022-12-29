@@ -1,15 +1,14 @@
 package org.ldbcouncil.finbench.driver.validation;
+
+import java.util.HashMap;
+import java.util.Map;
+import org.HdrHistogram.Histogram;
+
 /**
  * ResultsLogValidationSummaryCalculator.java
  * Stores per operation the delayed operations into a histogram (method RecordDelay)
  * and creates a summary of the delayed operations using (method snapshot)
  */
-
-import org.HdrHistogram.Histogram;
-
-import java.util.HashMap;
-import java.util.Map;
-
 class ResultsLogValidationSummaryCalculator {
     private final Histogram delays;
     private final Map<String, Histogram> delaysPerType;
@@ -65,28 +64,28 @@ class ResultsLogValidationSummaryCalculator {
         Map<String, Long> meanDelayAsMilliPerType = new HashMap<>();
         for (String operationType : delaysPerType.keySet()) {
             minDelayAsMilliPerType.put(
-                    operationType,
-                    delaysPerType.get(operationType).getMinValue()
+                operationType,
+                delaysPerType.get(operationType).getMinValue()
             );
             maxDelayAsMilliPerType.put(
-                    operationType,
-                    delaysPerType.get(operationType).getMaxValue()
+                operationType,
+                delaysPerType.get(operationType).getMaxValue()
             );
             meanDelayAsMilliPerType.put(
-                    operationType,
-                    Math.round(Math.ceil(delaysPerType.get(operationType).getMean()))
+                operationType,
+                Math.round(Math.ceil(delaysPerType.get(operationType).getMean()))
             );
         }
         return new ResultsLogValidationSummary(
-                excessiveDelayThresholdAsMilli,
-                delaysAboveThreshold,
-                delaysAboveThresholdPerType,
-                delays.getMinValue(),
-                delays.getMaxValue(),
-                Math.round(delays.getMean()),
-                minDelayAsMilliPerType,
-                maxDelayAsMilliPerType,
-                meanDelayAsMilliPerType
+            excessiveDelayThresholdAsMilli,
+            delaysAboveThreshold,
+            delaysAboveThresholdPerType,
+            delays.getMinValue(),
+            delays.getMaxValue(),
+            Math.round(delays.getMean()),
+            minDelayAsMilliPerType,
+            maxDelayAsMilliPerType,
+            meanDelayAsMilliPerType
         );
     }
 }

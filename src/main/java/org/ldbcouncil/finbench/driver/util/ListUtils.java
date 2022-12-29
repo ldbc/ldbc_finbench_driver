@@ -1,7 +1,6 @@
 package org.ldbcouncil.finbench.driver.util;
 
 import com.google.common.collect.Lists;
-
 import java.util.HashSet;
 import java.util.List;
 

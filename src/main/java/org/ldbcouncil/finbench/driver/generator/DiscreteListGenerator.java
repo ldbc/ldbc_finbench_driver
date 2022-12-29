@@ -1,13 +1,12 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import org.apache.commons.math3.random.RandomDataGenerator;
-import org.ldbcouncil.finbench.driver.util.Tuple2;
+import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static java.lang.String.format;
+import org.apache.commons.math3.random.RandomDataGenerator;
+import org.ldbcouncil.finbench.driver.util.Tuple2;
 
 public class DiscreteListGenerator<GENERATE_TYPE> extends Generator<List<GENERATE_TYPE>> {
     // generates the number of items to be selected upon next()
@@ -18,7 +17,7 @@ public class DiscreteListGenerator<GENERATE_TYPE> extends Generator<List<GENERAT
 
     DiscreteListGenerator(RandomDataGenerator random, Iterable<Tuple2<Double, GENERATE_TYPE>> itemProbabilities,
                           Iterator<Integer> amountToRetrieveGenerator) {
-        if (false == itemProbabilities.iterator().hasNext()) {
+        if (!itemProbabilities.iterator().hasNext()) {
             throw new GeneratorException("DiscreteMultiGenerator cannot be empty");
         }
 
@@ -40,7 +39,7 @@ public class DiscreteListGenerator<GENERATE_TYPE> extends Generator<List<GENERAT
 
         if (0 > amountToRetrieve || amountToRetrieve > itemProbabilities.size()) {
             String errMsg = format("amountToRetrieveGenerator returned %s, which exceeds number of items [%s]",
-                    amountToRetrieve, itemProbabilities.size());
+                amountToRetrieve, itemProbabilities.size());
             throw new GeneratorException(errMsg);
         }
 
@@ -61,7 +60,7 @@ public class DiscreteListGenerator<GENERATE_TYPE> extends Generator<List<GENERAT
         double randomValue = random.nextUniform(0, 1);
 
         for (Tuple2<Double, GENERATE_TYPE> item : itemProbabilities) {
-            if (true == alreadySelectedItems.contains(item._2())) {
+            if (alreadySelectedItems.contains(item._2())) {
                 continue;
             }
             if (randomValue < (item._1() / remainingProbabilitiesSum)) {
@@ -71,8 +70,8 @@ public class DiscreteListGenerator<GENERATE_TYPE> extends Generator<List<GENERAT
         }
 
         String errMsg = format("val=%s\n" + "probabilitiesSum=%s\n" + "remainingProbabilitiesSum=%s\n"
-                        + "items=%s\n" + "alreadySelectedItems=%s", randomValue, probabilitiesSum,
-                remainingProbabilitiesSum, itemProbabilities.toString(), alreadySelectedItems.toString());
+                + "items=%s\n" + "alreadySelectedItems=%s", randomValue, probabilitiesSum,
+            remainingProbabilitiesSum, itemProbabilities, alreadySelectedItems.toString());
         throw new GeneratorException(format("Unexpected Error - should never get to this line\n%s", errMsg));
     }
 

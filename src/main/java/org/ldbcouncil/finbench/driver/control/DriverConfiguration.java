@@ -52,7 +52,7 @@ public interface DriverConfiguration {
 
     DriverConfiguration applyArgs(DriverConfiguration newConfiguration) throws DriverConfigurationException;
 
-    DriverConfiguration applyArg(String argument, String newValue) throws DriverConfigurationException;
-
     DriverConfiguration applyArgs(Map<String, String> newMap) throws DriverConfigurationException;
+
+    DriverConfiguration applyArg(String argument, String newValue) throws DriverConfigurationException;
 }

@@ -1,6 +1,13 @@
 package org.ldbcouncil.finbench.driver.csv.charseeker;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -22,19 +29,6 @@ import java.util.zip.ZipFile;
  * </ol>
  */
 public class Readables {
-    /**
-     * First 4 bytes of a ZIP file have this signature.
-     */
-    private static final int ZIP_MAGIC = 0x504b0304;
-    /**
-     * First 2 bytes of a GZIP file have this signature.
-     */
-    private static final int GZIP_MAGIC = 0x1f8b;
-
-    private Readables() {
-        throw new AssertionError("No instances allowed");
-    }
-
     public static final CharReadable EMPTY = new CharReadable() {
         @Override
         public int read(char[] buffer, int offset, int length) throws IOException {
@@ -45,6 +39,84 @@ public class Readables {
         public void close() throws IOException {   // Nothing to close
         }
     };
+    /**
+     * First 4 bytes of a ZIP file have this signature.
+     */
+    private static final int ZIP_MAGIC = 0x504b0304;
+    /**
+     * First 2 bytes of a GZIP file have this signature.
+     */
+    private static final int GZIP_MAGIC = 0x1f8b;
+    private static final RawFunction<File, CharReadable, IOException> FROM_FILE =
+        new RawFunction<File, CharReadable, IOException>() {
+            @Override
+            public CharReadable apply(File file) throws IOException {
+                int magic = magic(file);
+                if (magic == ZIP_MAGIC) {   // ZIP file
+                    ZipFile zipFile = new ZipFile(file);
+                    ZipEntry entry = getSingleSuitableEntry(zipFile);
+                    return wrap(new InputStreamReader(zipFile.getInputStream(entry)));
+                } else if ((magic >>> 16)
+                    == GZIP_MAGIC) {   // GZIP file. GZIP isn't an archive like ZIP, so this is purely data that is
+                    // compressed.
+                    // Although a very common way of compressing with GZIP is to use TAR which can combine many
+                    // files into one blob, which is then compressed. If that's the case then
+                    // the data will look like garbage and the reader will fail for whatever it will be used for.
+                    // TODO add tar support
+                    GZIPInputStream zipStream = new GZIPInputStream(new FileInputStream(file));
+                    return wrap(new InputStreamReader(zipStream));
+                }
+
+                return wrap(new FileReader(file));
+            }
+
+            private ZipEntry getSingleSuitableEntry(ZipFile zipFile) throws IOException {
+                List<String> unsuitableEntries = new ArrayList<>();
+                Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
+                ZipEntry found = null;
+                while (enumeration.hasMoreElements()) {
+                    ZipEntry entry = enumeration.nextElement();
+                    if (entry.isDirectory() || invalidZipEntry(entry.getName())) {
+                        unsuitableEntries.add(entry.getName());
+                        continue;
+                    }
+
+                    if (found != null) {
+                        throw new IOException(
+                            "Multiple suitable files found in zip file " + zipFile.getName() + ", at least "
+                                + found.getName() + " and " + entry.getName()
+                                + ". Only a single file per zip file is supported");
+                    }
+                    found = entry;
+                }
+
+                if (found == null) {
+                    throw new IOException(
+                        "No suitable file found in zip file " + zipFile.getName() + "." + (!unsuitableEntries.isEmpty()
+                            ? " Although found these unsuitable entries " + unsuitableEntries : ""));
+                }
+                return found;
+            }
+
+            private int magic(File file) throws IOException {
+                try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
+                    return in.readInt();
+                } catch (EOFException e) {
+                    return -1;
+                }
+            }
+        };
+    private static final RawFunction<CharReadable, CharReadable, IOException> IDENTITY =
+        new RawFunction<CharReadable, CharReadable, IOException>() {
+            @Override
+            public CharReadable apply(CharReadable in) {
+                return in;
+            }
+        };
+
+    private Readables() {
+        throw new AssertionError("No instances allowed");
+    }
 
     public static CharReadable wrap(final Reader reader) {
         return new CharReadable() {
@@ -60,75 +132,9 @@ public class Readables {
         };
     }
 
-    private static final RawFunction<File, CharReadable, IOException> FROM_FILE = new RawFunction<File, CharReadable, IOException>() {
-        @Override
-        public CharReadable apply(File file) throws IOException {
-            int magic = magic(file);
-            if (magic == ZIP_MAGIC) {   // ZIP file
-                ZipFile zipFile = new ZipFile(file);
-                ZipEntry entry = getSingleSuitableEntry(zipFile);
-                return wrap(new InputStreamReader(zipFile.getInputStream(entry)));
-            } else if ((magic >>> 16) == GZIP_MAGIC) {   // GZIP file. GZIP isn't an archive like ZIP, so this is purely data that is compressed.
-                // Although a very common way of compressing with GZIP is to use TAR which can combine many
-                // files into one blob, which is then compressed. If that's the case then
-                // the data will look like garbage and the reader will fail for whatever it will be used for.
-                // TODO add tar support
-                GZIPInputStream zipStream = new GZIPInputStream(new FileInputStream(file));
-                return wrap(new InputStreamReader(zipStream));
-            }
-
-            return wrap(new FileReader(file));
-        }
-
-        private ZipEntry getSingleSuitableEntry(ZipFile zipFile) throws IOException {
-            List<String> unsuitableEntries = new ArrayList<>();
-            Enumeration<? extends ZipEntry> enumeration = zipFile.entries();
-            ZipEntry found = null;
-            while (enumeration.hasMoreElements()) {
-                ZipEntry entry = enumeration.nextElement();
-                if (entry.isDirectory() || invalidZipEntry(entry.getName())) {
-                    unsuitableEntries.add(entry.getName());
-                    continue;
-                }
-
-                if (found != null) {
-                    throw new IOException("Multiple suitable files found in zip file " + zipFile.getName() +
-                            ", at least " + found.getName() + " and " + entry.getName() +
-                            ". Only a single file per zip file is supported");
-                }
-                found = entry;
-            }
-
-            if (found == null) {
-                throw new IOException("No suitable file found in zip file " + zipFile.getName() + "." +
-                        (!unsuitableEntries.isEmpty() ?
-                                " Although found these unsuitable entries " + unsuitableEntries : ""));
-            }
-            return found;
-        }
-
-        private int magic(File file) throws IOException {
-            try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
-                return in.readInt();
-            } catch (EOFException e) {
-                return -1;
-            }
-        }
-    };
-
     private static boolean invalidZipEntry(String name) {
-        return name.contains("__MACOSX") ||
-                name.startsWith(".") ||
-                name.contains("/.");
+        return name.contains("__MACOSX") || name.startsWith(".") || name.contains("/.");
     }
-
-    private static final RawFunction<CharReadable, CharReadable, IOException> IDENTITY =
-            new RawFunction<CharReadable, CharReadable, IOException>() {
-                @Override
-                public CharReadable apply(CharReadable in) {
-                    return in;
-                }
-            };
 
     public static CharReadable file(File file) throws IOException {
         return FROM_FILE.apply(file);
@@ -138,12 +144,12 @@ public class Readables {
         return new MultiReadable(iterator(files, FROM_FILE));
     }
 
-    public static CharReadable multipleSources(CharReadable... sources) {
-        return new MultiReadable(iterator(sources, IDENTITY));
-    }
-
     public static CharReadable multipleFiles(Iterator<File> files) {
         return new MultiReadable(iterator(files, FROM_FILE));
+    }
+
+    public static CharReadable multipleSources(CharReadable... sources) {
+        return new MultiReadable(iterator(sources, IDENTITY));
     }
 
     public static CharReadable multipleSources(RawIterator<CharReadable, IOException> sources) {

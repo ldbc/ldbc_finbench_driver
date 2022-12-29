@@ -1,13 +1,12 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import org.ldbcouncil.finbench.driver.csv.charseeker.CharSeeker;
-import org.ldbcouncil.finbench.driver.csv.charseeker.Extractors;
-import org.ldbcouncil.finbench.driver.csv.charseeker.Mark;
+import static java.lang.String.format;
 
 import java.io.IOException;
 import java.util.Iterator;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.csv.charseeker.CharSeeker;
+import org.ldbcouncil.finbench.driver.csv.charseeker.Extractors;
+import org.ldbcouncil.finbench.driver.csv.charseeker.Mark;
 
 
 public class CsvEventStreamReaderBasicCharSeeker<BASE_EVENT_TYPE> implements Iterator<BASE_EVENT_TYPE> {
@@ -19,15 +18,15 @@ public class CsvEventStreamReaderBasicCharSeeker<BASE_EVENT_TYPE> implements Ite
     private BASE_EVENT_TYPE nextEvent = null;
 
     public CsvEventStreamReaderBasicCharSeeker(
-            CharSeeker charSeeker,
-            Extractors extractors,
-            Mark mark,
-            EventDecoder<BASE_EVENT_TYPE> decoder,
-            int columnDelimiter) {
+        CharSeeker charSeeker,
+        Extractors extractors,
+        Mark mark,
+        EventDecoder<BASE_EVENT_TYPE> decoder,
+        int columnDelimiter) {
         this.charSeeker = charSeeker;
         this.extractors = extractors;
         this.mark = mark;
-        this.columnDelimiters = new int[]{columnDelimiter};
+        this.columnDelimiters = new int[] {columnDelimiter};
         this.decoder = decoder;
     }
 
@@ -60,12 +59,12 @@ public class CsvEventStreamReaderBasicCharSeeker<BASE_EVENT_TYPE> implements Ite
     @Override
     public void remove() {
         throw new UnsupportedOperationException(
-                format("%s does not support remove()", getClass().getSimpleName()));
+            format("%s does not support remove()", getClass().getSimpleName()));
     }
 
 
     public interface EventDecoder<BASE_EVENT_TYPE> {
         BASE_EVENT_TYPE decodeEvent(CharSeeker charSeeker, Extractors extractors, int[] columnDelimiters, Mark mark)
-                throws IOException;
+            throws IOException;
     }
 }

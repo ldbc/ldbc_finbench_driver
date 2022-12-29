@@ -10,8 +10,8 @@ public class ResultsLogValidationTolerances {
     private final long toleratedExcessiveDelayCount;
 
     public ResultsLogValidationTolerances(
-            long excessiveDelayThresholdAsMilli,
-            long toleratedExcessiveDelayCount) {
+        long excessiveDelayThresholdAsMilli,
+        long toleratedExcessiveDelayCount) {
         this.excessiveDelayThresholdAsMilli = excessiveDelayThresholdAsMilli;
         this.toleratedExcessiveDelayCount = toleratedExcessiveDelayCount;
     }

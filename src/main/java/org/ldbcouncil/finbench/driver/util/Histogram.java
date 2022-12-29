@@ -1,12 +1,17 @@
 package org.ldbcouncil.finbench.driver.util;
 
-import com.google.common.collect.Range;
-import org.ldbcouncil.finbench.driver.util.Bucket.NumberRangeBucket;
-
-import java.util.*;
-import java.util.Map.Entry;
-
 import static java.lang.String.format;
+
+import com.google.common.collect.Range;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import org.ldbcouncil.finbench.driver.util.Bucket.NumberRangeBucket;
 
 // THING_TYPE - Things - type of things being counted
 //   ---> Bucket must be able to compare this
@@ -41,7 +46,7 @@ public class Histogram<THING_TYPE, COUNT extends Number> {
     }
 
     public static <THING_TYPES, COUNTS extends Number> boolean equalsWithinTolerance(
-            Histogram<THING_TYPES, COUNTS> first, Histogram<THING_TYPES, COUNTS> second, Number tolerance) {
+        Histogram<THING_TYPES, COUNTS> first, Histogram<THING_TYPES, COUNTS> second, Number tolerance) {
         if (first == second) {
             return true;
         }
@@ -60,7 +65,7 @@ public class Histogram<THING_TYPE, COUNT extends Number> {
     }
 
     private static <THING_TYPES, COUNTS extends Number> boolean doEqualsWithinTolerance(
-            Histogram<THING_TYPES, COUNTS> first, Histogram<THING_TYPES, COUNTS> second, Number tolerance) {
+        Histogram<THING_TYPES, COUNTS> first, Histogram<THING_TYPES, COUNTS> second, Number tolerance) {
         if (first.getBucketCount() != second.getBucketCount()) {
             return false;
         }
@@ -72,7 +77,7 @@ public class Histogram<THING_TYPE, COUNT extends Number> {
                 return false;
             }
 
-            if (false == NumberHelper.withinTolerance(firstBucketValue, secondBucketValue, tolerance)) {
+            if (!NumberHelper.withinTolerance(firstBucketValue, secondBucketValue, tolerance)) {
                 return false;
             }
         }
@@ -192,7 +197,7 @@ public class Histogram<THING_TYPE, COUNT extends Number> {
     @Override
     public String toString() {
         return "Histogram [sumOfAllBucketValues=" + sumOfAllBucketValues() + ", valuedBuckets=" + valuedBuckets
-                + ", defaultBucketValue=" + defaultBucketValue + "]";
+            + ", defaultBucketValue=" + defaultBucketValue + "]";
     }
 
     public String toPrettyString() {
@@ -200,17 +205,17 @@ public class Histogram<THING_TYPE, COUNT extends Number> {
     }
 
     public String toPrettyString(String prefix) {
-        StringBuilder prettyStringBuilder = new StringBuilder();
-        prettyStringBuilder.append(prefix + "Histogram\n");
-        prettyStringBuilder.append(prefix + "\tdefaultBucketValue=" + defaultBucketValue + "\n");
-        prettyStringBuilder.append(prefix + "\tbucketCount=" + getBucketCount() + "\n");
-        prettyStringBuilder.append(prefix + "\tsumOfAllBucketValues=" + sumOfAllBucketValues() + "\n");
-        prettyStringBuilder.append(MapUtils.prettyPrint(copyAndSortByBucketSize(valuedBuckets), prefix + "\t"));
-        return prettyStringBuilder.toString();
+        String prettyStringBuilder = prefix + "Histogram\n"
+            + prefix + "\tdefaultBucketValue=" + defaultBucketValue + "\n"
+            + prefix + "\tbucketCount=" + getBucketCount() + "\n"
+            + prefix + "\tsumOfAllBucketValues=" + sumOfAllBucketValues() + "\n"
+            + MapUtils.prettyPrint(copyAndSortByBucketSize(valuedBuckets), prefix + "\t");
+        return prettyStringBuilder;
     }
 
     private Bucket<THING_TYPE> getExactlyOneBucketFor(THING_TYPE value) {
-        List<Tuple2<Bucket<THING_TYPE>, THING_TYPE>> bucketHits = new ArrayList<Tuple2<Bucket<THING_TYPE>, THING_TYPE>>();
+        List<Tuple2<Bucket<THING_TYPE>, THING_TYPE>> bucketHits =
+            new ArrayList<Tuple2<Bucket<THING_TYPE>, THING_TYPE>>();
         for (Bucket<THING_TYPE> bucket : valuedBuckets.keySet()) {
             if (bucket.contains(value)) {
                 bucketHits.add(Tuple.tuple2(bucket, value));
@@ -218,20 +223,20 @@ public class Histogram<THING_TYPE, COUNT extends Number> {
         }
         if (bucketHits.size() < 1) {
             String errorMessage = format("0 buckets found matching %s, expected 1. Buckets(%s) BucketHits(%s)",
-                    value, valuedBuckets.keySet().toString(), bucketHits.toString());
+                value, valuedBuckets.keySet(), bucketHits);
             throw new RuntimeException(errorMessage);
         }
         if (bucketHits.size() > 1) {
             String errorMessage = format(
-                    "%s buckets found matching %s, expected 1. Buckets(%s) BucketHits(%s)", bucketHits.size(), value,
-                    valuedBuckets.keySet().toString(), bucketHits.toString());
+                "%s buckets found matching %s, expected 1. Buckets(%s) BucketHits(%s)", bucketHits.size(), value,
+                valuedBuckets.keySet(), bucketHits);
             throw new RuntimeException(errorMessage);
         }
         return bucketHits.get(0)._1();
     }
 
     private void assertBucketExists(Bucket<THING_TYPE> bucket) {
-        if (false == valuedBuckets.containsKey(bucket)) {
+        if (!valuedBuckets.containsKey(bucket)) {
             throw new RuntimeException(format("Bucket[%s] not found in Histogram", bucket));
         }
     }

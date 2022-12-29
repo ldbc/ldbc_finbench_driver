@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import java.util.Iterator;
-
 import static java.lang.String.format;
+
+import java.util.Iterator;
 
 public abstract class NoRemoveIterator<TYPE> implements Iterator<TYPE> {
     @Override

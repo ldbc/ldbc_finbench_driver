@@ -9,11 +9,12 @@ public abstract class QueueEventFetcher<EVENT_TYPE> {
 
     public static <TYPE> QueueEventFetcher<TYPE> queueEventFetcherFor(Queue<TYPE> queue) {
         return (BlockingQueue.class.isAssignableFrom(queue.getClass()))
-                ? new BlockingQueueEventFetcher((BlockingQueue) queue)
-                : new NonBlockingQueueEventFetcher(queue);
+            ? new BlockingQueueEventFetcher((BlockingQueue) queue)
+            : new NonBlockingQueueEventFetcher(queue);
     }
 
-    static class NonBlockingQueueEventFetcher<EVENT_TYPE_NON_BLOCKING> extends QueueEventFetcher<EVENT_TYPE_NON_BLOCKING> {
+    static class NonBlockingQueueEventFetcher<EVENT_TYPE_NON_BLOCKING>
+        extends QueueEventFetcher<EVENT_TYPE_NON_BLOCKING> {
         private final Queue<EVENT_TYPE_NON_BLOCKING> queue;
 
         public NonBlockingQueueEventFetcher(Queue<EVENT_TYPE_NON_BLOCKING> queue) {

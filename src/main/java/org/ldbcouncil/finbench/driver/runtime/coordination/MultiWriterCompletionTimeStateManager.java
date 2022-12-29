@@ -1,9 +1,9 @@
 package org.ldbcouncil.finbench.driver.runtime.coordination;
 
+import static java.lang.String.format;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.String.format;
 
 /**
  * Completion time is the point in time AT which there are no uncompleted events.
@@ -60,8 +60,8 @@ public class MultiWriterCompletionTimeStateManager implements CompletionTimeRead
         return (CompletionTimeWriter) processEvent(Event.ADD_WRITER, -1, -1);
     }
 
-    synchronized private Object processEvent(Event event, int writerId, long scheduledStartTimeAsMilli)
-            throws CompletionTimeException {
+    private synchronized Object processEvent(Event event, int writerId, long scheduledStartTimeAsMilli)
+        throws CompletionTimeException {
         switch (event) {
             case READ_LAST_KNOWN_IT: {
                 return initiationTimeAsMilli;
@@ -91,7 +91,7 @@ public class MultiWriterCompletionTimeStateManager implements CompletionTimeRead
                 int nextWriterId = completionTimeReaderWriters.size();
                 CompletionTimeReaderWriter completionTimeReaderWriter = new CompletionTimeStateManager();
                 CompletionTimeWriter completionTimeWriter =
-                        new MultiWriterCompletionTimeStateManagerWriter(nextWriterId, this);
+                    new MultiWriterCompletionTimeStateManagerWriter(nextWriterId, this);
                 completionTimeReaderWriters.add(completionTimeReaderWriter);
                 return completionTimeWriter;
             }
@@ -108,8 +108,7 @@ public class MultiWriterCompletionTimeStateManager implements CompletionTimeRead
             if (-1 == readerInitiationTimeAsMilli) {
                 // if any initiation times are null, initiation time and completion time are undefined
                 return;
-            } else if (-1 == tempInitiationTimeAsMilli ||
-                    readerInitiationTimeAsMilli < tempInitiationTimeAsMilli) {
+            } else if (-1 == tempInitiationTimeAsMilli || readerInitiationTimeAsMilli < tempInitiationTimeAsMilli) {
                 tempInitiationTimeAsMilli = readerInitiationTimeAsMilli;
             } else {
                 // reader has initiation time, but it is greater than minimum initiation time
@@ -128,8 +127,7 @@ public class MultiWriterCompletionTimeStateManager implements CompletionTimeRead
                 // initiation time already tells us that no more times will arrive BELOW that time
                 // continue checking completion times of other readers
             } else if (readerCompletionTimeAsMilli < tempInitiationTimeAsMilli) {
-                if (-1 == tempCompletionTimeAsMilli ||
-                        readerCompletionTimeAsMilli > tempCompletionTimeAsMilli) {
+                if (-1 == tempCompletionTimeAsMilli || readerCompletionTimeAsMilli > tempCompletionTimeAsMilli) {
                     tempCompletionTimeAsMilli = readerCompletionTimeAsMilli;
                 }
             } else {

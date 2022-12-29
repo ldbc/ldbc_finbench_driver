@@ -5,19 +5,6 @@ import org.ldbcouncil.finbench.driver.runtime.coordination.ThreadedQueuedComplet
 import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 
 abstract class CompletionTimeEvent {
-    public enum CompletionTimeEventType {
-        // Operation started executing
-        WRITE_INITIATED_TIME,
-        // Operation completed scheduling
-        WRITE_COMPLETED_TIME,
-        // Instruction to terminate when all results have arrived
-        TERMINATE_SERVICE,
-        // Request for future to CT value (value will only be available once event is processed)
-        READ_CT_FUTURE,
-        // Request a new completion time writer
-        NEW_COMPLETION_TIME_WRITER
-    }
-
     static InitiatedTimeEvent writeInitiatedTime(int completionTimeWriterId, long timeAsMilli) {
         return new InitiatedTimeEvent(completionTimeWriterId, timeAsMilli);
     }
@@ -39,6 +26,19 @@ abstract class CompletionTimeEvent {
     }
 
     abstract CompletionTimeEventType type();
+
+    public enum CompletionTimeEventType {
+        // Operation started executing
+        WRITE_INITIATED_TIME,
+        // Operation completed scheduling
+        WRITE_COMPLETED_TIME,
+        // Instruction to terminate when all results have arrived
+        TERMINATE_SERVICE,
+        // Request for future to CT value (value will only be available once event is processed)
+        READ_CT_FUTURE,
+        // Request a new completion time writer
+        NEW_COMPLETION_TIME_WRITER
+    }
 
     static class InitiatedTimeEvent extends CompletionTimeEvent {
         private static final TemporalUtil TEMPORAL_UTIL = new TemporalUtil();
@@ -65,11 +65,8 @@ abstract class CompletionTimeEvent {
 
         @Override
         public String toString() {
-            return "InitiatedEvent{" +
-                    "completionTimeWriterId=" + completionTimeWriterId +
-                    ", timeAsMilli=" + timeAsMilli +
-                    ", time=" + TEMPORAL_UTIL.milliTimeToTimeString(timeAsMilli) +
-                    '}';
+            return "InitiatedEvent{" + "completionTimeWriterId=" + completionTimeWriterId + ", timeAsMilli="
+                + timeAsMilli + ", time=" + TEMPORAL_UTIL.milliTimeToTimeString(timeAsMilli) + '}';
         }
     }
 
@@ -98,11 +95,8 @@ abstract class CompletionTimeEvent {
 
         @Override
         public String toString() {
-            return "InitiatedEvent{" +
-                    "completionTimeWriterId=" + completionTimeWriterId +
-                    ", timeAsMilli=" + timeAsMilli +
-                    ", time=" + TEMPORAL_UTIL.milliTimeToTimeString(timeAsMilli) +
-                    '}';
+            return "InitiatedEvent{" + "completionTimeWriterId=" + completionTimeWriterId + ", timeAsMilli="
+                + timeAsMilli + ", time=" + TEMPORAL_UTIL.milliTimeToTimeString(timeAsMilli) + '}';
         }
     }
 
@@ -124,9 +118,7 @@ abstract class CompletionTimeEvent {
 
         @Override
         public String toString() {
-            return "TerminationServiceEvent{" +
-                    "expectedEventCount=" + expectedEventCount +
-                    '}';
+            return "TerminationServiceEvent{" + "expectedEventCount=" + expectedEventCount + '}';
         }
     }
 
@@ -148,9 +140,7 @@ abstract class CompletionTimeEvent {
 
         @Override
         public String toString() {
-            return "FutureEvent{" +
-                    "future=" + future +
-                    '}';
+            return "FutureEvent{" + "future=" + future + '}';
         }
     }
 
@@ -172,9 +162,7 @@ abstract class CompletionTimeEvent {
 
         @Override
         public String toString() {
-            return "NewCompletionTimeWriterEvent{" +
-                    "future=" + future +
-                    '}';
+            return "NewCompletionTimeWriterEvent{" + "future=" + future + '}';
         }
     }
 }

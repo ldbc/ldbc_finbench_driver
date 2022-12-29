@@ -1,8 +1,7 @@
 package org.ldbcouncil.finbench.driver.runtime.metrics;
 
-import org.HdrHistogram.Histogram;
-
 import java.util.concurrent.TimeUnit;
+import org.HdrHistogram.Histogram;
 
 /*
 http://giltene.github.io/HdrHistogram/JavaDoc/
@@ -32,20 +31,20 @@ public class ContinuousMetricManager {
 
     public ContinuousMetricSnapshot snapshot() {
         return new ContinuousMetricSnapshot(
-                name,
-                unit,
-                count(),
-                mean(),
-                min(),
-                max(),
-                percentile25(),
-                percentile50(),
-                percentile75(),
-                percentile90(),
-                percentile95(),
-                percentile99(),
-                percentile99_9(),
-                stdDev());
+            name,
+            unit,
+            count(),
+            mean(),
+            min(),
+            max(),
+            percentile25(),
+            percentile50(),
+            percentile75(),
+            percentile90(),
+            percentile95(),
+            percentile99(),
+            percentile99_9(),
+            stdDev());
     }
 
     private long count() {

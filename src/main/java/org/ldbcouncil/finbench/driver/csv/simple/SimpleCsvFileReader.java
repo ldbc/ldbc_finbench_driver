@@ -1,13 +1,18 @@
 package org.ldbcouncil.finbench.driver.csv.simple;
 
-import com.google.common.base.Charsets;
+import static java.lang.String.format;
 
-import java.io.*;
+import com.google.common.base.Charsets;
+import java.io.BufferedReader;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
-
-import static java.lang.String.format;
 
 public class SimpleCsvFileReader implements Iterator<String[]>, Closeable {
     public static final String DEFAULT_COLUMN_SEPARATOR_REGEX_STRING = "\\|";
@@ -15,19 +20,19 @@ public class SimpleCsvFileReader implements Iterator<String[]>, Closeable {
     private final BufferedReader csvReader;
 
     private String[] next = null;
-    private boolean closed = false;
+    private final boolean closed = false;
 
     public SimpleCsvFileReader(File csvFile, String separatorRegexString) throws FileNotFoundException {
         this(
-                new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), Charsets.UTF_8)),
-                Pattern.compile(separatorRegexString)
+            new BufferedReader(new InputStreamReader(new FileInputStream(csvFile), Charsets.UTF_8)),
+            Pattern.compile(separatorRegexString)
         );
     }
 
     public SimpleCsvFileReader(BufferedReader reader, String separatorRegexString) throws FileNotFoundException {
         this(
-                reader,
-                Pattern.compile(separatorRegexString)
+            reader,
+            Pattern.compile(separatorRegexString)
         );
     }
 
@@ -70,7 +75,7 @@ public class SimpleCsvFileReader implements Iterator<String[]>, Closeable {
             }
             return parseLine(csvLine);
         } catch (IOException e) {
-            throw new RuntimeException(format("Error retrieving next csv entry from file"), e);
+            throw new RuntimeException("Error retrieving next csv entry from file", e);
         }
     }
 
@@ -83,8 +88,8 @@ public class SimpleCsvFileReader implements Iterator<String[]>, Closeable {
         if (closed) {
             return;
             // TODO this really should throw an exception
-//            String errMsg = "Can not close file multiple times";
-//            throw new RuntimeException(errMsg);
+            // String errMsg = "Can not close file multiple times";
+            // throw new RuntimeException(errMsg);
         }
         if (null == csvReader) {
             throw new RuntimeException("Can not close file - reader is null");

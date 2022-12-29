@@ -1,18 +1,24 @@
 package org.ldbcouncil.finbench.driver.util;
 
-import com.google.common.collect.Lists;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
-import java.io.*;
+import com.google.common.collect.Lists;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static java.lang.String.format;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toList;
 
 public class FileUtils {
     public static void createOrFail(File file) throws IOException {
@@ -27,7 +33,7 @@ public class FileUtils {
 
     public static String removePrefix(String original, String prefix) {
         return (!original.contains(prefix)) ? original : original
-                .substring(original.lastIndexOf(prefix) + prefix.length(), original.length());
+            .substring(original.lastIndexOf(prefix) + prefix.length());
     }
 
     public static List<File> filesWithSuffixInDirectory(File directory, final String fileNameSuffix) {
@@ -99,11 +105,11 @@ public class FileUtils {
 
     public static void copyDir(File from, File to) {
         try {
-            System.out.println(format("Copying directory...\n" +
-                            "From:     %s\n" +
-                            "To:       %s",
-                    from.getAbsolutePath(),
-                    to.getAbsolutePath()));
+            System.out.printf("Copying directory...\n"
+                    + "From:     %s\n"
+                    + "To:       %s%n",
+                from.getAbsolutePath(),
+                to.getAbsolutePath());
             FileUtils.assertDirectoryExists(from);
             FileUtils.assertFileDoesNotExist(to);
             // Alternative method of copying database into working directory
@@ -138,9 +144,9 @@ public class FileUtils {
         try (PrintWriter printer = new PrintWriter(new FileOutputStream(file, true))) {
             Arrays.stream(lines).forEach(line -> printer.println("[" + timeStamp + "] " + line));
         } catch (FileNotFoundException e) {
-            throw new RuntimeException("Error writing line to file\n" +
-                    "Line: " + lines + "\n" +
-                    "File: " + file.getAbsolutePath(), e);
+            throw new RuntimeException("Error writing line to file\n"
+                + "Line: " + lines + "\n"
+                + "File: " + file.getAbsolutePath(), e);
         }
     }
 

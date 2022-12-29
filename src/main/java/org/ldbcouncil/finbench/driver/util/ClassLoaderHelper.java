@@ -1,13 +1,13 @@
 package org.ldbcouncil.finbench.driver.util;
 
+import static java.lang.String.format;
+
 import org.ldbcouncil.finbench.driver.Db;
 import org.ldbcouncil.finbench.driver.DbException;
 import org.ldbcouncil.finbench.driver.OperationException;
 import org.ldbcouncil.finbench.driver.OperationHandler;
 import org.ldbcouncil.finbench.driver.Workload;
 import org.ldbcouncil.finbench.driver.WorkloadException;
-
-import static java.lang.String.format;
 
 public class ClassLoaderHelper {
     /**
@@ -49,14 +49,14 @@ public class ClassLoaderHelper {
     }
 
     public static OperationHandler loadOperationHandler(Class<? extends OperationHandler> operationHandlerClass)
-            throws OperationException {
+        throws OperationException {
         try {
             OperationHandler operationHandler = operationHandlerClass.getConstructor().newInstance();
             return operationHandler;
         } catch (Exception e) {
             throw new OperationException(
-                    format("Error creating OperationHandler [%s]", operationHandlerClass.getName()),
-                    e);
+                format("Error creating OperationHandler [%s]", operationHandlerClass.getName()),
+                e);
         }
     }
 

@@ -5,11 +5,10 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
  * TODO: add description
  */
 
-import org.ldbcouncil.finbench.driver.Operation;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.ldbcouncil.finbench.driver.Operation;
 
 // TODO: implement this
 public class SimpleRead7 extends Operation<List<SimpleRead7Result>> {

@@ -1,15 +1,14 @@
 package org.ldbcouncil.finbench.driver.runtime.coordination;
 
+import java.util.List;
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 import org.ldbcouncil.finbench.driver.runtime.scheduling.Spinner;
 import org.ldbcouncil.finbench.driver.temporal.TimeSource;
 
-import java.util.List;
-
 public class CompletionTimeServiceAssistant {
     public void writeInitiatedAndCompletedTimesToAllWriters(
-            CompletionTimeService completionTimeService,
-            long timeAsMilli) throws CompletionTimeException {
+        CompletionTimeService completionTimeService,
+        long timeAsMilli) throws CompletionTimeException {
         List<CompletionTimeWriter> writers = completionTimeService.getAllWriters();
         for (CompletionTimeWriter writer : writers) {
             writer.submitInitiatedTime(timeAsMilli);
@@ -18,11 +17,11 @@ public class CompletionTimeServiceAssistant {
     }
 
     public boolean waitForCompletionTime(
-            TimeSource timeSource,
-            long completionTimeToWaitForAsMilli,
-            long timeoutDurationAsMilli,
-            CompletionTimeService completionTimeService,
-            ConcurrentErrorReporter errorReporter) throws CompletionTimeException {
+        TimeSource timeSource,
+        long completionTimeToWaitForAsMilli,
+        long timeoutDurationAsMilli,
+        CompletionTimeService completionTimeService,
+        ConcurrentErrorReporter errorReporter) throws CompletionTimeException {
         long sleepDurationAsMilli = 100;
         long timeoutTimeAsMilli = timeSource.nowAsMilli() + timeoutDurationAsMilli;
         while (timeSource.nowAsMilli() < timeoutTimeAsMilli) {
@@ -46,8 +45,8 @@ public class CompletionTimeServiceAssistant {
     }
 
     public ThreadedQueuedCompletionTimeService newThreadedQueuedCompletionTimeService(
-            TimeSource timeSource,
-            ConcurrentErrorReporter errorReporter) throws CompletionTimeException {
+        TimeSource timeSource,
+        ConcurrentErrorReporter errorReporter) throws CompletionTimeException {
         return new ThreadedQueuedCompletionTimeService(timeSource, errorReporter);
     }
 }

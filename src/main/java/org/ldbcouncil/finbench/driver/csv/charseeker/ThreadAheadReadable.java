@@ -1,13 +1,13 @@
 package org.ldbcouncil.finbench.driver.csv.charseeker;
 
+import static java.lang.Math.min;
+import static java.lang.System.arraycopy;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.nio.CharBuffer;
 import java.util.concurrent.locks.LockSupport;
-
-import static java.lang.Math.min;
-import static java.lang.System.arraycopy;
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 /**
  * Like an ordinary {@link CharReadable}, it's just that the reading happens in a separate thread, so when

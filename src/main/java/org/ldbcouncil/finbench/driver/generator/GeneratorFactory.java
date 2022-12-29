@@ -1,15 +1,27 @@
 package org.ldbcouncil.finbench.driver.generator;
 
+import static java.lang.String.format;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.ldbcouncil.finbench.driver.Operation;
-import org.ldbcouncil.finbench.driver.util.*;
-
-import java.util.*;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.util.Function0;
+import org.ldbcouncil.finbench.driver.util.Function1;
+import org.ldbcouncil.finbench.driver.util.Function2;
+import org.ldbcouncil.finbench.driver.util.Tuple;
+import org.ldbcouncil.finbench.driver.util.Tuple2;
+import org.ldbcouncil.finbench.driver.util.Tuple3;
 
 public class GeneratorFactory {
 
@@ -84,15 +96,15 @@ public class GeneratorFactory {
         int operationNumber = 0;
         if (operationStream1.hasNext() != operationStream2.hasNext()) {
             return new OperationStreamComparisonResult("",
-                    OperationStreamComparisonResultType.FAIL_ONE_STREAM_IS_EMPTY);
+                OperationStreamComparisonResultType.FAIL_ONE_STREAM_IS_EMPTY);
         }
 
         while (operationStream1.hasNext()) {
             operationNumber++;
-            if (false == operationStream2.hasNext()) {
+            if (!operationStream2.hasNext()) {
                 return new OperationStreamComparisonResult(
-                        format("operation %s\nstream 2 is shorter", operationNumber),
-                        OperationStreamComparisonResultType.FAIL_STREAMS_HAVE_DIFFERENT_LENGTH);
+                    format("operation %s\nstream 2 is shorter", operationNumber),
+                    OperationStreamComparisonResultType.FAIL_STREAMS_HAVE_DIFFERENT_LENGTH);
             }
             Operation next1 = operationStream1.next();
             Operation next2 = operationStream2.next();
@@ -101,14 +113,14 @@ public class GeneratorFactory {
             }
             if (null == next1 || null == next2) {
                 return new OperationStreamComparisonResult(
-                        format("operation %s\none operation is null\nstream 1: %s\nstream 2: %s",
-                                operationNumber, next1, next2),
-                        OperationStreamComparisonResultType.FAIL_ONE_OPERATION_IS_NULL);
-            } else if (false == next1.equals(next2)) {
+                    format("operation %s\none operation is null\nstream 1: %s\nstream 2: %s",
+                        operationNumber, next1, next2),
+                    OperationStreamComparisonResultType.FAIL_ONE_OPERATION_IS_NULL);
+            } else if (!next1.equals(next2)) {
                 return new OperationStreamComparisonResult(
-                        format("operation %s\noperations not equal\nstream 1: %s\nstream 2: %s",
-                                operationNumber, next1, next2),
-                        OperationStreamComparisonResultType.FAIL_OPERATIONS_NOT_EQUAL);
+                    format("operation %s\noperations not equal\nstream 1: %s\nstream 2: %s",
+                        operationNumber, next1, next2),
+                    OperationStreamComparisonResultType.FAIL_OPERATIONS_NOT_EQUAL);
             }
             if (compareTimes) {
                 long scheduledStartTimeAsMilli1 = next1.scheduledStartTimeAsMilli();
@@ -117,14 +129,14 @@ public class GeneratorFactory {
                     // do nothing
                 } else if (-1 == scheduledStartTimeAsMilli1 || -1 == scheduledStartTimeAsMilli2) {
                     return new OperationStreamComparisonResult(
-                            format("operation %s\none start time is null\nstream 1: %s\nstream 2: %s",
-                                    scheduledStartTimeAsMilli1, scheduledStartTimeAsMilli2, operationNumber),
-                            OperationStreamComparisonResultType.FAIL_ONE_START_TIME_IS_NULL);
+                        format("operation %s\none start time is null\nstream 1: %s\nstream 2: %s",
+                            scheduledStartTimeAsMilli1, scheduledStartTimeAsMilli2, operationNumber),
+                        OperationStreamComparisonResultType.FAIL_ONE_START_TIME_IS_NULL);
                 } else if (scheduledStartTimeAsMilli1 != scheduledStartTimeAsMilli2) {
                     return new OperationStreamComparisonResult(
-                            format("operation %s\nstart times not equal\nstream 1: %s\nstream 2: %s",
-                                    operationNumber, scheduledStartTimeAsMilli1, scheduledStartTimeAsMilli2),
-                            OperationStreamComparisonResultType.FAIL_START_TIMES_NOT_EQUAL);
+                        format("operation %s\nstart times not equal\nstream 1: %s\nstream 2: %s",
+                            operationNumber, scheduledStartTimeAsMilli1, scheduledStartTimeAsMilli2),
+                        OperationStreamComparisonResultType.FAIL_START_TIMES_NOT_EQUAL);
                 }
                 long timeStamp1 = next1.timeStamp();
                 long timeStamp2 = next2.timeStamp();
@@ -132,14 +144,14 @@ public class GeneratorFactory {
                     // do nothing
                 } else if (-1 == timeStamp1 || -1 == timeStamp2) {
                     return new OperationStreamComparisonResult(
-                            format("operation %s\none time stamp is null\nstream 1: %s\nstream 2: %s",
-                                    timeStamp1, timeStamp2, operationNumber),
-                            OperationStreamComparisonResultType.FAIL_ONE_START_TIME_IS_NULL);
+                        format("operation %s\none time stamp is null\nstream 1: %s\nstream 2: %s",
+                            timeStamp1, timeStamp2, operationNumber),
+                        OperationStreamComparisonResultType.FAIL_ONE_START_TIME_IS_NULL);
                 } else if (timeStamp1 != timeStamp2) {
                     return new OperationStreamComparisonResult(
-                            format("operation %s\ntime stamps not equal\nstream 1: %s\nstream 2: %s",
-                                    operationNumber, timeStamp1, timeStamp2),
-                            OperationStreamComparisonResultType.FAIL_TIME_STAMPS_NOT_EQUAL);
+                        format("operation %s\ntime stamps not equal\nstream 1: %s\nstream 2: %s",
+                            operationNumber, timeStamp1, timeStamp2),
+                        OperationStreamComparisonResultType.FAIL_TIME_STAMPS_NOT_EQUAL);
                 }
                 long dependencyTimeStamp1 = next1.dependencyTimeStamp();
                 long dependencyTimeStamp2 = next2.dependencyTimeStamp();
@@ -147,21 +159,21 @@ public class GeneratorFactory {
                     // do nothing
                 } else if (-1 == dependencyTimeStamp1 || -1 == dependencyTimeStamp2) {
                     return new OperationStreamComparisonResult(
-                            format("operation %s\none dependency time is null\nstream1: %s\nstream2: %s",
-                                    dependencyTimeStamp1, dependencyTimeStamp2, operationNumber),
-                            OperationStreamComparisonResultType.FAIL_ONE_DEPENDENCY_TIME_IS_NULL);
+                        format("operation %s\none dependency time is null\nstream1: %s\nstream2: %s",
+                            dependencyTimeStamp1, dependencyTimeStamp2, operationNumber),
+                        OperationStreamComparisonResultType.FAIL_ONE_DEPENDENCY_TIME_IS_NULL);
                 } else if (dependencyTimeStamp1 != dependencyTimeStamp2) {
                     return new OperationStreamComparisonResult(
-                            format("operation %s\ndependency times not equal\nstream 1: %s\nstream 2: %s",
-                                    operationNumber, dependencyTimeStamp1, dependencyTimeStamp2),
-                            OperationStreamComparisonResultType.FAIL_DEPENDENCY_TIME_STAMPS_NOT_EQUAL);
+                        format("operation %s\ndependency times not equal\nstream 1: %s\nstream 2: %s",
+                            operationNumber, dependencyTimeStamp1, dependencyTimeStamp2),
+                        OperationStreamComparisonResultType.FAIL_DEPENDENCY_TIME_STAMPS_NOT_EQUAL);
                 }
             }
         }
         if (operationStream2.hasNext()) {
             return new OperationStreamComparisonResult(
-                    format("operation %s\nstream 1 is shorter", operationNumber),
-                    OperationStreamComparisonResultType.FAIL_STREAMS_HAVE_DIFFERENT_LENGTH);
+                format("operation %s\nstream 1 is shorter", operationNumber),
+                OperationStreamComparisonResultType.FAIL_STREAMS_HAVE_DIFFERENT_LENGTH);
         }
         return new OperationStreamComparisonResult("", OperationStreamComparisonResultType.PASS);
     }
@@ -213,7 +225,7 @@ public class GeneratorFactory {
 
         @Override
         public boolean apply(T1 input) {
-            return true == includedItems.contains(input);
+            return includedItems.contains(input);
         }
     }
 
@@ -234,7 +246,7 @@ public class GeneratorFactory {
 
         @Override
         public boolean apply(T1 input) {
-            return false == excludedItems.contains(input);
+            return !excludedItems.contains(input);
         }
     }
 
@@ -261,13 +273,13 @@ public class GeneratorFactory {
      * @param in1
      * @param in2
      * @param mergeFun
-     * @param <IN_1>
-     * @param <IN_2>
-     * @param <OUT>
+     * @param <IN1_T>
+     * @param <IN2_T>
+     * @param <OUT_T>
      * @return
      */
-    public <IN_1, IN_2, OUT> Iterator<OUT> merge(Iterator<IN_1> in1, Iterator<IN_2> in2,
-                                                 Function2<IN_1, IN_2, OUT, RuntimeException> mergeFun) {
+    public <IN1_T, IN2_T, OUT_T> Iterator<OUT_T> merge(Iterator<IN1_T> in1, Iterator<IN2_T> in2,
+                                                       Function2<IN1_T, IN2_T, OUT_T, RuntimeException> mergeFun) {
         return new MergingGenerator<>(in1, in2, mergeFun);
     }
 
@@ -286,14 +298,15 @@ public class GeneratorFactory {
     public Iterator<Operation> assignConservativeDependencyTimes(Iterator<Operation> operations,
                                                                  final long initialDependencyTimeAsMilli,
                                                                  final boolean canOverwriteDependencyTime) {
-        Function1<Operation, Boolean, RuntimeException> isDependency = new Function1<Operation, Boolean, RuntimeException>() {
-            @Override
-            public Boolean apply(Operation operation) {
-                return true;
-            }
-        };
+        Function1<Operation, Boolean, RuntimeException> isDependency =
+            new Function1<Operation, Boolean, RuntimeException>() {
+                @Override
+                public Boolean apply(Operation operation) {
+                    return true;
+                }
+            };
         return assignDependencyTimesEqualToLastEncounteredDependencyTimeStamp(operations, isDependency,
-                initialDependencyTimeAsMilli, canOverwriteDependencyTime);
+            initialDependencyTimeAsMilli, canOverwriteDependencyTime);
     }
 
     /**
@@ -311,33 +324,33 @@ public class GeneratorFactory {
      * @return
      */
     public Iterator<Operation> assignDependencyTimesEqualToLastEncounteredLowerDependencyTimeStamp(
-            Iterator<Operation> operations,
-            final Function1<Operation, Boolean, RuntimeException> isDependency,
-            final long initialDependencyTimeAsMilli,
-            final boolean canOverwriteDependencyTime) {
+        Iterator<Operation> operations,
+        final Function1<Operation, Boolean, RuntimeException> isDependency,
+        final long initialDependencyTimeAsMilli,
+        final boolean canOverwriteDependencyTime) {
         Function1<Operation, Operation, RuntimeException> dependencyTimeAssigningFun =
-                new Function1<Operation, Operation, RuntimeException>() {
-                    private long secondMostRecentDependencyAsMilli = initialDependencyTimeAsMilli;
-                    private long mostRecentDependencyAsMilli = initialDependencyTimeAsMilli;
+            new Function1<Operation, Operation, RuntimeException>() {
+                private long secondMostRecentDependencyAsMilli = initialDependencyTimeAsMilli;
+                private long mostRecentDependencyAsMilli = initialDependencyTimeAsMilli;
 
-                    @Override
-                    public Operation apply(Operation operation) {
-                        if (-1 == operation.dependencyTimeStamp() || canOverwriteDependencyTime) {
-                            if (operation.timeStamp() > mostRecentDependencyAsMilli) {
-                                operation.setDependencyTimeStamp(mostRecentDependencyAsMilli);
-                            } else {
-                                operation.setDependencyTimeStamp(secondMostRecentDependencyAsMilli);
-                            }
+                @Override
+                public Operation apply(Operation operation) {
+                    if (-1 == operation.dependencyTimeStamp() || canOverwriteDependencyTime) {
+                        if (operation.timeStamp() > mostRecentDependencyAsMilli) {
+                            operation.setDependencyTimeStamp(mostRecentDependencyAsMilli);
+                        } else {
+                            operation.setDependencyTimeStamp(secondMostRecentDependencyAsMilli);
                         }
-                        if (isDependency.apply(operation)) {
-                            if (operation.timeStamp() > mostRecentDependencyAsMilli) {
-                                secondMostRecentDependencyAsMilli = mostRecentDependencyAsMilli;
-                                mostRecentDependencyAsMilli = operation.timeStamp();
-                            }
-                        }
-                        return operation;
                     }
-                };
+                    if (isDependency.apply(operation)) {
+                        if (operation.timeStamp() > mostRecentDependencyAsMilli) {
+                            secondMostRecentDependencyAsMilli = mostRecentDependencyAsMilli;
+                            mostRecentDependencyAsMilli = operation.timeStamp();
+                        }
+                    }
+                    return operation;
+                }
+            };
         return new MappingGenerator<>(operations, dependencyTimeAssigningFun);
     }
 
@@ -355,25 +368,25 @@ public class GeneratorFactory {
      * @return
      */
     public Iterator<Operation> assignDependencyTimesEqualToLastEncounteredDependencyTimeStamp(
-            Iterator<Operation> operations,
-            final Function1<Operation, Boolean, RuntimeException> isDependency,
-            final long initialDependencyTimeAsMilli,
-            final boolean canOverwriteDependencyTime) {
+        Iterator<Operation> operations,
+        final Function1<Operation, Boolean, RuntimeException> isDependency,
+        final long initialDependencyTimeAsMilli,
+        final boolean canOverwriteDependencyTime) {
         Function1<Operation, Operation, RuntimeException> dependencyTimeAssigningFun =
-                new Function1<Operation, Operation, RuntimeException>() {
-                    private long mostRecentDependencyAsMilli = initialDependencyTimeAsMilli;
+            new Function1<Operation, Operation, RuntimeException>() {
+                private long mostRecentDependencyAsMilli = initialDependencyTimeAsMilli;
 
-                    @Override
-                    public Operation apply(Operation operation) {
-                        if (-1 == operation.dependencyTimeStamp() || canOverwriteDependencyTime) {
-                            operation.setDependencyTimeStamp(mostRecentDependencyAsMilli);
-                        }
-                        if (isDependency.apply(operation)) {
-                            mostRecentDependencyAsMilli = operation.timeStamp();
-                        }
-                        return operation;
+                @Override
+                public Operation apply(Operation operation) {
+                    if (-1 == operation.dependencyTimeStamp() || canOverwriteDependencyTime) {
+                        operation.setDependencyTimeStamp(mostRecentDependencyAsMilli);
                     }
-                };
+                    if (isDependency.apply(operation)) {
+                        mostRecentDependencyAsMilli = operation.timeStamp();
+                    }
+                    return operation;
+                }
+            };
         return new MappingGenerator<>(operations, dependencyTimeAssigningFun);
     }
 
@@ -387,14 +400,14 @@ public class GeneratorFactory {
      */
     public Iterator<Operation> assignStartTimes(Iterator<Long> startTimesAsMilli, Iterator<Operation> operations) {
         Function2<Long, Operation, Operation, RuntimeException> startTimeAssigningFun =
-                new Function2<Long, Operation, Operation, RuntimeException>() {
-                    @Override
-                    public Operation apply(Long timeAsMilli, Operation operation) {
-                        operation.setScheduledStartTimeAsMilli(timeAsMilli);
-                        operation.setTimeStamp(timeAsMilli);
-                        return operation;
-                    }
-                };
+            new Function2<Long, Operation, Operation, RuntimeException>() {
+                @Override
+                public Operation apply(Long timeAsMilli, Operation operation) {
+                    operation.setScheduledStartTimeAsMilli(timeAsMilli);
+                    operation.setTimeStamp(timeAsMilli);
+                    return operation;
+                }
+            };
         return new MergingGenerator<>(startTimesAsMilli, operations, startTimeAssigningFun);
     }
 
@@ -410,13 +423,13 @@ public class GeneratorFactory {
     public Iterator<Operation> assignDependencyTimes(Iterator<Long> dependencyTimesAsMilli,
                                                      Iterator<Operation> operations) {
         Function2<Long, Operation, Operation, RuntimeException> dependencyTimeAssigningFun =
-                new Function2<Long, Operation, Operation, RuntimeException>() {
-                    @Override
-                    public Operation apply(Long timeAsMilli, Operation operation) {
-                        operation.setDependencyTimeStamp(timeAsMilli);
-                        return operation;
-                    }
-                };
+            new Function2<Long, Operation, Operation, RuntimeException>() {
+                @Override
+                public Operation apply(Long timeAsMilli, Operation operation) {
+                    operation.setDependencyTimeStamp(timeAsMilli);
+                    return operation;
+                }
+            };
         return new MergingGenerator<>(dependencyTimesAsMilli, operations, dependencyTimeAssigningFun);
     }
 
@@ -443,19 +456,19 @@ public class GeneratorFactory {
      */
     public Iterator<Operation> mergeSortOperationsByScheduledStartTime(Iterator<Operation>... generators) {
         return mergeSort(
-                new Comparator<Operation>() {
-                    @Override
-                    public int compare(Operation o1, Operation o2) {
-                        if (o1.scheduledStartTimeAsMilli() > o2.scheduledStartTimeAsMilli()) {
-                            return 1;
-                        } else if (o1.scheduledStartTimeAsMilli() < o2.scheduledStartTimeAsMilli()) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+            new Comparator<Operation>() {
+                @Override
+                public int compare(Operation o1, Operation o2) {
+                    if (o1.scheduledStartTimeAsMilli() > o2.scheduledStartTimeAsMilli()) {
+                        return 1;
+                    } else if (o1.scheduledStartTimeAsMilli() < o2.scheduledStartTimeAsMilli()) {
+                        return -1;
+                    } else {
+                        return 0;
                     }
-                },
-                generators
+                }
+            },
+            generators
         );
     }
 
@@ -467,19 +480,19 @@ public class GeneratorFactory {
      */
     public Iterator<Operation> mergeSortOperationsByTimeStamp(Iterator<Operation>... generators) {
         return mergeSort(
-                new Comparator<Operation>() {
-                    @Override
-                    public int compare(Operation o1, Operation o2) {
-                        if (o1.timeStamp() > o2.timeStamp()) {
-                            return 1;
-                        } else if (o1.timeStamp() < o2.timeStamp()) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+            new Comparator<Operation>() {
+                @Override
+                public int compare(Operation o1, Operation o2) {
+                    if (o1.timeStamp() > o2.timeStamp()) {
+                        return 1;
+                    } else if (o1.timeStamp() < o2.timeStamp()) {
+                        return -1;
+                    } else {
+                        return 0;
                     }
-                },
-                generators
+                }
+            },
+            generators
         );
     }
 
@@ -491,19 +504,19 @@ public class GeneratorFactory {
      */
     public <T extends Number> Iterator<T> mergeSortNumbers(Iterator<T>... generators) {
         return mergeSort(
-                new Comparator<T>() {
-                    @Override
-                    public int compare(T t1, T t2) {
-                        if (t1.longValue() > t2.longValue()) {
-                            return 1;
-                        } else if (t1.longValue() < t2.longValue()) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
+            new Comparator<T>() {
+                @Override
+                public int compare(T t1, T t2) {
+                    if (t1.longValue() > t2.longValue()) {
+                        return 1;
+                    } else if (t1.longValue() < t2.longValue()) {
+                        return -1;
+                    } else {
+                        return 0;
                     }
-                },
-                generators
+                }
+            },
+            generators
         );
     }
 
@@ -573,12 +586,12 @@ public class GeneratorFactory {
     public <T> Iterator<T> interleave(Iterator<? extends T> baseGenerator,
                                       Iterator<? extends T> interleaveWithGenerator, final int amountToInterleave) {
         Function0<Integer, RuntimeException> amountToInterleaveFun =
-                new Function0<Integer, RuntimeException>() {
-                    @Override
-                    public Integer apply() {
-                        return amountToInterleave;
-                    }
-                };
+            new Function0<Integer, RuntimeException>() {
+                @Override
+                public Integer apply() {
+                    return amountToInterleave;
+                }
+            };
         return new InterleaveGenerator<>(baseGenerator, interleaveWithGenerator, amountToInterleaveFun);
     }
 
@@ -635,12 +648,12 @@ public class GeneratorFactory {
      */
     public <T> Iterator<String> prefix(Iterator<T> generator, final String prefix) {
         Function1<T, String, RuntimeException> prefixingFun =
-                new Function1<T, String, RuntimeException>() {
-                    @Override
-                    public String apply(T item) {
-                        return prefix + item.toString();
-                    }
-                };
+            new Function1<T, String, RuntimeException>() {
+                @Override
+                public String apply(T item) {
+                    return prefix + item.toString();
+                }
+            };
         return new MappingGenerator<>(generator, prefixingFun);
     }
 
@@ -786,7 +799,7 @@ public class GeneratorFactory {
     public <K, V> Iterator<Map<K, V>> weightedDiscreteMap(Iterable<Tuple3<Double, K, Iterator<V>>> items,
                                                           Iterator<Integer> amountToRetrieveGenerator) {
         List<Tuple2<Double, Tuple2<K, Iterator<V>>>> probabilityItems =
-                new ArrayList<Tuple2<Double, Tuple2<K, Iterator<V>>>>();
+            new ArrayList<Tuple2<Double, Tuple2<K, Iterator<V>>>>();
         for (Tuple3<Double, K, Iterator<V>> item : items) {
             double thingProbability = item._1();
             Tuple2<K, Iterator<V>> thingGeneratorPair = Tuple.tuple2(item._2(), item._3());
@@ -794,19 +807,19 @@ public class GeneratorFactory {
         }
 
         Iterator<List<Tuple2<K, Iterator<V>>>> discreteListGenerator = weightedDiscreteList(probabilityItems,
-                amountToRetrieveGenerator);
+            amountToRetrieveGenerator);
 
         Function1<List<Tuple2<K, Iterator<V>>>, Map<K, V>, RuntimeException> pairsToMap =
-                new Function1<List<Tuple2<K, Iterator<V>>>, Map<K, V>, RuntimeException>() {
-                    @Override
-                    public Map<K, V> apply(List<Tuple2<K, Iterator<V>>> pairs) {
-                        Map<K, V> keyedValues = new HashMap<>();
-                        for (Tuple2<K, Iterator<V>> pair : pairs) {
-                            keyedValues.put(pair._1(), pair._2().next());
-                        }
-                        return keyedValues;
+            new Function1<List<Tuple2<K, Iterator<V>>>, Map<K, V>, RuntimeException>() {
+                @Override
+                public Map<K, V> apply(List<Tuple2<K, Iterator<V>>> pairs) {
+                    Map<K, V> keyedValues = new HashMap<>();
+                    for (Tuple2<K, Iterator<V>> pair : pairs) {
+                        keyedValues.put(pair._1(), pair._2().next());
                     }
-                };
+                    return keyedValues;
+                }
+            };
         return new MappingGenerator<>(discreteListGenerator, pairsToMap);
     }
 
@@ -830,7 +843,8 @@ public class GeneratorFactory {
      * @return
      */
     public <T extends Number> Iterator<T> naiveBoundedNumberRange(MinMaxGenerator<T> lowerBoundGenerator,
-                                                                  MinMaxGenerator<T> upperBoundGenerator, Iterator<T> unboundedGenerator) {
+                                                                  MinMaxGenerator<T> upperBoundGenerator,
+                                                                  Iterator<T> unboundedGenerator) {
         return new NaiveBoundedRangeNumberGenerator<T>(unboundedGenerator, lowerBoundGenerator, upperBoundGenerator);
     }
 

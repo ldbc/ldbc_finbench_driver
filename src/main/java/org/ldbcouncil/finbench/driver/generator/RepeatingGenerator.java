@@ -1,7 +1,6 @@
 package org.ldbcouncil.finbench.driver.generator;
 
 import com.google.common.collect.Lists;
-
 import java.util.Iterator;
 
 public class RepeatingGenerator<GENERATE_TYPE> extends Generator<GENERATE_TYPE> {

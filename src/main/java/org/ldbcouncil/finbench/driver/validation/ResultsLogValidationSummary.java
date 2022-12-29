@@ -3,9 +3,9 @@ package org.ldbcouncil.finbench.driver.validation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 
 public class ResultsLogValidationSummary {
     @JsonProperty(value = "excessive_delay_threshold_as_milli")
@@ -43,15 +43,15 @@ public class ResultsLogValidationSummary {
     }
 
     ResultsLogValidationSummary(
-            long excessiveDelayThresholdAsMilli,
-            long excessiveDelayCount,
-            Map<String, Long> excessiveDelayCountPerType,
-            long minDelayAsMilli,
-            long maxDelayAsMilli,
-            long meanDelayAsMilli,
-            Map<String, Long> minDelayAsMilliPerType,
-            Map<String, Long> maxDelayAsMilliPerType,
-            Map<String, Long> meanDelayAsMilliPerType) {
+        long excessiveDelayThresholdAsMilli,
+        long excessiveDelayCount,
+        Map<String, Long> excessiveDelayCountPerType,
+        long minDelayAsMilli,
+        long maxDelayAsMilli,
+        long meanDelayAsMilli,
+        Map<String, Long> minDelayAsMilliPerType,
+        Map<String, Long> maxDelayAsMilliPerType,
+        Map<String, Long> meanDelayAsMilliPerType) {
         this.excessiveDelayThresholdAsMilli = excessiveDelayThresholdAsMilli;
         this.excessiveDelayCount = excessiveDelayCount;
         this.excessiveDelayCountPerType = excessiveDelayCountPerType;
@@ -124,34 +124,28 @@ public class ResultsLogValidationSummary {
 
         ResultsLogValidationSummary that = (ResultsLogValidationSummary) o;
 
-        if (excessiveDelayCount != null ? !excessiveDelayCount.equals(that.excessiveDelayCount)
-                : that.excessiveDelayCount != null) {
+        if (!Objects.equals(excessiveDelayCount, that.excessiveDelayCount)) {
             return false;
         }
-        if (excessiveDelayCountPerType != null ? !excessiveDelayCountPerType.equals(that.excessiveDelayCountPerType)
-                : that.excessiveDelayCountPerType != null) {
+        if (!Objects.equals(excessiveDelayCountPerType, that.excessiveDelayCountPerType)) {
             return false;
         }
-        if (minDelayAsMilli != null ? !minDelayAsMilli.equals(that.minDelayAsMilli) : that.minDelayAsMilli != null) {
+        if (!Objects.equals(minDelayAsMilli, that.minDelayAsMilli)) {
             return false;
         }
-        if (maxDelayAsMilli != null ? !maxDelayAsMilli.equals(that.maxDelayAsMilli) : that.maxDelayAsMilli != null) {
+        if (!Objects.equals(maxDelayAsMilli, that.maxDelayAsMilli)) {
             return false;
         }
-        if (meanDelayAsMilli != null ? !meanDelayAsMilli.equals(that.meanDelayAsMilli)
-                : that.meanDelayAsMilli != null) {
+        if (!Objects.equals(meanDelayAsMilli, that.meanDelayAsMilli)) {
             return false;
         }
-        if (minDelayAsMilliPerType != null ? !minDelayAsMilliPerType.equals(that.minDelayAsMilliPerType)
-                : that.minDelayAsMilliPerType != null) {
+        if (!Objects.equals(minDelayAsMilliPerType, that.minDelayAsMilliPerType)) {
             return false;
         }
-        if (maxDelayAsMilliPerType != null ? !maxDelayAsMilliPerType.equals(that.maxDelayAsMilliPerType)
-                : that.maxDelayAsMilliPerType != null) {
+        if (!Objects.equals(maxDelayAsMilliPerType, that.maxDelayAsMilliPerType)) {
             return false;
         }
-        return !(meanDelayAsMilliPerType != null ? !meanDelayAsMilliPerType.equals(that.meanDelayAsMilliPerType)
-                : that.meanDelayAsMilliPerType != null);
+        return !(!Objects.equals(meanDelayAsMilliPerType, that.meanDelayAsMilliPerType));
 
     }
 

@@ -15,7 +15,9 @@ public class LimitGenerator<GENERATE_TYPE> extends Generator<GENERATE_TYPE> {
 
     @Override
     protected GENERATE_TYPE doNext() throws GeneratorException {
-        if (count == limit) return null;
+        if (count == limit) {
+            return null;
+        }
         GENERATE_TYPE next = (generator.hasNext()) ? generator.next() : null;
         count++;
         return next;

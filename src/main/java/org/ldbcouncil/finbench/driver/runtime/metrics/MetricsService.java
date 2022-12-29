@@ -7,12 +7,12 @@ public interface MetricsService {
 
     interface MetricsServiceWriter {
         void submitOperationResult(
-                int operationType,
-                long scheduledStartTimeAsMilli,
-                long actualStartTimeAsMilli,
-                long runDurationAsNano,
-                int resultCode,
-                long originalStartTime) throws MetricsCollectionException;
+            int operationType,
+            long scheduledStartTimeAsMilli,
+            long actualStartTimeAsMilli,
+            long runDurationAsNano,
+            int resultCode,
+            long originalStartTime) throws MetricsCollectionException;
 
         WorkloadStatusSnapshot status() throws MetricsCollectionException;
 

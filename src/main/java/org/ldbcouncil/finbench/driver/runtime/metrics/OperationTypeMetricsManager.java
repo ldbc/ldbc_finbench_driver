@@ -1,13 +1,12 @@
 package org.ldbcouncil.finbench.driver.runtime.metrics;
 
-import org.ldbcouncil.finbench.driver.log.LoggingService;
-import org.ldbcouncil.finbench.driver.log.LoggingServiceFactory;
-import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
+import static java.lang.String.format;
 
 import java.util.Comparator;
 import java.util.concurrent.TimeUnit;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.log.LoggingService;
+import org.ldbcouncil.finbench.driver.log.LoggingServiceFactory;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 
 public class OperationTypeMetricsManager {
     private static final String METRIC_RUNTIME = "Runtime";
@@ -20,19 +19,19 @@ public class OperationTypeMetricsManager {
     private final LoggingService loggingService;
 
     OperationTypeMetricsManager(
-            String name,
-            TimeUnit unit,
-            long highestExpectedRuntimeDurationAsNano,
-            LoggingServiceFactory loggingServiceFactory) {
+        String name,
+        TimeUnit unit,
+        long highestExpectedRuntimeDurationAsNano,
+        LoggingServiceFactory loggingServiceFactory) {
         this.name = name;
         this.unit = unit;
         this.highestExpectedRuntimeDurationAsNano = highestExpectedRuntimeDurationAsNano;
         loggingService = loggingServiceFactory.loggingServiceFor(getClass().getSimpleName());
         this.runTimeMetric = new ContinuousMetricManager(
-                METRIC_RUNTIME,
-                unit,
-                unit.convert(highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS),
-                4
+            METRIC_RUNTIME,
+            unit,
+            unit.convert(highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS),
+            4
         );
     }
 
@@ -42,18 +41,15 @@ public class OperationTypeMetricsManager {
         //
         if (runDurationAsNano > highestExpectedRuntimeDurationAsNano) {
             String errMsg = format(
-                    "Error recording runtime - reported value exceeds maximum allowed. Time " +
-                            "reported as maximum.\n"
-                            + "Reported: %s %s / %s\n"
-                            + "For: %s\n"
-                            + "Maximum: %s %s / %s",
-                    runDurationAsNano,
-                    TimeUnit.NANOSECONDS.name(),
-                    temporalUtil.nanoDurationToString(runDurationAsNano),
-                    name,
-                    highestExpectedRuntimeDurationAsNano,
-                    TimeUnit.NANOSECONDS.name(),
-                    temporalUtil.nanoDurationToString(highestExpectedRuntimeDurationAsNano)
+                "Error recording runtime - reported value exceeds maximum allowed. Time " + "reported as maximum.\n"
+                    + "Reported: %s %s / %s\n" + "For: %s\n" + "Maximum: %s %s / %s",
+                runDurationAsNano,
+                TimeUnit.NANOSECONDS.name(),
+                temporalUtil.nanoDurationToString(runDurationAsNano),
+                name,
+                highestExpectedRuntimeDurationAsNano,
+                TimeUnit.NANOSECONDS.name(),
+                temporalUtil.nanoDurationToString(highestExpectedRuntimeDurationAsNano)
             );
             loggingService.info(errMsg);
             runDurationAsNano = highestExpectedRuntimeDurationAsNano;
@@ -65,16 +61,16 @@ public class OperationTypeMetricsManager {
             runTimeMetric.addMeasurement(runtimeInAppropriateUnit);
         } catch (Throwable e) {
             String errMsg = format(
-                    "Error encountered adding runtime: %s %s / %s %s\nTo: %s\nHighest expected value: %s %s / %s %s",
-                    runDurationAsNano,
-                    TimeUnit.NANOSECONDS.name(),
-                    runtimeInAppropriateUnit,
-                    unit.name(),
-                    name,
-                    highestExpectedRuntimeDurationAsNano,
-                    TimeUnit.NANOSECONDS.name(),
-                    unit.convert(highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS),
-                    unit.name()
+                "Error encountered adding runtime: %s %s / %s %s\nTo: %s\nHighest expected value: %s %s / %s %s",
+                runDurationAsNano,
+                TimeUnit.NANOSECONDS.name(),
+                runtimeInAppropriateUnit,
+                unit.name(),
+                name,
+                highestExpectedRuntimeDurationAsNano,
+                TimeUnit.NANOSECONDS.name(),
+                unit.convert(highestExpectedRuntimeDurationAsNano, TimeUnit.NANOSECONDS),
+                unit.name()
             );
             throw new MetricsCollectionException(errMsg, e);
         }

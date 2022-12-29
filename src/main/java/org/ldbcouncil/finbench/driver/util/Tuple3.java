@@ -65,12 +65,9 @@ public class Tuple3<T1, T2, T3> {
             return false;
         }
         if (thing3 == null) {
-            if (other.thing3 != null) {
-                return false;
-            }
-        } else if (!thing3.equals(other.thing3)) {
-            return false;
+            return other.thing3 == null;
+        } else {
+            return thing3.equals(other.thing3);
         }
-        return true;
     }
 }

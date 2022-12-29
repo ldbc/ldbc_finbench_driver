@@ -10,7 +10,7 @@ public class ExponentialNumberGenerator<GENERATE_TYPE extends Number> extends Ge
 
     ExponentialNumberGenerator(RandomDataGenerator random, GENERATE_TYPE mean) {
         this.exponentialDistribution = new ExponentialDistribution(random.getRandomGenerator(), mean.doubleValue(),
-                ExponentialDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+            ExponentialDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
         this.number = NumberHelper.createNumberHelper(mean.getClass());
     }
 
