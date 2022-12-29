@@ -95,9 +95,6 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static final String TIME_UNIT_ARG = "tu";
     public static final TimeUnit TIME_UNIT_DEFAULT = TimeUnit.MILLISECONDS;
     public static final String TIME_UNIT_DEFAULT_STRING = TIME_UNIT_DEFAULT.toString();
-    private static final String TIME_UNIT_DESCRIPTION =
-        format("time unit to use when gathering metrics. default:%s, valid:%s", TIME_UNIT_DEFAULT_STRING,
-            Arrays.toString(VALID_TIME_UNITS));
     public static final String TIME_COMPRESSION_RATIO_ARG = "tcr";
     public static final double TIME_COMPRESSION_RATIO_DEFAULT = 1.0; // 1.0 == do not compress
     public static final String TIME_COMPRESSION_RATIO_DEFAULT_STRING = Double.toString(TIME_COMPRESSION_RATIO_DEFAULT);
@@ -158,6 +155,10 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private static final TimeUnit[] VALID_TIME_UNITS =
         new TimeUnit[] {TimeUnit.NANOSECONDS, TimeUnit.MICROSECONDS, TimeUnit.MILLISECONDS, TimeUnit.SECONDS,
             TimeUnit.MINUTES};
+    private static final String TIME_UNIT_DESCRIPTION =
+        format("time unit to use when gathering metrics. default:%s, valid:%s", TIME_UNIT_DEFAULT_STRING,
+            Arrays.toString(VALID_TIME_UNITS));
+    private static final Options OPTIONS = buildOptions();
     private static final String TIME_COMPRESSION_RATIO_ARG_LONG = "time_compression_ratio";
     private static final String TIME_COMPRESSION_RATIO_DESCRIPTION = "change duration between operations of workload";
     private static final String SPINNER_SLEEP_DURATION_ARG_LONG = "spinner_wait_duration";
@@ -171,7 +172,6 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private static final String PROPERTY_DESCRIPTION =
         "properties to be passed to DB and Workload - these will override properties loaded from files";
     private static final char COMMANDLINE_SEPARATOR_CHAR = '|';
-    private static final Options OPTIONS = buildOptions();
     private final Map<String, String> paramsMap;
     private final String mode;
     private final String name;
