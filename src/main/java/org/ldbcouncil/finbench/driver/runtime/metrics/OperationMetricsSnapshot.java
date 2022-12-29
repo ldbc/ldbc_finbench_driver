@@ -1,7 +1,7 @@
 package org.ldbcouncil.finbench.driver.runtime.metrics;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class OperationMetricsSnapshot {
@@ -45,18 +45,25 @@ public class OperationMetricsSnapshot {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         OperationMetricsSnapshot that = (OperationMetricsSnapshot) o;
 
-        if (count != that.count) return false;
-        if (durationUnit != that.durationUnit) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (runTimeMetric != null ? !runTimeMetric.equals(that.runTimeMetric) : that.runTimeMetric != null)
+        if (count != that.count) {
             return false;
-
-        return true;
+        }
+        if (durationUnit != that.durationUnit) {
+            return false;
+        }
+        if (!Objects.equals(name, that.name)) {
+            return false;
+        }
+        return Objects.equals(runTimeMetric, that.runTimeMetric);
     }
 
     @Override
@@ -70,11 +77,7 @@ public class OperationMetricsSnapshot {
 
     @Override
     public String toString() {
-        return "OperationMetricsSnapshot{" +
-                "name='" + name + '\'' +
-                ", durationUnit=" + durationUnit +
-                ", count=" + count +
-                ", runTimeMetric=" + runTimeMetric +
-                '}';
+        return "OperationMetricsSnapshot{" + "name='" + name + '\'' + ", durationUnit=" + durationUnit + ", count="
+            + count + ", runTimeMetric=" + runTimeMetric + '}';
     }
 }

@@ -1,7 +1,6 @@
 package org.ldbcouncil.finbench.driver.runtime.metrics;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +49,7 @@ public class ContinuousMetricSnapshot {
                              long percentile90,
                              long percentile95,
                              long percentile99,
-                             long percentile99_9,
+                             long percentile999,
                              double stdDev) {
         this.name = name;
         this.unit = unit;
@@ -64,7 +63,7 @@ public class ContinuousMetricSnapshot {
         this.percentile90 = percentile90;
         this.percentile95 = percentile95;
         this.percentile99 = percentile99;
-        this.percentile99_9 = percentile99_9;
+        this.percentile99_9 = percentile999;
         this.stdDev = stdDev;
     }
 
@@ -133,25 +132,17 @@ public class ContinuousMetricSnapshot {
             return false;
         }
         ContinuousMetricSnapshot that = (ContinuousMetricSnapshot) o;
-        return count == that.count &&
-                Double.compare(that.mean, mean) == 0 &&
-                min == that.min &&
-                max == that.max &&
-                percentile25 == that.percentile25 &&
-                percentile50 == that.percentile50 &&
-                percentile75 == that.percentile75 &&
-                percentile90 == that.percentile90 &&
-                percentile95 == that.percentile95 &&
-                percentile99 == that.percentile99 &&
-                percentile99_9 == that.percentile99_9 &&
-                Double.compare(that.stdDev, stdDev) == 0 &&
-                Objects.equals(name, that.name) &&
-                unit == that.unit;
+        return count == that.count && Double.compare(that.mean, mean) == 0 && min == that.min && max == that.max
+            && percentile25 == that.percentile25 && percentile50 == that.percentile50
+            && percentile75 == that.percentile75 && percentile90 == that.percentile90
+            && percentile95 == that.percentile95 && percentile99 == that.percentile99
+            && percentile99_9 == that.percentile99_9 && Double.compare(that.stdDev, stdDev) == 0 && Objects.equals(name,
+            that.name) && unit == that.unit;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(name, unit, count, mean, min, max, percentile25, percentile50, percentile75, percentile90,
-                percentile95, percentile99, percentile99_9, stdDev);
+            percentile95, percentile99, percentile99_9, stdDev);
     }
 }

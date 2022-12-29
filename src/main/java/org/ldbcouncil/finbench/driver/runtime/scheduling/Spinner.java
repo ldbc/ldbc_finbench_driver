@@ -21,12 +21,12 @@ public class Spinner {
     private final Function2<Operation, SpinnerCheck, Boolean, RuntimeException> spinFun;
 
     public Spinner(
-            TimeSource timeSource,
-            long sleepDurationAsMilli,
-            boolean ignoreScheduleStartTimes) {
+        TimeSource timeSource,
+        long sleepDurationAsMilli,
+        boolean ignoreScheduleStartTimes) {
         this.spinFun = (ignoreScheduleStartTimes)
-                ? new WaitForChecksFun(sleepDurationAsMilli)
-                : new WaitForChecksAndScheduledStartTimeFun(timeSource, sleepDurationAsMilli);
+            ? new WaitForChecksFun(sleepDurationAsMilli)
+            : new WaitForChecksAndScheduledStartTimeFun(timeSource, sleepDurationAsMilli);
     }
 
     boolean waitForScheduledStartTime(Operation operation) {
@@ -63,13 +63,13 @@ public class Spinner {
     }
 
     private static class WaitForChecksAndScheduledStartTimeFun implements
-            Function2<Operation, SpinnerCheck, Boolean, RuntimeException> {
+        Function2<Operation, SpinnerCheck, Boolean, RuntimeException> {
         private final TimeSource timeSource;
         private final long sleepDurationAsMilli;
 
         private WaitForChecksAndScheduledStartTimeFun(
-                TimeSource timeSource,
-                long sleepDurationAsMilli) {
+            TimeSource timeSource,
+            long sleepDurationAsMilli) {
             this.timeSource = timeSource;
             this.sleepDurationAsMilli = sleepDurationAsMilli;
         }

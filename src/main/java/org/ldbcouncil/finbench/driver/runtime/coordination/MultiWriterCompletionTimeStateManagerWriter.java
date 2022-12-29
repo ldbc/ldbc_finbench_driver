@@ -5,8 +5,8 @@ public class MultiWriterCompletionTimeStateManagerWriter implements CompletionTi
     private final MultiWriterCompletionTimeStateManager completionTimeStateManager;
 
     MultiWriterCompletionTimeStateManagerWriter(
-            int id,
-            MultiWriterCompletionTimeStateManager completionTimeStateManager) {
+        int id,
+        MultiWriterCompletionTimeStateManager completionTimeStateManager) {
         this.id = id;
         this.completionTimeStateManager = completionTimeStateManager;
     }

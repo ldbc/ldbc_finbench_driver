@@ -1,5 +1,7 @@
 package org.ldbcouncil.finbench.driver;
 
+import static java.lang.String.format;
+
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeWriter;
 import org.ldbcouncil.finbench.driver.runtime.metrics.MetricsCollectionException;
@@ -9,8 +11,6 @@ import org.ldbcouncil.finbench.driver.runtime.scheduling.SpinnerCheck;
 import org.ldbcouncil.finbench.driver.temporal.TimeSource;
 import stormpot.Poolable;
 import stormpot.Slot;
-
-import static java.lang.String.format;
 
 public class OperationHandlerRunnableContext implements Runnable, Poolable {
     // set by OperationHandlerRunnerFactory
@@ -101,8 +101,6 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable {
      * If execution is successful OperationResultReport metrics are also written to ConcurrentMetricsService.
      * If execution is unsuccessful the result is null, an error is written to ConcurrentErrorReporter,
      * and no metrics are written.
-     *
-     * @return an OperationResultReport if Operation execution was successful, otherwise null
      */
     @Override
     public void run() {
@@ -127,18 +125,18 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable {
             } else {
                 completionTimeWriter.submitCompletedTime(operation.timeStamp());
                 metricsServiceWriter.submitOperationResult(
-                        operation.type(),
-                        operation.scheduledStartTimeAsMilli(),
-                        resultReporter.actualStartTimeAsMilli(),
-                        resultReporter.runDurationAsNano(),
-                        resultReporter.resultCode(),
-                        operation.timeStamp()
+                    operation.type(),
+                    operation.scheduledStartTimeAsMilli(),
+                    resultReporter.actualStartTimeAsMilli(),
+                    resultReporter.runDurationAsNano(),
+                    resultReporter.resultCode(),
+                    operation.timeStamp()
                 );
             }
         } catch (Throwable e) {
             String errMsg = format("Error encountered\n%s\n%s",
-                    operation,
-                    ConcurrentErrorReporter.stackTraceToString(e));
+                operation,
+                ConcurrentErrorReporter.stackTraceToString(e));
             errorReporter.reportError(this, errMsg);
         }
     }
@@ -146,13 +144,9 @@ public class OperationHandlerRunnableContext implements Runnable, Poolable {
 
     @Override
     public String toString() {
-        return "OperationHandlerRunner\n" +
-                "    -> resultReporter=" + resultReporter + "\n" +
-                "    -> slot=" + slot + "\n" +
-                "    -> operation=" + operation + "\n" +
-                "    -> beforeExecuteCheck=" + beforeExecuteCheck + "\n" +
-                "    -> operationHandler=" + operationHandler + "\n" +
-                "    -> initialized=" + initialized;
+        return "OperationHandlerRunner\n" + "    -> resultReporter=" + resultReporter + "\n" + "    -> slot=" + slot
+            + "\n" + "    -> operation=" + operation + "\n" + "    -> beforeExecuteCheck=" + beforeExecuteCheck + "\n"
+            + "    -> operationHandler=" + operationHandler + "\n" + "    -> initialized=" + initialized;
     }
 
     public final void cleanup() {

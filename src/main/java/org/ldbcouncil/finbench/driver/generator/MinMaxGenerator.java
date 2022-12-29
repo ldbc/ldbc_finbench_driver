@@ -16,7 +16,9 @@ public class MinMaxGenerator<GENERATE_TYPE extends Number> extends Generator<GEN
 
     @Override
     protected GENERATE_TYPE doNext() throws GeneratorException {
-        if (false == generator.hasNext()) return null;
+        if (!generator.hasNext()) {
+            return null;
+        }
         GENERATE_TYPE next = generator.next();
         min = (next.doubleValue() < min.doubleValue()) ? next : min;
         max = (next.doubleValue() > max.doubleValue()) ? next : max;

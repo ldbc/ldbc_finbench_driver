@@ -12,7 +12,8 @@ public class RandomDataGeneratorFactory {
     private final RandomGenerator random;
 
     /**
-     * Will use current time to seed a RandomGenerator, which will generate seeds for all returned RandomDataGenerator instances
+     * Will use current time to seed a RandomGenerator, which will generate seeds for all returned
+     * RandomDataGenerator instances
      */
     public RandomDataGeneratorFactory() {
         this.random = getRandomGenerator(timeSource.nowAsMilli());

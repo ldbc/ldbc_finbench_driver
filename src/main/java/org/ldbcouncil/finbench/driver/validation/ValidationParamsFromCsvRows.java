@@ -1,14 +1,13 @@
 package org.ldbcouncil.finbench.driver.validation;
 
+import static java.lang.String.format;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Iterator;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.Workload;
 import org.ldbcouncil.finbench.driver.generator.GeneratorException;
-
-import java.io.IOException;
-import java.util.Iterator;
-
-import static java.lang.String.format;
 
 public class ValidationParamsFromCsvRows implements Iterator<ValidationParam> {
     private final Iterator<String[]> csvRows;
@@ -43,7 +42,7 @@ public class ValidationParamsFromCsvRows implements Iterator<ValidationParam> {
             operationResult = operation.deserializeResult(serializedOperationResult);
         } catch (IOException e) {
             throw new GeneratorException(format("Error marshalling operation result\n%s", serializedOperationResult),
-                    e);
+                e);
         }
         return ValidationParam.createUntyped(operation, operationResult);
     }

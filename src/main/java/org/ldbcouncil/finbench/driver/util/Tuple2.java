@@ -51,13 +51,10 @@ public class Tuple2<T1, T2> {
             return false;
         }
         if (thing2 == null) {
-            if (other.thing2 != null) {
-                return false;
-            }
-        } else if (!thing2.equals(other.thing2)) {
-            return false;
+            return other.thing2 == null;
+        } else {
+            return thing2.equals(other.thing2);
         }
-        return true;
     }
 
 }

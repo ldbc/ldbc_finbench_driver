@@ -1,11 +1,20 @@
 package org.ldbcouncil.finbench.driver.util;
 
 import com.google.common.collect.Lists;
-
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
 
 public class MapUtils {
     public static <K, V> String prettyPrint(Map<K, V> map) {
@@ -54,7 +63,7 @@ public class MapUtils {
     public static <K, V> Map<K, V> copyExcludingKeys(Map<K, V> map, Set<K> excludedKeys) {
         Map<K, V> resultMap = new HashMap<>();
         for (Entry<K, V> entry : map.entrySet()) {
-            if (false == excludedKeys.contains(entry.getKey())) {
+            if (!excludedKeys.contains(entry.getKey())) {
                 resultMap.put(entry.getKey(), entry.getValue());
             }
         }
@@ -68,7 +77,7 @@ public class MapUtils {
     public static <K, V> Map<K, V> propertiesToMap(Properties properties) {
         Map<K, V> resultMap = new HashMap<>();
         for (Object propertyKey : properties.keySet()) {
-            resultMap.put((K) propertyKey, (V) properties.get((K) propertyKey));
+            resultMap.put((K) propertyKey, (V) properties.get(propertyKey));
         }
         return resultMap;
     }
@@ -87,8 +96,8 @@ public class MapUtils {
             resultMap.put(mapKey, map.get(mapKey));
         }
         for (Object propertyKey : properties.keySet()) {
-            if ((overwrite) || (false == resultMap.containsKey((K) propertyKey))) {
-                resultMap.put((K) propertyKey, (V) properties.get((K) propertyKey));
+            if ((overwrite) || (!resultMap.containsKey((K) propertyKey))) {
+                resultMap.put((K) propertyKey, (V) properties.get(propertyKey));
             }
         }
         return resultMap;
@@ -118,7 +127,7 @@ public class MapUtils {
             resultProperties.put(propertyKey, properties.get(propertyKey));
         }
         for (K mapKey : map.keySet()) {
-            if ((overwrite) || (false == resultProperties.containsKey(mapKey))) {
+            if ((overwrite) || (!resultProperties.containsKey(mapKey))) {
                 resultProperties.put(mapKey, map.get(mapKey));
             }
         }
@@ -136,9 +145,9 @@ public class MapUtils {
      * @return
      */
     public static <K, V> Map<K, V> mergeMaps(
-            Map<K, V> originalMap,
-            Map<K, V> newMap,
-            final boolean overwrite) {
+        Map<K, V> originalMap,
+        Map<K, V> newMap,
+        final boolean overwrite) {
         Function2<V, V, V, RuntimeException> overwriteFun = new Function2<V, V, V, RuntimeException>() {
             @Override
             public V apply(V originalVal, V newVal) {
@@ -157,9 +166,9 @@ public class MapUtils {
      * @return
      */
     public static <K, V> Map<K, V> mergeMaps(
-            Map<K, V> originalMap,
-            Map<K, V> newMap,
-            Function2<V, V, V, RuntimeException> mergeFun) {
+        Map<K, V> originalMap,
+        Map<K, V> newMap,
+        Function2<V, V, V, RuntimeException> mergeFun) {
         Map<K, V> resultMap = new HashMap<>();
         for (K originalMapKey : originalMap.keySet()) {
             resultMap.put(originalMapKey, originalMap.get(originalMapKey));
@@ -181,12 +190,12 @@ public class MapUtils {
 
     public static Map<String, String> loadPropertiesStringToMap(String propertiesString) throws IOException {
         InputStream propertiesInputStream =
-                new ByteArrayInputStream(propertiesString.getBytes(StandardCharsets.UTF_8));
+            new ByteArrayInputStream(propertiesString.getBytes(StandardCharsets.UTF_8));
         return loadPropertiesInputStreamToMap(propertiesInputStream);
     }
 
     public static Map<String, String> loadPropertiesInputStreamToMap(InputStream propertiesInputStream)
-            throws IOException {
+        throws IOException {
         Properties properties = new Properties();
         properties.load(propertiesInputStream);
         return propertiesToMap(properties);

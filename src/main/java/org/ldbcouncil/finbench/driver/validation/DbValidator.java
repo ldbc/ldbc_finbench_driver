@@ -1,14 +1,21 @@
 package org.ldbcouncil.finbench.driver.validation;
 
-import org.ldbcouncil.finbench.driver.*;
-import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcFinBenchTransactionWorkloadConfiguration;
+import static java.lang.String.format;
 
 import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Map;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.Db;
+import org.ldbcouncil.finbench.driver.DbConnectionState;
+import org.ldbcouncil.finbench.driver.DbException;
+import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.OperationHandler;
+import org.ldbcouncil.finbench.driver.OperationHandlerRunnableContext;
+import org.ldbcouncil.finbench.driver.ResultReporter;
+import org.ldbcouncil.finbench.driver.Workload;
+import org.ldbcouncil.finbench.driver.WorkloadException;
+import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcFinBenchTransactionWorkloadConfiguration;
 
 public class DbValidator {
     /**
@@ -17,8 +24,9 @@ public class DbValidator {
      * @param validationParameters  Iterator of validation parameters created using 'create_validation' mode
      * @param db                    The database connector
      * @param validationParamsCount Total validation parameters
-     * @param workload              The workload to use, e.g. @see org.ldbcouncil.finbench.driver.workloads.interactive.LdbcSnbInteractiveWorkload
-     * @return
+     * @param workload              The workload to use, e.g. @see org.ldbcouncil.finbench.driver.workloads
+     *                              .interactive.LdbcSnbInteractiveWorkload
+     * @return DbValidationResult
      * @throws WorkloadException
      */
     public DbValidationResult validate(Iterator<ValidationParam> validationParameters,
@@ -32,7 +40,7 @@ public class DbValidator {
         ResultReporter resultReporter = new ResultReporter.SimpleResultReporter(errorReporter);
 
         Map<Integer, Class<? extends Operation>> operationMap =
-                LdbcFinBenchTransactionWorkloadConfiguration.operationTypeToClassMapping();
+            LdbcFinBenchTransactionWorkloadConfiguration.operationTypeToClassMapping();
 
         int validationParamsProcessedSoFar = 0;
         int validationParamsCrashedSoFar = 0;
@@ -41,14 +49,14 @@ public class DbValidator {
         Operation operation = null;
         while (true) {
             if (null != operation) {
-                System.out.print(format(
-                        "Processed %s / %s -- Crashed %s -- Incorrect %s -- Currently processing %s...\r",
-                        numberFormat.format(validationParamsProcessedSoFar),
-                        numberFormat.format(validationParamsCount),
-                        numberFormat.format(validationParamsCrashedSoFar),
-                        numberFormat.format(validationParamsIncorrectSoFar),
-                        operation.getClass().getSimpleName()
-                ));
+                System.out.printf(
+                    "Processed %s / %s -- Crashed %s -- Incorrect %s -- Currently processing %s...\r",
+                    numberFormat.format(validationParamsProcessedSoFar),
+                    numberFormat.format(validationParamsCount),
+                    numberFormat.format(validationParamsCrashedSoFar),
+                    numberFormat.format(validationParamsIncorrectSoFar),
+                    operation.getClass().getSimpleName()
+                );
                 System.out.flush();
             }
 
@@ -75,14 +83,14 @@ public class DbValidator {
                 handler.executeOperation(operation, dbConnectionState, resultReporter);
                 if (null == resultReporter.result()) {
                     throw new DbException(
-                            format("Db returned null result for: %s", operation.getClass().getSimpleName()));
+                        format("Db returned null result for: %s", operation.getClass().getSimpleName()));
                 }
             } catch (Throwable e) {
                 // Not necessary, but perhaps useful for debugging
                 e.printStackTrace();
                 validationParamsCrashedSoFar++;
                 dbValidationResult
-                        .reportUnableToExecuteOperation(operation, ConcurrentErrorReporter.stackTraceToString(e));
+                    .reportUnableToExecuteOperation(operation, ConcurrentErrorReporter.stackTraceToString(e));
                 continue;
             } finally {
                 validationParamsProcessedSoFar++;
@@ -91,27 +99,31 @@ public class DbValidator {
 
             Object actualOperationResult = resultReporter.result();
 
-//            // Exception for Q14 where the path ordering for equal weights is not defined.
-//            // This comparison should be made on list level and then on individual paths
-//            // where paths with equal weights are grouped and compared.
-//            // TODO: Either remove workload abstraction or move this to separate validator class.
-//            if (LdbcQuery14.class  == operationMap.get(operation.type()))
-//            {
-//                if (!LdbcQuery14Result.resultListEqual(expectedOperationResult, actualOperationResult)){
-//                    validationParamsIncorrectSoFar++;
-//                    dbValidationResult
-//                            .reportIncorrectResultForOperation( operation, expectedOperationResult, actualOperationResult );
-//                    continue;
-//                }
-//            }
-//
-//            else if ( false == actualOperationResult.equals(expectedOperationResult))
-//            {
-//                validationParamsIncorrectSoFar++;
-//                dbValidationResult
-//                        .reportIncorrectResultForOperation( operation, expectedOperationResult, actualOperationResult );
-//                continue;
-//            }
+            // Exception for Q14 where the path ordering for equal weights is not defined.
+            // This comparison should be made on list level and then on individual paths
+            // where paths with equal weights are grouped and compared.
+            // TODO: Either remove workload abstraction or move this to separate validator class.
+            /*
+            if (LdbcQuery14.class  == operationMap.get(operation.type()))
+            {
+                if (!LdbcQuery14Result.resultListEqual(expectedOperationResult, actualOperationResult)){
+                    validationParamsIncorrectSoFar++;
+                    dbValidationResult
+                            .reportIncorrectResultForOperation( operation, expectedOperationResult,
+                            actualOperationResult );
+                    continue;
+                }
+            }
+
+            else if ( false == actualOperationResult.equals(expectedOperationResult))
+            {
+                validationParamsIncorrectSoFar++;
+                dbValidationResult
+                        .reportIncorrectResultForOperation( operation, expectedOperationResult,
+                        actualOperationResult );
+                continue;
+            }
+            */
 
             dbValidationResult.reportSuccessfulExecution(operation);
         }

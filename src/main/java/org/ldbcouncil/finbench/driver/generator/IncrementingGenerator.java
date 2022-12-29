@@ -1,8 +1,7 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import org.ldbcouncil.finbench.driver.util.NumberHelper;
-
 import java.util.Iterator;
+import org.ldbcouncil.finbench.driver.util.NumberHelper;
 
 public class IncrementingGenerator<GENERATE_TYPE extends Number> extends Generator<GENERATE_TYPE> {
     private final NumberHelper<GENERATE_TYPE> number;

@@ -1,11 +1,11 @@
 package org.ldbcouncil.finbench.driver.temporal;
 
+import static java.lang.String.format;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import static java.lang.String.format;
 
 public class TemporalUtil {
     private final SimpleDateFormat timeFormat;
@@ -38,14 +38,14 @@ public class TemporalUtil {
         long h = TimeUnit.NANOSECONDS.toHours(durationAsNano);
         if (h > 0) {
             long m = TimeUnit.NANOSECONDS.toMinutes(durationAsNano) - TimeUnit.HOURS.toMinutes(h);
-            long s = TimeUnit.NANOSECONDS.toSeconds(durationAsNano) - TimeUnit.HOURS.toSeconds(h) -
-                    TimeUnit.MINUTES.toSeconds(m);
-            long ms = TimeUnit.NANOSECONDS.toMillis(durationAsNano) - TimeUnit.HOURS.toMillis(h) -
-                    TimeUnit.MINUTES.toMillis(m) - TimeUnit.SECONDS.toMillis(s);
+            long s = TimeUnit.NANOSECONDS.toSeconds(durationAsNano) - TimeUnit.HOURS.toSeconds(h)
+                - TimeUnit.MINUTES.toSeconds(m);
+            long ms =
+                TimeUnit.NANOSECONDS.toMillis(durationAsNano) - TimeUnit.HOURS.toMillis(h) - TimeUnit.MINUTES.toMillis(
+                    m) - TimeUnit.SECONDS.toMillis(s);
             if (detailed) {
-                long us = TimeUnit.NANOSECONDS.toMicros(durationAsNano) - TimeUnit.HOURS.toMicros(h) -
-                        TimeUnit.MINUTES.toMicros(m) - TimeUnit.SECONDS.toMicros(s) -
-                        TimeUnit.MILLISECONDS.toMicros(ms);
+                long us = TimeUnit.NANOSECONDS.toMicros(durationAsNano) - TimeUnit.HOURS.toMicros(h)
+                    - TimeUnit.MINUTES.toMicros(m) - TimeUnit.SECONDS.toMicros(s) - TimeUnit.MILLISECONDS.toMicros(ms);
                 return format("%02d:%02d:%02d.%03d.%03d (h:m:s.ms.us)", h, m, s, ms, us);
             } else {
                 return format("%02d:%02d:%02d.%03d (h:m:s.ms)", h, m, s, ms);
@@ -53,11 +53,11 @@ public class TemporalUtil {
         } else {
             long m = TimeUnit.NANOSECONDS.toMinutes(durationAsNano);
             long s = TimeUnit.NANOSECONDS.toSeconds(durationAsNano) - TimeUnit.MINUTES.toSeconds(m);
-            long ms = TimeUnit.NANOSECONDS.toMillis(durationAsNano) - TimeUnit.MINUTES.toMillis(m) -
-                    TimeUnit.SECONDS.toMillis(s);
+            long ms = TimeUnit.NANOSECONDS.toMillis(durationAsNano) - TimeUnit.MINUTES.toMillis(m)
+                - TimeUnit.SECONDS.toMillis(s);
             if (detailed) {
-                long us = TimeUnit.NANOSECONDS.toMicros(durationAsNano) - TimeUnit.MINUTES.toMicros(m) -
-                        TimeUnit.SECONDS.toMicros(s) - TimeUnit.MILLISECONDS.toMicros(ms);
+                long us = TimeUnit.NANOSECONDS.toMicros(durationAsNano) - TimeUnit.MINUTES.toMicros(m)
+                    - TimeUnit.SECONDS.toMicros(s) - TimeUnit.MILLISECONDS.toMicros(ms);
                 return format("%02d:%02d.%03d.%03d (m:s.ms.us)", m, s, ms, us);
             } else {
                 return format("%02d:%02d.%03d (m:s.ms)", m, s, ms);

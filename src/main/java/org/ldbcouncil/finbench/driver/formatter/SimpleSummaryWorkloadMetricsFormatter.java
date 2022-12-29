@@ -1,15 +1,14 @@
 package org.ldbcouncil.finbench.driver.formatter;
 
 import com.google.common.collect.Lists;
-import org.ldbcouncil.finbench.driver.runtime.metrics.OperationMetricsSnapshot;
-import org.ldbcouncil.finbench.driver.runtime.metrics.OperationTypeMetricsManager;
-import org.ldbcouncil.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
-import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
-
 import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import org.ldbcouncil.finbench.driver.runtime.metrics.OperationMetricsSnapshot;
+import org.ldbcouncil.finbench.driver.runtime.metrics.OperationTypeMetricsManager;
+import org.ldbcouncil.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
+import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 
 public class SimpleSummaryWorkloadMetricsFormatter implements WorkloadMetricsFormatter {
     private static final String DEFAULT_NAME = "<no name given>";
@@ -27,19 +26,19 @@ public class SimpleSummaryWorkloadMetricsFormatter implements WorkloadMetricsFor
         StringBuilder sb = new StringBuilder();
         sb.append("------------------------------------------------------------------------------\n");
         sb
-                .append(String.format("%1$-" + padRightDistance + "s", "Operation Count:"))
-                .append(INTEGER_FORMATTER.format(resultsSnapshot.totalOperationCount()))
-                .append("\n");
+            .append(String.format("%1$-" + padRightDistance + "s", "Operation Count:"))
+            .append(INTEGER_FORMATTER.format(resultsSnapshot.totalOperationCount()))
+            .append("\n");
         sb
-                .append(String.format("%1$-" + padRightDistance + "s", "Duration:"))
-                .append(TEMPORAL_UTIL.nanoDurationToString(resultsSnapshot.totalRunDurationAsNano()))
-                .append("\n");
+            .append(String.format("%1$-" + padRightDistance + "s", "Duration:"))
+            .append(TEMPORAL_UTIL.nanoDurationToString(resultsSnapshot.totalRunDurationAsNano()))
+            .append("\n");
         double opsPerNs = (resultsSnapshot.totalOperationCount() / (double) resultsSnapshot.totalRunDurationAsNano());
         double opsPerS = opsPerNs * TimeUnit.SECONDS.toNanos(1);
         sb
-                .append(String.format("%1$-" + padRightDistance + "s", "Throughput:"))
-                .append(FLOAT_FORMATTER.format(opsPerS))
-                .append(" (op/s)\n");
+            .append(String.format("%1$-" + padRightDistance + "s", "Throughput:"))
+            .append(FLOAT_FORMATTER.format(opsPerS))
+            .append(" (op/s)\n");
         sb.append("------------------------------------------------------------------------------\n");
         int namePadRightDistance = 0;
         int countPadRightDistance = 0;
@@ -58,16 +57,15 @@ public class SimpleSummaryWorkloadMetricsFormatter implements WorkloadMetricsFor
                                           int countPadRightDistance) {
         String name = (null == metric.name()) ? DEFAULT_NAME : metric.name();
         String unit = (null == metric.durationUnit()) ? DEFAULT_UNIT
-                : TEMPORAL_UTIL.abbreviatedTimeUnit(metric.durationUnit());
-        return new StringBuilder()
-                .append(offset)
-                .append(String.format("%1$-" + namePadRightDistance + "s", name))
-                .append("Count: ")
-                .append(String.format("%1$-" + countPadRightDistance + "s",
-                        INTEGER_FORMATTER.format(metric.runTimeMetric().count()))).append(" ")
-                .append("Mean: ")
-                .append(FLOAT_FORMATTER.format(metric.runTimeMetric().mean())).append(" ").append(unit)
-                .append("\n")
-                .toString();
+            : TEMPORAL_UTIL.abbreviatedTimeUnit(metric.durationUnit());
+        return offset
+            + String.format("%1$-" + namePadRightDistance + "s", name)
+            + "Count: "
+            + String.format("%1$-" + countPadRightDistance + "s",
+            INTEGER_FORMATTER.format(metric.runTimeMetric().count()))
+            + " "
+            + "Mean: "
+            + FLOAT_FORMATTER.format(metric.runTimeMetric().mean()) + " " + unit
+            + "\n";
     }
 }

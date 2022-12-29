@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 
 public class WorkloadResultsSnapshot {
     @JsonProperty(value = "all_metrics")
@@ -37,23 +37,15 @@ public class WorkloadResultsSnapshot {
     @JsonProperty(value = "throughput")
     private double throughput;
 
-    public static WorkloadResultsSnapshot fromJson(File jsonFile) throws IOException {
-        return new ObjectMapper().readValue(jsonFile, WorkloadResultsSnapshot.class);
-    }
-
-    public static WorkloadResultsSnapshot fromJson(String jsonString) throws IOException {
-        return new ObjectMapper().readValue(jsonString, WorkloadResultsSnapshot.class);
-    }
-
     private WorkloadResultsSnapshot() {
     }
 
     public WorkloadResultsSnapshot(
-            Iterable<OperationMetricsSnapshot> metrics,
-            long startTimeAsMilli,
-            long latestFinishTimeAsMilli,
-            long operationCount,
-            TimeUnit unit) {
+        Iterable<OperationMetricsSnapshot> metrics,
+        long startTimeAsMilli,
+        long latestFinishTimeAsMilli,
+        long operationCount,
+        TimeUnit unit) {
         this.metrics = Lists.newArrayList(metrics);
         this.metrics.sort(new OperationTypeMetricsManager.OperationMetricsNameComparator());
         this.startTimeAsUnit = unit.convert(startTimeAsMilli, TimeUnit.MILLISECONDS);
@@ -62,6 +54,14 @@ public class WorkloadResultsSnapshot {
         this.throughput = 1000 * (operationCount / (double) unit.toMillis(totalRunDurationAsUnit));
         this.operationCount = operationCount;
         this.unit = unit;
+    }
+
+    public static WorkloadResultsSnapshot fromJson(File jsonFile) throws IOException {
+        return new ObjectMapper().readValue(jsonFile, WorkloadResultsSnapshot.class);
+    }
+
+    public static WorkloadResultsSnapshot fromJson(String jsonString) throws IOException {
+        return new ObjectMapper().readValue(jsonString, WorkloadResultsSnapshot.class);
     }
 
     @JsonProperty(value = "all_metrics")
@@ -110,15 +110,9 @@ public class WorkloadResultsSnapshot {
 
     @Override
     public String toString() {
-        return "WorkloadResultsSnapshot{" +
-                "metrics=" + metrics +
-                ", unit=" + unit +
-                ", startTimeAsUnit=" + startTimeAsUnit +
-                ", latestFinishTimeAsUnit=" + latestFinishTimeAsUnit +
-                ", totalRunDurationAsUnit=" + totalRunDurationAsUnit +
-                ", operationCount=" + operationCount +
-                ", throughput=" + throughput +
-                '}';
+        return "WorkloadResultsSnapshot{" + "metrics=" + metrics + ", unit=" + unit + ", startTimeAsUnit="
+            + startTimeAsUnit + ", latestFinishTimeAsUnit=" + latestFinishTimeAsUnit + ", totalRunDurationAsUnit="
+            + totalRunDurationAsUnit + ", operationCount=" + operationCount + ", throughput=" + throughput + '}';
     }
 
     @Override
@@ -144,14 +138,10 @@ public class WorkloadResultsSnapshot {
         if (totalRunDurationAsUnit != that.totalRunDurationAsUnit) {
             return false;
         }
-        if (metrics != null ? !metrics.equals(that.metrics) : that.metrics != null) {
+        if (!Objects.equals(metrics, that.metrics)) {
             return false;
         }
-        if (unit != that.unit) {
-            return false;
-        }
-
-        return true;
+        return unit == that.unit;
     }
 
     @Override

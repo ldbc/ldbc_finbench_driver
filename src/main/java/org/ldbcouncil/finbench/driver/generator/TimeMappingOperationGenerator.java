@@ -1,9 +1,8 @@
 package org.ldbcouncil.finbench.driver.generator;
 
+import java.util.Iterator;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.util.Function1;
-
-import java.util.Iterator;
 
 public class TimeMappingOperationGenerator extends Generator<Operation> {
     private final Iterator<Operation> operations;
@@ -14,9 +13,9 @@ public class TimeMappingOperationGenerator extends Generator<Operation> {
     private Function1<Long, Long, RuntimeException> startTimeAsMilliCompressionFun = null;
 
     TimeMappingOperationGenerator(
-            Iterator<Operation> operations,
-            long newStartTimeAsMilli,
-            Double timeCompressionRatio) {
+        Iterator<Operation> operations,
+        long newStartTimeAsMilli,
+        Double timeCompressionRatio) {
         this.operations = operations;
         this.newStartTimeAsMilli = newStartTimeAsMilli;
         this.timeCompressionRatio = timeCompressionRatio;
@@ -24,7 +23,7 @@ public class TimeMappingOperationGenerator extends Generator<Operation> {
 
     @Override
     protected Operation doNext() throws GeneratorException {
-        if (false == operations.hasNext()) {
+        if (!operations.hasNext()) {
             return null;
         }
         Operation nextOperation = operations.next();
@@ -46,8 +45,8 @@ public class TimeMappingOperationGenerator extends Generator<Operation> {
                 startTimeAsMilliCompressionFun = new IdentityTimeFun();
             } else {
                 startTimeAsMilliCompressionFun = new TimeCompressionFun(
-                        timeCompressionRatio,
-                        timeOffsetAsMilliFun.apply(nextOperation.scheduledStartTimeAsMilli())
+                    timeCompressionRatio,
+                    timeOffsetAsMilliFun.apply(nextOperation.scheduledStartTimeAsMilli())
                 );
             }
         }
@@ -92,7 +91,7 @@ public class TimeMappingOperationGenerator extends Generator<Operation> {
 
     private class TimeCompressionFun implements Function1<Long, Long, RuntimeException> {
         private final double timeCompressionRatio;
-        private long firstTimeAsMilli;
+        private final long firstTimeAsMilli;
 
         private TimeCompressionFun(double timeCompressionRatio, long firstTimeAsMilli) {
             this.timeCompressionRatio = timeCompressionRatio;
@@ -103,7 +102,7 @@ public class TimeMappingOperationGenerator extends Generator<Operation> {
         public Long apply(Long timeAsMilli) {
             long durationFromOriginalStartTimeAsMilli = timeAsMilli - firstTimeAsMilli;
             long compressedDurationFromOriginalStartTimeAsMilli =
-                    Math.round(durationFromOriginalStartTimeAsMilli * timeCompressionRatio);
+                Math.round(durationFromOriginalStartTimeAsMilli * timeCompressionRatio);
             return firstTimeAsMilli + compressedDurationFromOriginalStartTimeAsMilli;
         }
     }

@@ -32,6 +32,22 @@ import java.io.Reader;
  * @author Mattias Persson
  */
 public interface CharSeeker extends Closeable {
+    CharSeeker EMPTY = new CharSeeker() {
+        @Override
+        public boolean seek(Mark mark, int[] untilOneOfChars) {
+            return false;
+        }
+
+        @Override
+        public <EXTRACTOR extends Extractor<?>> EXTRACTOR extract(Mark mark, EXTRACTOR extractor) {
+            throw new IllegalStateException("Nothing to extract");
+        }
+
+        @Override
+        public void close() {   // Nothing to close
+        }
+    };
+
     /**
      * Seeks the next occurrence of any of the characters in {@code untilOneOfChars}, or if end-of-line,
      * or even end-of-file.
@@ -48,24 +64,8 @@ public interface CharSeeker extends Closeable {
      *
      * @param mark      the {@link Mark} specifying which part of a bigger piece of data contains the found value.
      * @param extractor {@link Extractor} capable of extracting the value.
-     * @return the supplied {@link Extractor}, which after the call carries the extracted value itself,
-     * where either {@link Extractor#value()} or a more specific accessor method can be called to access the value.
+     * @return the supplied {@link Extractor}, which after the call carries the extracted value itself, where either
+     * {@link Extractor#value()} or a more specific accessor method can be called to access the value.
      */
     <EXTRACTOR extends Extractor<?>> EXTRACTOR extract(Mark mark, EXTRACTOR extractor);
-
-    public static final CharSeeker EMPTY = new CharSeeker() {
-        @Override
-        public boolean seek(Mark mark, int[] untilOneOfChars) {
-            return false;
-        }
-
-        @Override
-        public <EXTRACTOR extends Extractor<?>> EXTRACTOR extract(Mark mark, EXTRACTOR extractor) {
-            throw new IllegalStateException("Nothing to extract");
-        }
-
-        @Override
-        public void close() {   // Nothing to close
-        }
-    };
 }

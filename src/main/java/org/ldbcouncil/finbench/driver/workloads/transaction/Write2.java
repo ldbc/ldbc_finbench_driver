@@ -5,9 +5,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
  * TODO: add description
  */
 
-import org.ldbcouncil.finbench.driver.Operation;
-
 import java.util.Map;
+import org.ldbcouncil.finbench.driver.Operation;
 
 // TODO: implement this
 public class Write2 extends Operation<LdbcNoResult> {

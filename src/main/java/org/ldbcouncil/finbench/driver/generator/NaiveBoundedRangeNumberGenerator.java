@@ -1,10 +1,9 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import org.ldbcouncil.finbench.driver.util.NumberHelper;
+import static java.lang.String.format;
 
 import java.util.Iterator;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.util.NumberHelper;
 
 public class NaiveBoundedRangeNumberGenerator<GENERATE_TYPE extends Number> extends Generator<GENERATE_TYPE> {
     private final Integer maxIterations = 1000;
@@ -32,7 +31,7 @@ public class NaiveBoundedRangeNumberGenerator<GENERATE_TYPE extends Number> exte
             }
         }
         throw new GeneratorException(
-                format("Random in-range number not found within maxIterations[%s]", maxIterations)
+            format("Random in-range number not found within maxIterations[%s]", maxIterations)
         );
     }
 }

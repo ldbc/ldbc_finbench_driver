@@ -1,14 +1,13 @@
 package org.ldbcouncil.finbench.driver.runtime;
 
-import com.google.common.collect.ImmutableList;
+import static java.lang.String.format;
 
+import com.google.common.collect.ImmutableList;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import static java.lang.String.format;
 
 // TODO rewrite like sync CT tracker class, to be more threadsafe
 public class ConcurrentErrorReporter {
@@ -22,11 +21,11 @@ public class ConcurrentErrorReporter {
     private static String whoAmI(Object caller) {
         Thread myThread = Thread.currentThread();
         return format("%s [%s] (Thread: ID=%s, Name=%s, Priority=%s)",
-                caller.getClass().getSimpleName(),
-                Thread.currentThread().getStackTrace()[3].getLineNumber(),
-                myThread.getId(),
-                myThread.getName(),
-                myThread.getPriority());
+            caller.getClass().getSimpleName(),
+            Thread.currentThread().getStackTrace()[3].getLineNumber(),
+            myThread.getId(),
+            myThread.getName(),
+            myThread.getPriority());
     }
 
     private static String formatErrors(List<ErrorReport> errors) {
@@ -45,7 +44,7 @@ public class ConcurrentErrorReporter {
 
     private final List<ErrorReport> errorMessages = new ArrayList<>();
 
-    synchronized public void reportError(Object caller, String errMsg) {
+    public synchronized void reportError(Object caller, String errMsg) {
         syncGetErrorMessages().add(new ErrorReport(whoAmI(caller), errMsg));
     }
 

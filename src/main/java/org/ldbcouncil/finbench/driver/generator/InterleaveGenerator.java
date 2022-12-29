@@ -1,8 +1,7 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import org.ldbcouncil.finbench.driver.util.Function0;
-
 import java.util.Iterator;
+import org.ldbcouncil.finbench.driver.util.Function0;
 
 public class InterleaveGenerator<GENERATE_TYPE> extends Generator<GENERATE_TYPE> {
     private final Iterator<? extends GENERATE_TYPE> baseGenerator;

@@ -1,5 +1,12 @@
 package org.ldbcouncil.finbench.driver.runtime.coordination;
 
+import static java.lang.String.format;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 import org.ldbcouncil.finbench.driver.runtime.QueueEventFetcher;
 import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeEvent.CompletedTimeEvent;
@@ -9,14 +16,6 @@ import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeEvent.N
 import org.ldbcouncil.finbench.driver.runtime.coordination.ThreadedQueuedCompletionTimeService.CompletionTimeFuture;
 import org.ldbcouncil.finbench.driver.runtime.coordination.ThreadedQueuedCompletionTimeService.CompletionTimeWriterFuture;
 import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Queue;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-
-import static java.lang.String.format;
 
 public class ThreadedQueuedCompletionTimeServiceThread extends Thread {
 
@@ -34,17 +33,16 @@ public class ThreadedQueuedCompletionTimeServiceThread extends Thread {
     private final AtomicLong completionTimeSharedReference;
     private final QueueEventFetcher<CompletionTimeEvent> completionTimeEventQueueEventFetcher;
     private final ConcurrentErrorReporter errorReporter;
-    private Long processedWriteEventCount = 0L;
-    private Long expectedEventCount = null;
     private final Map<Integer, CompletionTimeWriter> completionTimeWriters;
     private final AtomicBoolean shutdownComplete = new AtomicBoolean(false);
+    private Long processedWriteEventCount = 0L;
+    private Long expectedEventCount = null;
 
     ThreadedQueuedCompletionTimeServiceThread(
-            Queue<CompletionTimeEvent> completionTimeQueue,
-            ConcurrentErrorReporter errorReporter,
-            AtomicLong completionTimeSharedReference) throws CompletionTimeException {
-        super(ThreadedQueuedCompletionTimeServiceThread.class.getSimpleName() + "-" +
-                System.currentTimeMillis());
+        Queue<CompletionTimeEvent> completionTimeQueue,
+        ConcurrentErrorReporter errorReporter,
+        AtomicLong completionTimeSharedReference) throws CompletionTimeException {
+        super(ThreadedQueuedCompletionTimeServiceThread.class.getSimpleName() + "-" + System.currentTimeMillis());
         // *** CT Reader ***
         // Completion Time will only get read from MultiWriterCompletionTimeStateManager,
         // and its internal Completion Time values will be written to by multiple instances of
@@ -100,44 +98,45 @@ public class ThreadedQueuedCompletionTimeServiceThread extends Thread {
                     case NEW_COMPLETION_TIME_WRITER: {
                         CompletionTimeWriterFuture future = ((NewCompletionTimeWriterEvent) event).future();
                         MultiWriterCompletionTimeStateManagerWriter completionTimeWriter =
-                                (MultiWriterCompletionTimeStateManagerWriter) completionTimeStateManager
-                                        .newCompletionTimeWriter();
+                            (MultiWriterCompletionTimeStateManagerWriter) completionTimeStateManager
+                                .newCompletionTimeWriter();
                         completionTimeWriters.put(completionTimeWriter.id(), completionTimeWriter);
                         future.set(completionTimeWriter.id());
                         break;
                     }
                     case TERMINATE_SERVICE: {
                         if (null == expectedEventCount) {
-                            expectedEventCount = ((CompletionTimeEvent.TerminationServiceEvent) event).expectedEventCount();
+                            expectedEventCount =
+                                ((CompletionTimeEvent.TerminationServiceEvent) event).expectedEventCount();
                         } else {
                             errorReporter.reportError(
-                                    this,
-                                    format("Encountered multiple %s events. First expectedEventCount[%s]. Second " +
-                                                    "expectedEventCount[%s]",
-                                            CompletionTimeEvent.CompletionTimeEventType.TERMINATE_SERVICE.name(),
-                                            expectedEventCount,
-                                            ((CompletionTimeEvent.TerminationServiceEvent) event).expectedEventCount()));
+                                this,
+                                format("Encountered multiple %s events. First expectedEventCount[%s]. Second "
+                                        + "expectedEventCount[%s]",
+                                    CompletionTimeEvent.CompletionTimeEventType.TERMINATE_SERVICE.name(),
+                                    expectedEventCount,
+                                    ((CompletionTimeEvent.TerminationServiceEvent) event).expectedEventCount()));
                         }
                         break;
                     }
                     default: {
                         errorReporter.reportError(
-                                this,
-                                format("Encountered unexpected event type: %s", event.type().name()));
+                            this,
+                            format("Encountered unexpected event type: %s", event.type().name()));
                         return;
                     }
                 }
             } catch (CompletionTimeException e) {
                 errorReporter.reportError(
-                        this,
-                        format("Encountered completion time related error\n%s",
-                                ConcurrentErrorReporter.stackTraceToString(e)));
+                    this,
+                    format("Encountered completion time related error\n%s",
+                        ConcurrentErrorReporter.stackTraceToString(e)));
                 return;
             } catch (Throwable e) {
                 errorReporter.reportError(
-                        this,
-                        format("Encountered unexpected exception\n%s",
-                                ConcurrentErrorReporter.stackTraceToString(e)));
+                    this,
+                    format("Encountered unexpected exception\n%s",
+                        ConcurrentErrorReporter.stackTraceToString(e)));
                 return;
             }
         }
@@ -157,12 +156,12 @@ public class ThreadedQueuedCompletionTimeServiceThread extends Thread {
         long prevCompletionTimeAsMilli = completionTimeSharedReference.get();
         if (-1 != prevCompletionTimeAsMilli && newCompletionTimeAsMilli < prevCompletionTimeAsMilli) {
             errorReporter.reportError(
-                    this,
-                    format("New CT %s / %s smaller than previous CT %s / %s",
-                            temporalUtil.milliTimeToDateTimeString(newCompletionTimeAsMilli),
-                            newCompletionTimeAsMilli,
-                            temporalUtil.milliTimeToDateTimeString(prevCompletionTimeAsMilli),
-                            prevCompletionTimeAsMilli));
+                this,
+                format("New CT %s / %s smaller than previous CT %s / %s",
+                    temporalUtil.milliTimeToDateTimeString(newCompletionTimeAsMilli),
+                    newCompletionTimeAsMilli,
+                    temporalUtil.milliTimeToDateTimeString(prevCompletionTimeAsMilli),
+                    prevCompletionTimeAsMilli));
         } else {
             completionTimeSharedReference.set(newCompletionTimeAsMilli);
         }

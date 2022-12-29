@@ -1,15 +1,14 @@
 package org.ldbcouncil.finbench.driver.validation;
 
+import static java.lang.String.format;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.Iterator;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.Workload;
 import org.ldbcouncil.finbench.driver.generator.GeneratorException;
-
-import java.io.IOException;
-import java.util.Iterator;
-
-import static java.lang.String.format;
 
 public class ValidationParamsToCsvRows implements Iterator<String[]> {
     private final Iterator<ValidationParam> validationParams;
@@ -41,11 +40,11 @@ public class ValidationParamsToCsvRows implements Iterator<String[]> {
             serializedOperation = OBJECT_MAPPER.writeValueAsString(operation);
         } catch (IOException e) {
             throw new GeneratorException(
-                    format(
-                            "Workload(%s) unable to serialize operation\n"
-                                    + "Operation: %s",
-                            operation),
-                    e);
+                format(
+                    "Workload(%s) unable to serialize operation\n"
+                        + "Operation: %s",
+                    operation),
+                e);
         }
 
         String serializedOperationResult;
@@ -53,12 +52,12 @@ public class ValidationParamsToCsvRows implements Iterator<String[]> {
             serializedOperationResult = OBJECT_MAPPER.writeValueAsString(operationResult);
         } catch (JsonProcessingException e) {
             throw new GeneratorException(
-                    format(
-                            "Error serializing operation result\n"
-                                    + "Operation: %s\n"
-                                    + "Operation Result: %s",
-                            operation, operationResult),
-                    e);
+                format(
+                    "Error serializing operation result\n"
+                        + "Operation: %s\n"
+                        + "Operation Result: %s",
+                    operation, operationResult),
+                e);
         }
 
         // Assert that serialization/marshalling is performed correctly
@@ -68,28 +67,28 @@ public class ValidationParamsToCsvRows implements Iterator<String[]> {
                 marshaledOperationResult = operation.deserializeResult(serializedOperationResult);
             } catch (IOException e) {
                 throw new GeneratorException(
-                        format(""
-                                        + "Error marshalling serialized operation result\n"
-                                        + "Operation: %s\n"
-                                        + "Operation Result: %s\n"
-                                        + "Serialized Result: %s",
-                                operation, operationResult, serializedOperationResult),
-                        e);
+                    format(""
+                            + "Error marshalling serialized operation result\n"
+                            + "Operation: %s\n"
+                            + "Operation Result: %s\n"
+                            + "Serialized Result: %s",
+                        operation, operationResult, serializedOperationResult),
+                    e);
             }
             if (!marshaledOperationResult.equals(operationResult)) {
                 throw new GeneratorException(
-                        format(""
-                                        + "Operation result and serialized-then-marshaled operation result do not equal\n"
-                                        + "Operation: %s\n"
-                                        + "Actual Result: %s\n"
-                                        + "Serialized Result: %s\n"
-                                        + "Marshaled Result: %s",
-                                operation, operationResult, serializedOperationResult, marshaledOperationResult)
+                    format(""
+                            + "Operation result and serialized-then-marshaled operation result do not equal\n"
+                            + "Operation: %s\n"
+                            + "Actual Result: %s\n"
+                            + "Serialized Result: %s\n"
+                            + "Marshaled Result: %s",
+                        operation, operationResult, serializedOperationResult, marshaledOperationResult)
                 );
             }
         }
 
-        return new String[]{serializedOperation, serializedOperationResult};
+        return new String[] {serializedOperation, serializedOperationResult};
     }
 
     @Override

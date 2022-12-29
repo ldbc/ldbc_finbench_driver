@@ -1,20 +1,20 @@
 package org.ldbcouncil.finbench.driver.csv.charseeker;
 
+import static java.lang.Math.max;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.CharBuffer;
 
-import static java.lang.Math.max;
-
 /**
  * Much like a {@link BufferedReader} for a {@link Reader}.
  */
 public class BufferedCharSeeker implements CharSeeker {
-    private static final int KB = 1024, MB = KB * KB;
-    public static final int DEFAULT_BUFFER_SIZE = 2 * MB;
     public static final char DEFAULT_QUOTE_CHAR = '"';
-
+    private static final int KB = 1024;
+    private static final int MB = KB * KB;
+    public static final int DEFAULT_BUFFER_SIZE = 2 * MB;
     private static final char EOL_CHAR = '\n';
     private static final char EOL_CHAR_2 = '\r';
     private static final char EOF_CHAR = (char) -1;
@@ -26,13 +26,12 @@ public class BufferedCharSeeker implements CharSeeker {
     // Wraps the char[] buffer and is only used during reading more data, using f.ex. compact()
     // so that we don't have to duplicate that functionality.
     private final CharBuffer charBuffer;
-
+    private final char quoteChar;
     private int bufferPos;
     private long lineStartPos;
     private int seekStartPos;
     private int lineNumber = 1;
     private boolean eof;
-    private final char quoteChar;
 
     public BufferedCharSeeker(CharReadable reader) {
         this(reader, DEFAULT_BUFFER_SIZE, DEFAULT_QUOTE_CHAR);
@@ -66,7 +65,9 @@ public class BufferedCharSeeker implements CharSeeker {
         while (!eof) {
             ch = nextChar(skippedChars);
             if (quoteDepth == 0) {   // In normal mode, i.e. not within quotes
-                if (ch == quoteChar && seekStartPos == bufferPos - 1/* -1 since we just advanced one */) {   // We found a quote, which was the first of the value, skip it and switch mode
+                if (ch == quoteChar && seekStartPos == bufferPos
+                    - 1/* -1 since we just advanced one */) {   // We found a quote, which was the first of the
+                    // value, skip it and switch mode
                     quoteDepth++;
                     seekStartPos++;
                     continue;
@@ -84,7 +85,9 @@ public class BufferedCharSeeker implements CharSeeker {
                 if (ch == quoteChar) {   // Found a quote within a quote, peek at next char
                     int nextCh = peekChar();
 
-                    if (nextCh == quoteChar) {   // Found a double quote, skip it and we're going down one more quote depth (quote-in-quote)
+                    if (nextCh
+                        == quoteChar) {   // Found a double quote, skip it and we're going down one more quote depth
+                        // (quote-in-quote)
                         repositionChar(bufferPos++, ++skippedChars);
                         quoteDepth = quoteDepth == 1 ? 2 : 1; // toggle between quote and quote-in-quote
                     } else {   // Found an ending quote, skip it and switch mode
@@ -103,7 +106,8 @@ public class BufferedCharSeeker implements CharSeeker {
         }
 
         int valueLength = bufferPos - seekStartPos - 1;
-        if (eof && valueLength == 0 && seekStartPos == lineStartPos) {   // We didn't find any of the characters sought for
+        if (eof && valueLength == 0
+            && seekStartPos == lineStartPos) {   // We didn't find any of the characters sought for
             return eof(mark);
         }
 
@@ -147,7 +151,8 @@ public class BufferedCharSeeker implements CharSeeker {
 
     private int skipEolChars() throws IOException {
         int skipped = 0;
-        while (isNewLine(nextChar(0/*doesn't matter since we ignore the chars anyway*/))) {   // Just loop through, skipping them
+        while (isNewLine(
+            nextChar(0/*doesn't matter since we ignore the chars anyway*/))) {   // Just loop through, skipping them
             skipped++;
         }
         bufferPos--; // since nextChar advances one step
@@ -190,7 +195,7 @@ public class BufferedCharSeeker implements CharSeeker {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + "[buffer:" + charBuffer +
-                ", seekPos:" + seekStartPos + ", line:" + lineNumber + "]";
+        return getClass().getSimpleName() + "[buffer:" + charBuffer + ", seekPos:" + seekStartPos + ", line:"
+            + lineNumber + "]";
     }
 }

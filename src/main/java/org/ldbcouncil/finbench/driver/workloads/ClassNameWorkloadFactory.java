@@ -1,10 +1,10 @@
 package org.ldbcouncil.finbench.driver.workloads;
 
+import static java.lang.String.format;
+
 import org.ldbcouncil.finbench.driver.Workload;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.util.ClassLoaderHelper;
-
-import static java.lang.String.format;
 
 public class ClassNameWorkloadFactory implements WorkloadFactory {
     private final String workloadClassName;

@@ -1,8 +1,12 @@
 package org.ldbcouncil.finbench.driver.csv.simple;
 
 import com.google.common.base.Charsets;
-
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.Iterator;
 
 public class SimpleCsvFileWriter implements Closeable {
@@ -14,7 +18,7 @@ public class SimpleCsvFileWriter implements Closeable {
 
     public SimpleCsvFileWriter(File file, String columnSeparator, boolean flushLog) throws IOException {
         this.bufferedWriter =
-                new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8));
+            new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8));
 
         this.columnSeparator = columnSeparator;
         this.flushLog = flushLog;

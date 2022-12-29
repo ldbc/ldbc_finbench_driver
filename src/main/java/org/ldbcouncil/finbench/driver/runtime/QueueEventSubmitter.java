@@ -8,13 +8,14 @@ public abstract class QueueEventSubmitter<EVENT_TYPE> {
 
     public static <TYPE> QueueEventSubmitter<TYPE> queueEventSubmitterFor(Queue<TYPE> queue) {
         return (BlockingQueue.class.isAssignableFrom(queue.getClass()))
-                ? new BlockingQueueEventSubmitter((BlockingQueue) queue)
-                : new NonBlockingQueueEventSubmitter(queue);
+            ? new BlockingQueueEventSubmitter((BlockingQueue) queue)
+            : new NonBlockingQueueEventSubmitter(queue);
     }
 
     public abstract void submitEventToQueue(EVENT_TYPE event) throws InterruptedException;
 
-    static class NonBlockingQueueEventSubmitter<EVENT_TYPE_NON_BLOCKING> extends QueueEventSubmitter<EVENT_TYPE_NON_BLOCKING> {
+    static class NonBlockingQueueEventSubmitter<EVENT_TYPE_NON_BLOCKING>
+        extends QueueEventSubmitter<EVENT_TYPE_NON_BLOCKING> {
         private final Queue<EVENT_TYPE_NON_BLOCKING> queue;
 
         private NonBlockingQueueEventSubmitter(Queue<EVENT_TYPE_NON_BLOCKING> queue) {
@@ -23,7 +24,7 @@ public abstract class QueueEventSubmitter<EVENT_TYPE> {
 
         @Override
         public void submitEventToQueue(EVENT_TYPE_NON_BLOCKING event) throws InterruptedException {
-            while (false == queue.offer(event)) {
+            while (!queue.offer(event)) {
                 LockSupport.parkNanos(1);
             }
         }

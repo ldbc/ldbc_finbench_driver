@@ -1,16 +1,15 @@
 package org.ldbcouncil.finbench.driver.generator;
 
-import com.google.common.collect.Ordering;
-import org.ldbcouncil.finbench.driver.csv.charseeker.CharSeeker;
-import org.ldbcouncil.finbench.driver.csv.charseeker.Extractors;
-import org.ldbcouncil.finbench.driver.csv.charseeker.Mark;
+import static java.lang.String.format;
 
+import com.google.common.collect.Ordering;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.csv.charseeker.CharSeeker;
+import org.ldbcouncil.finbench.driver.csv.charseeker.Extractors;
+import org.ldbcouncil.finbench.driver.csv.charseeker.Mark;
 
 public class CsvEventStreamReaderTimedTypedCharSeeker<BASE_EVENT_TYPE> implements Iterator<BASE_EVENT_TYPE> {
     private final EventDecoder<BASE_EVENT_TYPE>[] decoders;
@@ -27,11 +26,11 @@ public class CsvEventStreamReaderTimedTypedCharSeeker<BASE_EVENT_TYPE> implement
         this.charSeeker = charSeeker;
         this.extractors = extractors;
         this.mark = new Mark();
-        this.columnDelimiters = new int[]{columnDelimiter};
+        this.columnDelimiters = new int[] {columnDelimiter};
         int minEventTypeCode = Ordering.<Integer>natural().min(decoders.keySet());
         int maxEventTypeCode = Ordering.<Integer>natural().max(decoders.keySet());
         if (minEventTypeCode < 0) {
-            throw new GeneratorException("Event codes must be positive numbers: " + decoders.keySet().toString());
+            throw new GeneratorException("Event codes must be positive numbers: " + decoders.keySet());
         }
         this.decoders = new EventDecoder[maxEventTypeCode + 1];
         for (Integer eventTypeCode : decoders.keySet()) {
@@ -84,12 +83,12 @@ public class CsvEventStreamReaderTimedTypedCharSeeker<BASE_EVENT_TYPE> implement
             EventDecoder<BASE_EVENT_TYPE> decoder = decoders[eventType];
             if (null == decoder) {
                 throw new NoSuchElementException(
-                        format("No decoder found that matches this column\nDECODER KEY: %s", eventType)
+                    format("No decoder found that matches this column\nDECODER KEY: %s", eventType)
                 );
             }
 
             return decoder
-                    .decodeEvent(scheduledStartTime, dependencyTime, charSeeker, extractors, columnDelimiters, mark);
+                .decodeEvent(scheduledStartTime, dependencyTime, charSeeker, extractors, columnDelimiters, mark);
         } catch (IOException e) {
             throw new GeneratorException("Error while retrieving next event", e);
         }
@@ -101,7 +100,7 @@ public class CsvEventStreamReaderTimedTypedCharSeeker<BASE_EVENT_TYPE> implement
     }
 
 
-    public static interface EventDecoder<BASE_EVENT_TYPE> {
+    public interface EventDecoder<BASE_EVENT_TYPE> {
         BASE_EVENT_TYPE decodeEvent(long scheduledStartTime, long dependencyTime, CharSeeker charSeeker,
                                     Extractors extractors, int[] columnDelimiters, Mark mark);
     }

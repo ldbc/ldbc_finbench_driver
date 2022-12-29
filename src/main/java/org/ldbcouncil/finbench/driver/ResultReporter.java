@@ -1,14 +1,14 @@
 package org.ldbcouncil.finbench.driver;
 
-import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-
 import static java.lang.String.format;
+
+import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 
 public interface ResultReporter {
     <OTHER_RESULT_TYPE> void report(
-            int resultCode,
-            OTHER_RESULT_TYPE result,
-            Operation<OTHER_RESULT_TYPE> operation) throws DbException;
+        int resultCode,
+        OTHER_RESULT_TYPE result,
+        Operation<OTHER_RESULT_TYPE> operation) throws DbException;
 
     Object result();
 
@@ -30,18 +30,18 @@ public interface ResultReporter {
         }
 
         public <OTHER_RESULT_TYPE> void report(
-                int resultCode,
-                OTHER_RESULT_TYPE result,
-                Operation<OTHER_RESULT_TYPE> operation) throws DbException {
+            int resultCode,
+            OTHER_RESULT_TYPE result,
+            Operation<OTHER_RESULT_TYPE> operation) throws DbException {
             this.resultCode = resultCode;
             this.result = result;
             if (null == operation) {
                 String errMsg = format(
-                        "Operation is null\n"
-                                + "Operation: %s\n"
-                                + "Result: %s",
-                        operation,
-                        result
+                    "Operation is null\n"
+                        + "Operation: %s\n"
+                        + "Result: %s",
+                    operation,
+                    result
                 );
                 errorReporter.reportError(this, errMsg);
                 throw new DbException(errMsg);
@@ -78,13 +78,9 @@ public interface ResultReporter {
 
         @Override
         public String toString() {
-            return "SimpleResultReporter{\n" +
-                    "\t-->errorReporter=" + errorReporter + "\n" +
-                    "\t-->result=" + result + "\n" +
-                    "\t-->resultCode=" + resultCode + "\n" +
-                    "\t-->actualStartTimeAsMilli=" + actualStartTimeAsMilli + "\n" +
-                    "\t-->runDurationAsNano=" + runDurationAsNano + "\n" +
-                    '}';
+            return "SimpleResultReporter{\n" + "\t-->errorReporter=" + errorReporter + "\n" + "\t-->result=" + result
+                + "\n" + "\t-->resultCode=" + resultCode + "\n" + "\t-->actualStartTimeAsMilli="
+                + actualStartTimeAsMilli + "\n" + "\t-->runDurationAsNano=" + runDurationAsNano + "\n" + '}';
         }
     }
 }

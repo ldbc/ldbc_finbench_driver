@@ -1,4 +1,24 @@
 package org.ldbcouncil.finbench.driver.validation;
+
+import static java.lang.String.format;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import org.ldbcouncil.finbench.driver.Db;
+import org.ldbcouncil.finbench.driver.DbConnectionState;
+import org.ldbcouncil.finbench.driver.DbException;
+import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.OperationHandler;
+import org.ldbcouncil.finbench.driver.OperationHandlerRunnableContext;
+import org.ldbcouncil.finbench.driver.ResultReporter;
+import org.ldbcouncil.finbench.driver.Workload;
+import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilter;
+import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilterResult;
+import org.ldbcouncil.finbench.driver.generator.Generator;
+import org.ldbcouncil.finbench.driver.generator.GeneratorException;
+import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
+
 /**
  * Class generating validation parameters for specified workload.
  * To generate the validation parameters, the following is required:
@@ -6,30 +26,15 @@ package org.ldbcouncil.finbench.driver.validation;
  * - A validation parameters filter to determine which queries needs to be part of the validation parameters
  * - An iterator with time mapped operations
  */
-
-
-import org.ldbcouncil.finbench.driver.*;
-import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilter;
-import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilterResult;
-import org.ldbcouncil.finbench.driver.generator.Generator;
-import org.ldbcouncil.finbench.driver.generator.GeneratorException;
-import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
-import static java.lang.String.format;
-
 public class ValidationParamsGenerator extends Generator<ValidationParam> {
     private final Db db;
     private final DbValidationParametersFilter dbValidationParametersFilter;
     private final Iterator<Operation> operations;
     private final ResultReporter resultReporter;
+    private final List<Operation> injectedOperations;
+    private final int requiredValidationParameterSize;
     private int entriesWrittenSoFar;
     private boolean needMoreValidationParameters;
-    private final List<Operation> injectedOperations;
-    private int requiredValidationParameterSize;
 
     public ValidationParamsGenerator(Db db,
                                      DbValidationParametersFilter dbValidationParametersFilter,
@@ -51,7 +56,8 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
 
     @Override
     protected ValidationParam doNext() throws GeneratorException {
-        while ((injectedOperations.size() > 0 || operations.hasNext()) && needMoreValidationParameters && (requiredValidationParameterSize > entriesWrittenSoFar)) {
+        while ((injectedOperations.size() > 0 || operations.hasNext()) && needMoreValidationParameters && (
+            requiredValidationParameterSize > entriesWrittenSoFar)) {
             Operation operation;
             if (injectedOperations.isEmpty()) {
                 operation = operations.next();
@@ -59,7 +65,7 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
                 operation = injectedOperations.remove(0);
             }
 
-            if (false == dbValidationParametersFilter.useOperation(operation)) {
+            if (!dbValidationParametersFilter.useOperation(operation)) {
                 continue;
             }
 
@@ -68,12 +74,12 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
                 operationHandlerRunner = db.getOperationHandlerRunnableContext(operation);
             } catch (DbException e) {
                 throw new GeneratorException(
-                        format(
-                                "Error retrieving operation handler for operation\n"
-                                        + "Db: %s\n"
-                                        + "Operation: %s",
-                                db.getClass().getName(), operation),
-                        e);
+                    format(
+                        "Error retrieving operation handler for operation\n"
+                            + "Db: %s\n"
+                            + "Operation: %s",
+                        db.getClass().getName(), operation),
+                    e);
             }
             try {
                 OperationHandler operationHandler = operationHandlerRunner.operationHandler();
@@ -81,19 +87,19 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
                 operationHandler.executeOperation(operation, dbConnectionState, resultReporter);
             } catch (DbException e) {
                 throw new GeneratorException(
-                        format(""
-                                        + "Error executing operation to retrieve validation result\n"
-                                        + "Db: %s\n"
-                                        + "Operation: %s",
-                                db.getClass().getName(), operation),
-                        e);
+                    format(""
+                            + "Error executing operation to retrieve validation result\n"
+                            + "Db: %s\n"
+                            + "Operation: %s",
+                        db.getClass().getName(), operation),
+                    e);
             } finally {
                 operationHandlerRunner.cleanup();
             }
 
             Object result = resultReporter.result();
             DbValidationParametersFilterResult dbValidationParametersFilterResult =
-                    dbValidationParametersFilter.useOperationAndResultForValidation(operation, result);
+                dbValidationParametersFilter.useOperationAndResultForValidation(operation, result);
             injectedOperations.addAll(dbValidationParametersFilterResult.injectedOperations());
 
             switch (dbValidationParametersFilterResult.acceptance()) {
@@ -111,10 +117,10 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
                     return ValidationParam.createUntyped(operation, result);
                 default:
                     throw new GeneratorException(
-                            format("Unrecognized %s value: %s",
-                                    Workload.DbValidationParametersFilterAcceptance.class.getSimpleName(),
-                                    dbValidationParametersFilterResult.acceptance().name()
-                            )
+                        format("Unrecognized %s value: %s",
+                            Workload.DbValidationParametersFilterAcceptance.class.getSimpleName(),
+                            dbValidationParametersFilterResult.acceptance().name()
+                        )
                     );
             }
         }

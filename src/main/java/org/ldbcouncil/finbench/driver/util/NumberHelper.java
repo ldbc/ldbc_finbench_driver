@@ -1,10 +1,10 @@
 package org.ldbcouncil.finbench.driver.util;
 
-import org.ldbcouncil.finbench.driver.generator.GeneratorException;
+import static java.lang.String.format;
+
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
-
-import static java.lang.String.format;
+import org.ldbcouncil.finbench.driver.generator.GeneratorException;
 
 public abstract class NumberHelper<T extends Number> {
     private static final NumberHelper<Integer> integerNumberHelper = new IntegerNumberHelper();
@@ -28,20 +28,12 @@ public abstract class NumberHelper<T extends Number> {
          * Not supported: Byte, Float, Short, AtomicInteger, AtomicLong, BigDecimal, BigInteger
          */
         throw new GeneratorException(format("%s not supported. Only supports: Double, Integer, Long",
-                type.getName()));
+            type.getName()));
     }
 
     public static <T1 extends Number> boolean withinTolerance(T1 a, T1 b, Number tolerance) {
         Double difference = Math.abs((a.doubleValue() - b.doubleValue()));
         return difference <= tolerance.doubleValue();
-    }
-
-    public final T sum(Iterable<T> ts) {
-        T sum = zero();
-        for (T t : ts) {
-            sum = sum(sum, t);
-        }
-        return sum;
     }
 
     public final T one() {
@@ -53,6 +45,14 @@ public abstract class NumberHelper<T extends Number> {
     public abstract T inc(T a);
 
     public abstract T zero();
+
+    public final T sum(Iterable<T> ts) {
+        T sum = zero();
+        for (T t : ts) {
+            sum = sum(sum, t);
+        }
+        return sum;
+    }
 
     public abstract T sum(T a, T b);
 
@@ -166,7 +166,7 @@ public abstract class NumberHelper<T extends Number> {
 
         @Override
         public Long zero() {
-            return 0l;
+            return 0L;
         }
 
         @Override

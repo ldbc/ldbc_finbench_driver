@@ -1,7 +1,8 @@
 package org.ldbcouncil.finbench.driver.csv.charseeker;
 
 /**
- * Extracts a value from a part of a {@code char[]} into any type of value, f.ex. a {@link Extractors#string()}  string},
+ * Extracts a value from a part of a {@code char[]} into any type of value, f.ex. a {@link Extractors#string()}
+ * string},
  * {@link Extractors#long_()}  long} or {@link Extractors#intArray()}.
  * <p/>
  * An {@link Extractor} is mutable for the single purpose of ability to reuse its value instance. Consider extracting
