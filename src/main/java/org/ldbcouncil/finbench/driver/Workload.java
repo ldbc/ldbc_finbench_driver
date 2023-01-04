@@ -54,6 +54,11 @@ public abstract class Workload implements Closeable {
 
     public abstract void onInit(Map<String, String> params) throws WorkloadException;
 
+    /**
+     * Gets the operation class object used for serialization.
+     * @return
+     */
+    public abstract Class<? extends Operation> getOperationClass();
 
     public final void close() throws IOException {
         if (isClosed) {

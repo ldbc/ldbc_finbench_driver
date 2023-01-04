@@ -8,6 +8,18 @@ import java.io.IOException;
 import java.util.Map;
 import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead1;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead10;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead11;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead12;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead3;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead4;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead6;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead7;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead8;
+import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead9;
 
 /**
  * Describes Operation performed by the driver, e.g. queries.
@@ -18,12 +30,25 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead1;
 @JsonTypeInfo(use = DEDUCTION)
 @JsonSubTypes({
     @JsonSubTypes.Type(ComplexRead1.class),
+    @JsonSubTypes.Type(ComplexRead2.class),
+    @JsonSubTypes.Type(ComplexRead3.class),
+    @JsonSubTypes.Type(ComplexRead4.class),
+    @JsonSubTypes.Type(ComplexRead5.class),
+    @JsonSubTypes.Type(ComplexRead6.class),
+    @JsonSubTypes.Type(ComplexRead7.class),
+    @JsonSubTypes.Type(ComplexRead8.class),
+    @JsonSubTypes.Type(ComplexRead9.class),
+    @JsonSubTypes.Type(ComplexRead10.class),
+    @JsonSubTypes.Type(ComplexRead11.class),
+    @JsonSubTypes.Type(ComplexRead12.class),
+    @JsonSubTypes.Type(ComplexRead13.class),
 })
 public abstract class Operation<RESULT_TYPE> {
     private static final TemporalUtil temporalutil = new TemporalUtil();
     private long scheduledStartTimeAsMilli = -1;
     private long timeStamp = -1;
     private long dependencyTimeStamp = -1;
+    private long expiryTimeStamp = -1;
 
     public final void setScheduledStartTimeAsMilli(long scheduledStartTimeAsMilli) {
         this.scheduledStartTimeAsMilli = scheduledStartTimeAsMilli;
@@ -33,12 +58,20 @@ public abstract class Operation<RESULT_TYPE> {
         this.dependencyTimeStamp = dependencyTimeStamp;
     }
 
+    public final void setExpiryTimeStamp(long expiryTimeStamp) {
+        this.expiryTimeStamp = expiryTimeStamp;
+    }
+
     public final long scheduledStartTimeAsMilli() {
         return scheduledStartTimeAsMilli;
     }
 
     public final long dependencyTimeStamp() {
         return dependencyTimeStamp;
+    }
+
+    public long expiryTimeStamp() {
+        return expiryTimeStamp;
     }
 
     public long timeStamp() {
@@ -51,6 +84,7 @@ public abstract class Operation<RESULT_TYPE> {
 
     /**
      * Get type of operation
+     *
      * @return Type as integer
      */
     public abstract int type();
@@ -78,4 +112,7 @@ public abstract class Operation<RESULT_TYPE> {
      */
     public abstract RESULT_TYPE deserializeResult(String serializedOperationResult) throws IOException;
 
+    public Operation newInstance() {
+        throw new UnsupportedOperationException();
+    }
 }
