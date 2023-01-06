@@ -2,15 +2,27 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
 /*
  * Transaction workload write query 10:
  * -- Block an account of high risk --
- * TODO: add description
+ * Set an existed account’s isBlocked to True.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
 
-// TODO: implement this
 public class Write10 extends Operation<LdbcNoResult> {
     public static final int TYPE = 1010;
+    public static final String ACCOUNT_ID = "accountId";
+    private final long accountId;
+
+    public Write10(@JsonProperty(ACCOUNT_ID) long accountId) {
+        this.accountId = accountId;
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
 
     @Override
     public int type() {
@@ -19,11 +31,39 @@ public class Write10 extends Operation<LdbcNoResult> {
 
     @Override
     public Map<String, Object> parameterMap() {
-        return null;
+        return ImmutableMap.<String, Object>builder()
+            .put(ACCOUNT_ID, accountId)
+            .build();
     }
 
     @Override
     public LdbcNoResult deserializeResult(String serializedResults) {
         return LdbcNoResult.INSTANCE;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Write10 that = (Write10) o;
+        return accountId == that.accountId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(accountId);
+    }
+
+    @Override
+    public String toString() {
+        return "Write10{"
+            + "accountId="
+            + accountId
+            + '}';
+    }
 }
+

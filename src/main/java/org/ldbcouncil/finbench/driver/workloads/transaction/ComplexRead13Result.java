@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead13Result {
-    private final int amount;
+    public static final String SUM_EDGE2_AMOUNT = "sumEdge2Amount";
+    private final long sumEdge2Amount;
 
-    public ComplexRead13Result(@JsonProperty("amount") int amount) {
-        this.amount = amount;
+    public ComplexRead13Result(@JsonProperty(SUM_EDGE2_AMOUNT) long sumEdge2Amount) {
+        this.sumEdge2Amount = sumEdge2Amount;
     }
 
-    public int getAmount() {
-        return amount;
+    public long getSumEdge2Amount() {
+        return sumEdge2Amount;
     }
 
     @Override
@@ -23,19 +24,20 @@ public class ComplexRead13Result {
             return false;
         }
         ComplexRead13Result that = (ComplexRead13Result) o;
-        return amount == that.amount;
+        return sumEdge2Amount == that.sumEdge2Amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(amount);
+        return Objects.hash(sumEdge2Amount);
     }
 
     @Override
     public String toString() {
         return "ComplexRead13Result{"
-            + "amount="
-            + amount
+            + "sumEdge2Amount="
+            + sumEdge2Amount
             + '}';
     }
 }
+

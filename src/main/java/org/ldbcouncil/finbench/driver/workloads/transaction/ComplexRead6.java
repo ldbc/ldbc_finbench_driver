@@ -2,17 +2,86 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
 /*
  * Transaction workload complex read query 6:
  * -- Withdrawal after Many-to-One transfer --
- * TODO: add description
+ * Given an account of type card and a specified time window between start_time and end_time, find
+all the connected accounts(mid) via withdrawal(edge2) satisfying, (1)More than 3 transfer-ins(edge1)
+from other accounts(mid) whose amount exceeds threshold1. (2) The amount of withdrawal(edge2)
+exceeds threshold2. Return the sum of transfer amount from src to mid, the amount from mid to
+dstCard groupby mid.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 
-// TODO: implement this
 public class ComplexRead6 extends Operation<List<ComplexRead6Result>> {
     public static final int TYPE = 6;
+    public static final String ID = "id";
+    public static final String THRESHOLD1 = "threshold1";
+    public static final String THRESHOLD2 = "threshold2";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
+    public static final String TRUNCATION_LIMIT = "truncationLimit";
+    public static final String TRUNCATION_ORDER = "truncationOrder";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private final long id;
+    private final long threshold1;
+    private final long threshold2;
+    private final Date startTime;
+    private final Date endTime;
+    private final int truncationLimit;
+    private final TruncationOrder truncationOrder;
+
+    public ComplexRead6(@JsonProperty(ID) long id,
+                        @JsonProperty(THRESHOLD1) long threshold1,
+                        @JsonProperty(THRESHOLD2) long threshold2,
+                        @JsonProperty(START_TIME) Date startTime,
+                        @JsonProperty(END_TIME) Date endTime,
+                        @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
+                        @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
+        this.id = id;
+        this.threshold1 = threshold1;
+        this.threshold2 = threshold2;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.truncationLimit = truncationLimit;
+        this.truncationOrder = truncationOrder;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public long getThreshold1() {
+        return threshold1;
+    }
+
+    public long getThreshold2() {
+        return threshold2;
+    }
+
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public int getTruncationLimit() {
+        return truncationLimit;
+    }
+
+    public TruncationOrder getTruncationOrder() {
+        return truncationOrder;
+    }
 
     @Override
     public int type() {
@@ -21,11 +90,63 @@ public class ComplexRead6 extends Operation<List<ComplexRead6Result>> {
 
     @Override
     public Map<String, Object> parameterMap() {
-        return null;
+        return ImmutableMap.<String, Object>builder()
+            .put(ID, id)
+            .put(THRESHOLD1, threshold1)
+            .put(THRESHOLD2, threshold2)
+            .put(START_TIME, startTime)
+            .put(END_TIME, endTime)
+            .put(TRUNCATION_LIMIT, truncationLimit)
+            .put(TRUNCATION_ORDER, truncationOrder)
+            .build();
     }
 
     @Override
     public List<ComplexRead6Result> deserializeResult(String serializedOperationResult) throws IOException {
-        return null;
+        return Arrays.asList(OBJECT_MAPPER.readValue(serializedOperationResult, ComplexRead6Result[].class));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ComplexRead6 that = (ComplexRead6) o;
+        return id == that.id
+            && threshold1 == that.threshold1
+            && threshold2 == that.threshold2
+            && Objects.equals(startTime, that.startTime)
+            && Objects.equals(endTime, that.endTime)
+            && truncationLimit == that.truncationLimit
+            && truncationOrder == that.truncationOrder;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, threshold1, threshold2, startTime, endTime, truncationLimit, truncationOrder);
+    }
+
+    @Override
+    public String toString() {
+        return "ComplexRead6{"
+            + "id="
+            + id
+            + ", threshold1="
+            + threshold1
+            + ", threshold2="
+            + threshold2
+            + ", startTime="
+            + startTime
+            + ", endTime="
+            + endTime
+            + ", truncationLimit="
+            + truncationLimit
+            + ", truncationOrder="
+            + truncationOrder
+            + '}';
     }
 }
+

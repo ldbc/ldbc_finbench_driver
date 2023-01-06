@@ -2,7 +2,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
 /*
  * Transaction workload complex read query 1:
  * -- Blocked medium related accounts --
- * TODO: add description
+ * Given an Account and a specified time window between start_time and end_time, find all the Ac-
+count that is signed in by a blocked Medium and has fund transfered via edge1 by at most 3 steps.
+Note that all timestamps in the transfer trace are in ascending order. Return the mediums.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -17,14 +19,13 @@ import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 
-// TODO: implement this
 public class ComplexRead1 extends Operation<List<ComplexRead1Result>> {
     public static final int TYPE = 1;
     public static final String ID = "id";
-    public static final String START_TIME = "start_time";
-    public static final String END_TIME = "end_time";
-    public static final String TRUNCATION_LIMIT = "truncation_limit";
-    public static final String TRUNCATION_ORDER = "truncation_order";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
+    public static final String TRUNCATION_LIMIT = "truncationLimit";
+    public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
     private final Date startTime;
@@ -32,11 +33,11 @@ public class ComplexRead1 extends Operation<List<ComplexRead1Result>> {
     private final int truncationLimit;
     private final TruncationOrder truncationOrder;
 
-    public ComplexRead1(@JsonProperty("id") long id,
-                         @JsonProperty("startTime") Date startTime,
-                         @JsonProperty("endTime") Date endTime,
-                         @JsonProperty("truncationLimit") int truncationLimit,
-                         @JsonProperty("truncationOrder") TruncationOrder truncationOrder) {
+    public ComplexRead1(@JsonProperty(ID) long id,
+                        @JsonProperty(START_TIME) Date startTime,
+                        @JsonProperty(END_TIME) Date endTime,
+                        @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
+                        @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -95,9 +96,9 @@ public class ComplexRead1 extends Operation<List<ComplexRead1Result>> {
         }
         ComplexRead1 that = (ComplexRead1) o;
         return id == that.id
-            && truncationLimit == that.truncationLimit
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime)
+            && truncationLimit == that.truncationLimit
             && truncationOrder == that.truncationOrder;
     }
 
@@ -122,3 +123,4 @@ public class ComplexRead1 extends Operation<List<ComplexRead1Result>> {
             + '}';
     }
 }
+

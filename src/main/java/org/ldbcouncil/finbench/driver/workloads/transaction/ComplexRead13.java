@@ -2,10 +2,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
 /*
  * Transaction workload complex read query 13:
  * -- Transfer to company amount statistics --
- *
  * Given a Person and a specified time window between start_time and end_time, find all the company
- * accounts that s/he has transferred to. Return companies and the sum of their transfer amount in
- * descending order.
+accounts that s/he has transferred to. Return companies and the sum of their transfer amount in
+descending order.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,10 +22,10 @@ import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 public class ComplexRead13 extends Operation<List<ComplexRead13Result>> {
     public static final int TYPE = 13;
     public static final String ID = "id";
-    public static final String START_TIME = "start_time";
-    public static final String END_TIME = "end_time";
-    public static final String TRUNCATION_LIMIT = "truncation_limit";
-    public static final String TRUNCATION_ORDER = "truncation_order";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
+    public static final String TRUNCATION_LIMIT = "truncationLimit";
+    public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
     private final Date startTime;
@@ -34,11 +33,11 @@ public class ComplexRead13 extends Operation<List<ComplexRead13Result>> {
     private final int truncationLimit;
     private final TruncationOrder truncationOrder;
 
-    public ComplexRead13(@JsonProperty("id") long id,
-                         @JsonProperty("startTime") Date startTime,
-                         @JsonProperty("endTime") Date endTime,
-                         @JsonProperty("truncationLimit") int truncationLimit,
-                         @JsonProperty("truncationOrder") TruncationOrder truncationOrder) {
+    public ComplexRead13(@JsonProperty(ID) long id,
+                         @JsonProperty(START_TIME) Date startTime,
+                         @JsonProperty(END_TIME) Date endTime,
+                         @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
+                         @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -97,9 +96,9 @@ public class ComplexRead13 extends Operation<List<ComplexRead13Result>> {
         }
         ComplexRead13 that = (ComplexRead13) o;
         return id == that.id
-            && truncationLimit == that.truncationLimit
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime)
+            && truncationLimit == that.truncationLimit
             && truncationOrder == that.truncationOrder;
     }
 
@@ -124,3 +123,4 @@ public class ComplexRead13 extends Operation<List<ComplexRead13Result>> {
             + '}';
     }
 }
+
