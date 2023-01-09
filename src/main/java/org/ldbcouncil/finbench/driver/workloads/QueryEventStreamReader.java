@@ -66,10 +66,10 @@ public class QueryEventStreamReader implements Iterator<Operation> {
     public Operation next() {
         Operation query = operationStream.next();
         // TODO Whether to do Instance
-        Operation operation = query.newInstance();
-        operation.setDependencyTimeStamp(query.dependencyTimeStamp());
-        operation.setExpiryTimeStamp(query.expiryTimeStamp());
-        return operation;
+        //Operation operation = query.newInstance();
+        //operation.setDependencyTimeStamp(query.dependencyTimeStamp());
+        //operation.setExpiryTimeStamp(query.expiryTimeStamp());
+        return query;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead1 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -92,8 +92,8 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 int truncationLimit = rs.getInt(4);
                 TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
                 // TODO dependencyTimeStamp & expiryTimeStamp
-                long dependencyTimeStamp = convertStringToLong(rs.getString(6));
-                long expiryTimeStamp = convertStringToLong(rs.getString(7));
+                //long dependencyTimeStamp = convertStringToLong(rs.getString(6));
+                //long expiryTimeStamp = convertStringToLong(rs.getString(7));
                 Operation query = new ComplexRead1(
                     id,
                     startTime,
@@ -101,8 +101,8 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                     truncationLimit,
                     truncationOrder
                 );
-                query.setDependencyTimeStamp(dependencyTimeStamp);
-                query.setExpiryTimeStamp(expiryTimeStamp);
+                //query.setDependencyTimeStamp(dependencyTimeStamp);
+                //query.setExpiryTimeStamp(expiryTimeStamp);
                 return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead1: %s", e));
@@ -114,7 +114,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead2 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -132,7 +132,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead3 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -150,7 +150,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead4 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -168,7 +168,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead5 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -186,7 +186,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead6 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -204,7 +204,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead7 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -222,7 +222,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead8 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -240,7 +240,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead9 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -258,7 +258,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead10 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -276,7 +276,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead11 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -294,7 +294,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead12 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
@@ -312,7 +312,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         /**
          * @param rs ResultSet object containing the row to decode
          * @return ComplexRead13 Object
-         * @throws SQLException when an error occurs reading the resultSet
+         * @throws WorkloadException when an error occurs reading the resultSet
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {

@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.ldbcouncil.finbench.driver.control.DriverConfiguration;
 import org.ldbcouncil.finbench.driver.generator.GeneratorFactory;
@@ -114,7 +115,7 @@ public abstract class Workload implements Closeable {
         return DEFAULT_MAXIMUM_EXPECTED_INTERLEAVE_AS_MILLI;
     }
 
-    public abstract int enabledValidationOperations();
+    public abstract Set<Class> enabledValidationOperations();
 
     public interface DbValidationParametersFilter {
         boolean useOperation(Operation operation);
