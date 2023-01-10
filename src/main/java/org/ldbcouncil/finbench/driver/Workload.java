@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import org.ldbcouncil.finbench.driver.control.DriverConfiguration;
 import org.ldbcouncil.finbench.driver.generator.GeneratorFactory;
@@ -54,6 +55,11 @@ public abstract class Workload implements Closeable {
 
     public abstract void onInit(Map<String, String> params) throws WorkloadException;
 
+    /**
+     * Gets the operation class object used for serialization.
+     * @return
+     */
+    public abstract Class<? extends Operation> getOperationClass();
 
     public final void close() throws IOException {
         if (isClosed) {
@@ -109,7 +115,7 @@ public abstract class Workload implements Closeable {
         return DEFAULT_MAXIMUM_EXPECTED_INTERLEAVE_AS_MILLI;
     }
 
-    public abstract int enabledValidationOperations();
+    public abstract Set<Class> enabledValidationOperations();
 
     public interface DbValidationParametersFilter {
         boolean useOperation(Operation operation);
