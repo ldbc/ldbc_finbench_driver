@@ -19,9 +19,9 @@ import org.ldbcouncil.finbench.driver.util.Tuple2;
  */
 public class ParquetLoader {
 
-    private final DuckDbConnectionState db;
+    private final DuckDbParquetExtractor db;
 
-    public ParquetLoader(DuckDbConnectionState db) throws SQLException {
+    public ParquetLoader(DuckDbParquetExtractor db) throws SQLException {
         this.db = db;
     }
 

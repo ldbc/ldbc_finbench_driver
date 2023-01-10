@@ -17,14 +17,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
-import org.ldbcouncil.finbench.driver.csv.DuckDbConnectionState;
+import org.ldbcouncil.finbench.driver.csv.DuckDbParquetExtractor;
 import org.ldbcouncil.finbench.driver.csv.ParquetLoader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.workloads.QueryEventStreamReader;
 
 
 public class TransactionReadEventStreamReaderTest {
-    private DuckDbConnectionState db;
+    private DuckDbParquetExtractor db;
     private Statement stmt;
 
     /**
@@ -35,7 +35,7 @@ public class TransactionReadEventStreamReaderTest {
     @BeforeEach
     public void init() throws SQLException {
         Connection connection = mock(Connection.class);
-        db = mock(DuckDbConnectionState.class);
+        db = mock(DuckDbParquetExtractor.class);
         when(db.getConnection()).thenReturn(connection);
         stmt = mock(Statement.class);
         when(connection.createStatement()).thenReturn(stmt);
