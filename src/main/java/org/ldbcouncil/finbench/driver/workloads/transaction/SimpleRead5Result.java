@@ -5,30 +5,30 @@ import java.util.Objects;
 
 public class SimpleRead5Result {
     public static final String SUM_EDGE_AMOUNT = "sumEdgeAmount";
-    public static final String COUNT_EDGE = "countEdge";
-    public static final String COUNT_OTHER_ACCOUNT = "countOtherAccount";
+    public static final String NUM_EDGE = "numEdge";
+    public static final String NUM_OTHER_ACCOUNT = "numOtherAccount";
     private final long sumEdgeAmount;
-    private final int countEdge;
-    private final int countOtherAccount;
+    private final int numEdge;
+    private final int numOtherAccount;
 
     public SimpleRead5Result(@JsonProperty(SUM_EDGE_AMOUNT) long sumEdgeAmount,
-                             @JsonProperty(COUNT_EDGE) int countEdge,
-                             @JsonProperty(COUNT_OTHER_ACCOUNT) int countOtherAccount) {
+                             @JsonProperty(NUM_EDGE) int numEdge,
+                             @JsonProperty(NUM_OTHER_ACCOUNT) int numOtherAccount) {
         this.sumEdgeAmount = sumEdgeAmount;
-        this.countEdge = countEdge;
-        this.countOtherAccount = countOtherAccount;
+        this.numEdge = numEdge;
+        this.numOtherAccount = numOtherAccount;
     }
 
     public long getSumEdgeAmount() {
         return sumEdgeAmount;
     }
 
-    public int getCountEdge() {
-        return countEdge;
+    public int getNumEdge() {
+        return numEdge;
     }
 
-    public int getCountOtherAccount() {
-        return countOtherAccount;
+    public int getNumOtherAccount() {
+        return numOtherAccount;
     }
 
     @Override
@@ -41,13 +41,13 @@ public class SimpleRead5Result {
         }
         SimpleRead5Result that = (SimpleRead5Result) o;
         return sumEdgeAmount == that.sumEdgeAmount
-            && countEdge == that.countEdge
-            && countOtherAccount == that.countOtherAccount;
+            && numEdge == that.numEdge
+            && numOtherAccount == that.numOtherAccount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sumEdgeAmount, countEdge, countOtherAccount);
+        return Objects.hash(sumEdgeAmount, numEdge, numOtherAccount);
     }
 
     @Override
@@ -55,10 +55,10 @@ public class SimpleRead5Result {
         return "SimpleRead5Result{"
             + "sumEdgeAmount="
             + sumEdgeAmount
-            + ", countEdge="
-            + countEdge
-            + ", countOtherAccount="
-            + countOtherAccount
+            + ", numEdge="
+            + numEdge
+            + ", numOtherAccount="
+            + numOtherAccount
             + '}';
     }
 }

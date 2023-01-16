@@ -18,6 +18,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.Write13;
 import org.ldbcouncil.finbench.driver.workloads.transaction.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.Write15;
 import org.ldbcouncil.finbench.driver.workloads.transaction.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.Write4;
@@ -65,6 +66,7 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         decoders.put(Write12.class, new EventDecoderWrite12());
         decoders.put(Write13.class, new EventDecoderWrite13());
         decoders.put(Write14.class, new EventDecoderWrite14());
+        decoders.put(Write15.class, new EventDecoderWrite15());
         return decoders;
     }
 
@@ -357,6 +359,25 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write14: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite15 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         *
+         * @param rs ResultSet object containing the row to decode
+         * @return Write15 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                // TODO write params and remove the line
+                rs.getTimestamp(1);
+                return null;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write15: %s", e));
             }
         }
     }

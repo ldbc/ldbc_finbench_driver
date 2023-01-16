@@ -6,17 +6,17 @@ import java.util.Objects;
 public class ComplexRead2Result {
     public static final String SUM_LOAN_AMOUNT = "sumLoanAmount";
     public static final String SUM_LOAN_BALANCE = "sumLoanBalance";
-    public static final String COUNT_LOAN = "countLoan";
+    public static final String NUM_LOANS = "numLoans";
     private final long sumLoanAmount;
     private final long sumLoanBalance;
-    private final long countLoan;
+    private final long numLoans;
 
     public ComplexRead2Result(@JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
                               @JsonProperty(SUM_LOAN_BALANCE) long sumLoanBalance,
-                              @JsonProperty(COUNT_LOAN) long countLoan) {
+                              @JsonProperty(NUM_LOANS) long numLoans) {
         this.sumLoanAmount = sumLoanAmount;
         this.sumLoanBalance = sumLoanBalance;
-        this.countLoan = countLoan;
+        this.numLoans = numLoans;
     }
 
     public long getSumLoanAmount() {
@@ -27,8 +27,8 @@ public class ComplexRead2Result {
         return sumLoanBalance;
     }
 
-    public long getCountLoan() {
-        return countLoan;
+    public long getNumLoans() {
+        return numLoans;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class ComplexRead2Result {
         ComplexRead2Result that = (ComplexRead2Result) o;
         return sumLoanAmount == that.sumLoanAmount
             && sumLoanBalance == that.sumLoanBalance
-            && countLoan == that.countLoan;
+            && numLoans == that.numLoans;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sumLoanAmount, sumLoanBalance, countLoan);
+        return Objects.hash(sumLoanAmount, sumLoanBalance, numLoans);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class ComplexRead2Result {
             + sumLoanAmount
             + ", sumLoanBalance="
             + sumLoanBalance
-            + ", countLoan="
-            + countLoan
+            + ", numLoans="
+            + numLoans
             + '}';
     }
 }
