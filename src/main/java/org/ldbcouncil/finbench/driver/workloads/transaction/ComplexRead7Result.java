@@ -5,17 +5,17 @@ import java.util.Objects;
 
 public class ComplexRead7Result {
     public static final String COUNT_SRC = "countSrc";
-    public static final String COUNT_DST = "countDst";
+    public static final String NUM_DST = "numDst";
     public static final String RATIO = "ratio";
     private final int countSrc;
-    private final int countDst;
+    private final int numDst;
     private final float ratio;
 
     public ComplexRead7Result(@JsonProperty(COUNT_SRC) int countSrc,
-                              @JsonProperty(COUNT_DST) int countDst,
+                              @JsonProperty(NUM_DST) int numDst,
                               @JsonProperty(RATIO) float ratio) {
         this.countSrc = countSrc;
-        this.countDst = countDst;
+        this.numDst = numDst;
         this.ratio = ratio;
     }
 
@@ -23,8 +23,8 @@ public class ComplexRead7Result {
         return countSrc;
     }
 
-    public int getCountDst() {
-        return countDst;
+    public int getNumDst() {
+        return numDst;
     }
 
     public float getRatio() {
@@ -41,13 +41,13 @@ public class ComplexRead7Result {
         }
         ComplexRead7Result that = (ComplexRead7Result) o;
         return countSrc == that.countSrc
-            && countDst == that.countDst
+            && numDst == that.numDst
             && ratio == that.ratio;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countSrc, countDst, ratio);
+        return Objects.hash(countSrc, numDst, ratio);
     }
 
     @Override
@@ -55,8 +55,8 @@ public class ComplexRead7Result {
         return "ComplexRead7Result{"
             + "countSrc="
             + countSrc
-            + ", countDst="
-            + countDst
+            + ", numDst="
+            + numDst
             + ", ratio="
             + ratio
             + '}';

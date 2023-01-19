@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead10Result {
-    public static final String JACCARD = "jaccard";
-    private final float jaccard;
+    public static final String JACCARD_SIMILARITY = "jaccardSimilarity";
+    private final float jaccardSimilarity;
 
-    public ComplexRead10Result(@JsonProperty(JACCARD) float jaccard) {
-        this.jaccard = jaccard;
+    public ComplexRead10Result(@JsonProperty(JACCARD_SIMILARITY) float jaccardSimilarity) {
+        this.jaccardSimilarity = jaccardSimilarity;
     }
 
-    public float getJaccard() {
-        return jaccard;
+    public float getJaccardSimilarity() {
+        return jaccardSimilarity;
     }
 
     @Override
@@ -24,19 +24,19 @@ public class ComplexRead10Result {
             return false;
         }
         ComplexRead10Result that = (ComplexRead10Result) o;
-        return jaccard == that.jaccard;
+        return jaccardSimilarity == that.jaccardSimilarity;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jaccard);
+        return Objects.hash(jaccardSimilarity);
     }
 
     @Override
     public String toString() {
         return "ComplexRead10Result{"
-            + "jaccard="
-            + jaccard
+            + "jaccardSimilarity="
+            + jaccardSimilarity
             + '}';
     }
 }

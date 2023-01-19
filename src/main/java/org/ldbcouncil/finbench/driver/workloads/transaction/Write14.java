@@ -1,8 +1,9 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction;
 /*
  * Transaction workload write query 14:
- * -- Remove a loan --
- * Given an id, remove a loan, and remove the repay, deposit edges.
+ * -- Remove an account --
+ * Given an id, remove the account, and remove the related edges including own, transfer, withdraw,
+repay, deposit, signIn. Remove the connected Loan vertex in cascade.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

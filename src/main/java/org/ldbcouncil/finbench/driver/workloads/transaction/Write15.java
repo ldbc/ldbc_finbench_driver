@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction;
 /*
- * Transaction workload write query 11:
- * -- Block a person of high risk --
- * Set a person’s isBlocked to True.
+ * Transaction workload write query 15:
+ * -- Remove a loan --
+ * Given an id, remove a loan, and remove the repay, deposit and apply edges.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,17 +11,17 @@ import java.util.Map;
 import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
 
-public class Write11 extends Operation<LdbcNoResult> {
-    public static final int TYPE = 1011;
-    public static final String PERSON_ID = "personId";
-    private final long personId;
+public class Write15 extends Operation<LdbcNoResult> {
+    public static final int TYPE = 1015;
+    public static final String ID = "id";
+    private final long id;
 
-    public Write11(@JsonProperty(PERSON_ID) long personId) {
-        this.personId = personId;
+    public Write15(@JsonProperty(ID) long id) {
+        this.id = id;
     }
 
-    public long getPersonId() {
-        return personId;
+    public long getId() {
+        return id;
     }
 
     @Override
@@ -32,7 +32,7 @@ public class Write11 extends Operation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(PERSON_ID, personId)
+            .put(ID, id)
             .build();
     }
 
@@ -49,20 +49,20 @@ public class Write11 extends Operation<LdbcNoResult> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Write11 that = (Write11) o;
-        return personId == that.personId;
+        Write15 that = (Write15) o;
+        return id == that.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId);
+        return Objects.hash(id);
     }
 
     @Override
     public String toString() {
-        return "Write11{"
-            + "personId="
-            + personId
+        return "Write15{"
+            + "id="
+            + id
             + '}';
     }
 }

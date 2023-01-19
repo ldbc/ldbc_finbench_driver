@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class SimpleRead4Result {
-    public static final String COUNT_EDGE = "countEdge";
-    private final int countEdge;
+    public static final String NUM_EDGE = "numEdge";
+    private final int numEdge;
 
-    public SimpleRead4Result(@JsonProperty(COUNT_EDGE) int countEdge) {
-        this.countEdge = countEdge;
+    public SimpleRead4Result(@JsonProperty(NUM_EDGE) int numEdge) {
+        this.numEdge = numEdge;
     }
 
-    public int getCountEdge() {
-        return countEdge;
+    public int getNumEdge() {
+        return numEdge;
     }
 
     @Override
@@ -24,19 +24,19 @@ public class SimpleRead4Result {
             return false;
         }
         SimpleRead4Result that = (SimpleRead4Result) o;
-        return countEdge == that.countEdge;
+        return numEdge == that.numEdge;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countEdge);
+        return Objects.hash(numEdge);
     }
 
     @Override
     public String toString() {
         return "SimpleRead4Result{"
-            + "countEdge="
-            + countEdge
+            + "numEdge="
+            + numEdge
             + '}';
     }
 }

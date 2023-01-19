@@ -5,22 +5,22 @@ import java.util.Objects;
 
 public class ComplexRead12Result {
     public static final String SUM_LOAN_AMOUNT = "sumLoanAmount";
-    public static final String COUNT_LOAN = "countLoan";
+    public static final String NUM_LOANS = "numLoans";
     private final long sumLoanAmount;
-    private final int countLoan;
+    private final int numLoans;
 
     public ComplexRead12Result(@JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
-                               @JsonProperty(COUNT_LOAN) int countLoan) {
+                               @JsonProperty(NUM_LOANS) int numLoans) {
         this.sumLoanAmount = sumLoanAmount;
-        this.countLoan = countLoan;
+        this.numLoans = numLoans;
     }
 
     public long getSumLoanAmount() {
         return sumLoanAmount;
     }
 
-    public int getCountLoan() {
-        return countLoan;
+    public int getNumLoans() {
+        return numLoans;
     }
 
     @Override
@@ -33,12 +33,12 @@ public class ComplexRead12Result {
         }
         ComplexRead12Result that = (ComplexRead12Result) o;
         return sumLoanAmount == that.sumLoanAmount
-            && countLoan == that.countLoan;
+            && numLoans == that.numLoans;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sumLoanAmount, countLoan);
+        return Objects.hash(sumLoanAmount, numLoans);
     }
 
     @Override
@@ -46,8 +46,8 @@ public class ComplexRead12Result {
         return "ComplexRead12Result{"
             + "sumLoanAmount="
             + sumLoanAmount
-            + ", countLoan="
-            + countLoan
+            + ", numLoans="
+            + numLoans
             + '}';
     }
 }
