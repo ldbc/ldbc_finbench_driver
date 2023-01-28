@@ -23,7 +23,7 @@
         <common.math.version>3.2</common.math.version>
         <guava.version>18.0</guava.version>
         <stormpot.version>2.4</stormpot.version>
-        <jackson.api.version>2.13.2</jackson.api.version>
+        <jackson.api.version>2.13.4.1</jackson.api.version>
         <hdrhistogram.version>1.2.1</hdrhistogram.version>
         <junit.version>5.9.0</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
