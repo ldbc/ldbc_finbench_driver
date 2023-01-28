@@ -16,14 +16,14 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <commmons.cli.version>1.5.0</commmons.cli.version>
-        <commons.io.version>2.4</commons.io.version>
+        <commons.io.version>2.7</commons.io.version>
         <org.javatuples.version>1.2</org.javatuples.version>
         <log4j.version>2.19.0</log4j.version>
         <!--        <commmons.collections.version>4.4</commmons.collections.version>-->
         <common.math.version>3.2</common.math.version>
-        <guava.version>18.0</guava.version>
+        <guava.version>24.1.1-jre</guava.version>
         <stormpot.version>2.4</stormpot.version>
-        <jackson.api.version>2.13.2</jackson.api.version>
+        <jackson.api.version>2.13.5</jackson.api.version>
         <hdrhistogram.version>1.2.1</hdrhistogram.version>
         <junit.version>5.9.0</junit.version>
         <hamcrest.version>2.2</hamcrest.version>
