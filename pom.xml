@@ -29,6 +29,8 @@
         <hamcrest.version>2.2</hamcrest.version>
         <mockito.version>4.6.0</mockito.version>
         <duckdb.version>0.5.1</duckdb.version>
+        <disruptor-version>3.3.2</disruptor-version>
+        <agrona-version>1.16.0</agrona-version>
     </properties>
 
     <dependencies>
@@ -126,6 +128,16 @@
             <groupId>org.duckdb</groupId>
             <artifactId>duckdb_jdbc</artifactId>
             <version>${duckdb.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.lmax</groupId>
+            <artifactId>disruptor</artifactId>
+            <version>${disruptor-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.agrona</groupId>
+            <artifactId>agrona</artifactId>
+            <version>${agrona-version}</version>
         </dependency>
     </dependencies>
 

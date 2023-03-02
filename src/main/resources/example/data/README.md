@@ -21,7 +21,7 @@ medium_0_0.csv
 id|type|isBlocked
 
 person_workIn_company_0_0.csv
-personId|commpanyId
+personId|companyId
 
 person_invest_company_0_0.csv
 personId|companyId|timestamp

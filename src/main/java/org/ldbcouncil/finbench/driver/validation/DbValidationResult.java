@@ -166,7 +166,7 @@ public class DbValidationResult {
             .append(" operation types\n");
         for (Class operationType : sort(totalOperationsPerOperationType.keySet())) {
             sb.append("    ").append((successfullyExecutedOperationsPerOperationType.containsKey(operationType))
-                    ? successfullyExecutedOperationsPerOperationType.get(operationType) : "0").append(" / ")
+                ? successfullyExecutedOperationsPerOperationType.get(operationType) : "0").append(" / ")
                 .append(format("%1$-" + padRightDistance + "s", totalOperationsPerOperationType.get(operationType)))
                 .append(operationType.getSimpleName()).append("\n");
         }

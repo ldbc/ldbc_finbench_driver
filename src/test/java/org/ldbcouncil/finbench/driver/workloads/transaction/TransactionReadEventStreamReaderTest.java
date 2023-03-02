@@ -20,7 +20,7 @@ import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.csv.DuckDbParquetExtractor;
 import org.ldbcouncil.finbench.driver.csv.ParquetLoader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
-import org.ldbcouncil.finbench.driver.workloads.QueryEventStreamReader;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 
 
 public class TransactionReadEventStreamReaderTest {

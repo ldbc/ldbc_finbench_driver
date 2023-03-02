@@ -4,8 +4,10 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.ldbcouncil.finbench.driver.formatter.SimpleDetailedWorkloadMetricsFormatter;
 import org.ldbcouncil.finbench.driver.formatter.SimpleSummaryWorkloadMetricsFormatter;
 import org.ldbcouncil.finbench.driver.formatter.WorkloadMetricsFormatter;
@@ -16,7 +18,7 @@ import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 public class Log4jLoggingService implements LoggingService {
     private static final DecimalFormat OPERATION_COUNT_FORMATTER = new DecimalFormat("###,###,###,###");
     private static final DecimalFormat THROUGHPUT_FORMATTER = new DecimalFormat("###,###,###,##0.00");
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("YYYY/MM/dd HH:mm:ss Z");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss Z");
 
     private final Logger logger;
     private final TemporalUtil temporalUtil;
@@ -26,6 +28,7 @@ public class Log4jLoggingService implements LoggingService {
 
     Log4jLoggingService(String source, TemporalUtil temporalUtil, boolean detailedStatus) {
         this.logger = LogManager.getLogger(source);
+        Configurator.setAllLevels(LogManager.getRootLogger().getName(), Level.INFO);
         this.temporalUtil = temporalUtil;
         this.detailedStatus = detailedStatus;
         this.summaryWorkloadMetricsFormatter = new SimpleSummaryWorkloadMetricsFormatter();
@@ -130,7 +133,7 @@ public class Log4jLoggingService implements LoggingService {
             .append(" (Last ").append(TimeUnit.MILLISECONDS.toSeconds(recentDurationAsMilli))
             .append("s) [").append(THROUGHPUT_FORMATTER.format(recentThroughput)).append("]");
         if (null != ctAsMilli) {
-            sb.append(", CT: " + ((-1 == ctAsMilli) ? "--" : temporalUtil.milliTimeToDateTimeString(ctAsMilli)));
+            sb.append(", CT: ").append((-1 == ctAsMilli) ? "--" : temporalUtil.milliTimeToDateTimeString(ctAsMilli));
         }
         return sb;
     }

@@ -125,7 +125,7 @@ public class CompletionTimeStateManager implements CompletionTimeReaderWriter {
                     }
                 };
             return new CompletedTimeTrackerImpl(
-                TreeMultiset.<Long>create(),
+                TreeMultiset.create(),
                 removeTimesLowerThanAndReturnHighestRemovedFun);
         }
 
@@ -149,7 +149,7 @@ public class CompletionTimeStateManager implements CompletionTimeReaderWriter {
                     }
                 };
             return new CompletedTimeTrackerImpl(
-                Lists.<Long>newArrayList(),
+                Lists.newArrayList(),
                 removeTimesLowerThanAndReturnHighestRemovedFun);
         }
 
@@ -195,7 +195,7 @@ public class CompletionTimeStateManager implements CompletionTimeReaderWriter {
                     }
                 };
             return new InitiatedTimeTrackerImpl(
-                TreeMultiset.<Long>create(),
+                TreeMultiset.create(),
                 getLastKnownLowestInitiatedTimeFun);
         }
 
@@ -208,7 +208,7 @@ public class CompletionTimeStateManager implements CompletionTimeReaderWriter {
                     }
                 };
             return new InitiatedTimeTrackerImpl(
-                Lists.<Long>newArrayList(),
+                Lists.newArrayList(),
                 getLastKnownLowestInitiatedTimeFun);
         }
 
