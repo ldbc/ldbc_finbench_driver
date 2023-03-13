@@ -7,19 +7,19 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.IOException;
 import java.util.Map;
 import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead1;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead10;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead11;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead13;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead2;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead3;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead4;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead5;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead6;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead7;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead8;
-import org.ldbcouncil.finbench.driver.workloads.transaction.ComplexRead9;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
 
 /**
  * Describes Operation performed by the driver, e.g. queries.

@@ -8,6 +8,7 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 
 public class TransactionQueryEqualityTest {
     public long id1;

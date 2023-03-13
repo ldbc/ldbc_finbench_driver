@@ -8,12 +8,15 @@ package org.ldbcouncil.finbench.driver.validation;
 public class ResultsLogValidationTolerances {
     private final long excessiveDelayThresholdAsMilli;
     private final long toleratedExcessiveDelayCount;
+    private final double toleratedExcessiveDelayCountPercentage;
 
     public ResultsLogValidationTolerances(
         long excessiveDelayThresholdAsMilli,
-        long toleratedExcessiveDelayCount) {
+        long toleratedExcessiveDelayCount,
+        double toleratedExcessiveDelayCountPercentage) {
         this.excessiveDelayThresholdAsMilli = excessiveDelayThresholdAsMilli;
         this.toleratedExcessiveDelayCount = toleratedExcessiveDelayCount;
+        this.toleratedExcessiveDelayCountPercentage = toleratedExcessiveDelayCountPercentage;
     }
 
     public long excessiveDelayThresholdAsMilli() {
@@ -22,5 +25,9 @@ public class ResultsLogValidationTolerances {
 
     public long toleratedExcessiveDelayCount() {
         return toleratedExcessiveDelayCount;
+    }
+
+    public double toleratedExcessiveDelayCountPercentage() {
+        return toleratedExcessiveDelayCountPercentage;
     }
 }

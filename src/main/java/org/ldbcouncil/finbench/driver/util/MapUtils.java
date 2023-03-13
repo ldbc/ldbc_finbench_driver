@@ -96,7 +96,7 @@ public class MapUtils {
             resultMap.put(mapKey, map.get(mapKey));
         }
         for (Object propertyKey : properties.keySet()) {
-            if ((overwrite) || (!resultMap.containsKey((K) propertyKey))) {
+            if ((overwrite) || (!resultMap.containsKey(propertyKey))) {
                 resultMap.put((K) propertyKey, (V) properties.get(propertyKey));
             }
         }

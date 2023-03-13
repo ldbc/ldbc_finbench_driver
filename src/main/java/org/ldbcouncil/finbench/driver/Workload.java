@@ -38,7 +38,8 @@ public abstract class Workload implements Closeable {
                 : Math.round(configuration.operationCount() * toleratedExcessiveDelayCountPercentage);
         return new ResultsLogValidationTolerances(
             excessiveDelayThresholdAsMilli,
-            toleratedExcessiveDelayCount
+            toleratedExcessiveDelayCount,
+            toleratedExcessiveDelayCountPercentage
         );
     }
 
@@ -57,6 +58,7 @@ public abstract class Workload implements Closeable {
 
     /**
      * Gets the operation class object used for serialization.
+     *
      * @return
      */
     public abstract Class<? extends Operation> getOperationClass();

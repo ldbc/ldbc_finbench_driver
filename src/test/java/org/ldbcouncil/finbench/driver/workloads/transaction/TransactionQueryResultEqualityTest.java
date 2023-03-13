@@ -5,6 +5,7 @@ import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import org.junit.jupiter.api.Test;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1Result;
 
 public class TransactionQueryResultEqualityTest {
 

@@ -39,10 +39,10 @@ public class SimpleDetailedWorkloadMetricsFormatter implements WorkloadMetricsFo
         sb.append(String.format("%1$-" + padRightDistance + "s", "Throughput:"))
             .append(FLOAT_FORMATTER.format(opsPerS)).append(" (op/s)\n");
         sb.append(String.format("%1$-" + padRightDistance + "s",
-                "Start Time (" + TimeZone.getDefault().getDisplayName() + "):"))
+            "Start Time (" + TimeZone.getDefault().getDisplayName() + "):"))
             .append(dateTimeFormat.format(workloadResultsSnapshot.startTimeAsMilli())).append("\n");
         sb.append(String.format("%1$-" + padRightDistance + "s",
-                "Finish Time (" + TimeZone.getDefault().getDisplayName() + "):"))
+            "Finish Time (" + TimeZone.getDefault().getDisplayName() + "):"))
             .append(dateTimeFormat.format(workloadResultsSnapshot.latestFinishTimeAsMilli())).append("\n");
         sb.append("------------------------------------------------------------------------------\n");
         for (OperationMetricsSnapshot metric : sortedMetrics) {
