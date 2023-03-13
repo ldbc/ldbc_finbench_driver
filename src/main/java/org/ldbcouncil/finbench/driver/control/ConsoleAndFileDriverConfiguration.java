@@ -29,7 +29,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.ldbcouncil.finbench.driver.constant.DriverModeEnum;
 import org.ldbcouncil.finbench.driver.driver.Driver;
 import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
 import org.ldbcouncil.finbench.driver.util.MapUtils;
@@ -41,7 +40,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.db.DummyLdbcFinBench
 public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     // --- MODE ---
     public static final String MODE_ARG = "om";
-    public static final String MODE_DEFAULT = "execute_benchmark";
+    public static final String MODE_DEFAULT = "EXECUTE_BENCHMARK";
     public static final String MODE_DEFAULT_STRING = MODE_DEFAULT;
     // --- REQUIRED ---
     public static final String OPERATION_COUNT_ARG = "oc";
@@ -118,8 +117,8 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private static final DecimalFormat FLOAT_FORMAT = new DecimalFormat("###,###,###,###,##0.0000000");
     private static final String MODE_ARG_LONG = "mode";
     private static final String MODE_DESCRIPTION =
-        "mode the driver should execute (e.g. create_validation, validate_database, create_statistics, "
-            + "execute_benchmark)";
+        "mode the driver should execute (e.g. CREATE_VALIDATION, VALIDATE_DATABASE, CREATE_STATISTICS, "
+            + "EXECUTE_BENCHMARK)";
     private static final String OPERATION_COUNT_ARG_LONG = "operation_count";
     private static final String OPERATION_COUNT_DESCRIPTION = "number of operations to execute";
     private static final String WORKLOAD_ARG_LONG = "workload";
@@ -306,20 +305,20 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         if (null == configuration.workloadClassName()) {
             missingParams.add(ConsoleAndFileDriverConfiguration.WORKLOAD_ARG);
         }
-        DriverModeEnum mode = DriverModeEnum.valueOf(configuration.mode());
+        OperationMode mode = OperationMode.valueOf(configuration.mode());
         switch (mode) {
-            case create_statistics:
+            case CREATE_STATISTICS:
                 if (0 == configuration.operationCount()) {
                     missingParams.add(ConsoleAndFileDriverConfiguration.OPERATION_COUNT_ARG);
                 }
                 break;
-            case validate_database:
+            case VALIDATE_DATABASE:
                 if (null == configuration.dbClassName()) {
                     missingParams.add(ConsoleAndFileDriverConfiguration.DB_ARG);
                 }
                 break;
-            case create_validation:
-            case execute_benchmark:
+            case CREATE_VALIDATION:
+            case EXECUTE_BENCHMARK:
             default: // Execute benchmark is default behaviour
                 if (null == configuration.dbClassName()) {
                     missingParams.add(ConsoleAndFileDriverConfiguration.DB_ARG);

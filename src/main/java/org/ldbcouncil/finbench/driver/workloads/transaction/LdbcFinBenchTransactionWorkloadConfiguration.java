@@ -58,7 +58,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
 public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final int WRITE_OPERATION_NO_RESULT_DEFAULT_RESULT = -1;
-    public static final String LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX = "ldbc.finbench.transaction.";
+    public static final String LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX = "ldbc.finbench.transaction.queries.";
     // directory that contains the substitution parameters files
     public static final String PARAMETERS_DIRECTORY = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "parameters_dir";
     // directory containing forum and person update event streams
@@ -78,7 +78,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String LDBC_transaction_PACKAGE_PREFIX =
         removeSuffix(ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName());
 
-
     public static final String BATCH_SIZE = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "batch_size";
 
     // Default batch size denotes 24 hours of data
@@ -87,6 +86,10 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final int BUFFERED_QUEUE_SIZE = 4;
     public static final String INSERTS_DIRECTORY = "inserts";
     public static final String INSERTS_DATE_COLUMN = "creationDate";
+
+    public static final String LDBC_INTERACTIVE_PACKAGE_PREFIX =
+        removeSuffix( ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName() );
+
     /*
      * Operation Interleave
      */
@@ -262,19 +265,19 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     /*
      * Read Operation Parameters
      */
-    public static final String READ_OPERATION_1_PARAMS_FILENAME = "transaction_1_param.txt";
-    public static final String READ_OPERATION_2_PARAMS_FILENAME = "transaction_2_param.txt";
-    public static final String READ_OPERATION_3_PARAMS_FILENAME = "transaction_3_param.txt";
-    public static final String READ_OPERATION_4_PARAMS_FILENAME = "transaction_4_param.txt";
-    public static final String READ_OPERATION_5_PARAMS_FILENAME = "transaction_5_param.txt";
-    public static final String READ_OPERATION_6_PARAMS_FILENAME = "transaction_6_param.txt";
-    public static final String READ_OPERATION_7_PARAMS_FILENAME = "transaction_7_param.txt";
-    public static final String READ_OPERATION_8_PARAMS_FILENAME = "transaction_8_param.txt";
-    public static final String READ_OPERATION_9_PARAMS_FILENAME = "transaction_9_param.txt";
-    public static final String READ_OPERATION_10_PARAMS_FILENAME = "transaction_10_param.txt";
-    public static final String READ_OPERATION_11_PARAMS_FILENAME = "transaction_11_param.txt";
-    public static final String READ_OPERATION_12_PARAMS_FILENAME = "transaction_12_param.txt";
-    public static final String READ_OPERATION_13_PARAMS_FILENAME = "transaction_13_param.txt";
+    public static final String READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param.csv";
+    public static final String READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param.csv";
+    public static final String READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param.csv";
+    public static final String READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param.csv";
+    public static final String READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param.csv";
+    public static final String READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param.csv";
+    public static final String READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param.csv";
+    public static final String READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param.csv";
+    public static final String READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param.csv";
+    public static final String READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param.csv";
+    public static final String READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param.csv";
+    public static final String READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.csv";
+    public static final String READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.csv";
     public static final List<String> READ_OPERATION_PARAMS_FILENAMES = Lists.newArrayList(
         READ_OPERATION_1_PARAMS_FILENAME,
         READ_OPERATION_2_PARAMS_FILENAME,

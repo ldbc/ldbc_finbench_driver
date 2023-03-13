@@ -74,7 +74,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         }
 
         // Validation mode does not require parameter directory
-        if (operationMode != OperationMode.validate_database )
+        if (operationMode != OperationMode.VALIDATE_DATABASE )
         {
             compulsoryKeys.add( LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY );
         }
@@ -116,7 +116,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             }
         }
 
-        if (operationMode != OperationMode.validate_database)
+        if (operationMode != OperationMode.VALIDATE_DATABASE)
         {
             parametersDir = new File( params.get( LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY ).trim() );
             if ( !parametersDir.exists() )
@@ -160,7 +160,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         enabledWriteOperationTypes = getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.WRITE_OPERATION_ENABLE_KEYS, params);
         //enabledDeleteOperationTypes = getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.DELETE_OPERATION_ENABLE_KEYS, params);
         enabledUpdateOperationTypes = new HashSet<Class<? extends Operation>>(enabledWriteOperationTypes);
-        enabledUpdateOperationTypes.addAll(enabledDeleteOperationTypes);
+        // enabledUpdateOperationTypes.addAll(enabledDeleteOperationTypes);
         // First load the scale factor from the provided properties file, then load the frequency keys from resources
         if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR))
         {
@@ -173,7 +173,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         String scaleFactor = params.get( LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR ).trim();
         // Load the frequencyKeys for the appropiate scale factor if that scale factor is supported
 
-        String scaleFactorPropertiesPath = "configuration/ldbc/snb/interactive/sf" + scaleFactor  + ".properties";
+        String scaleFactorPropertiesPath = "configuration/ldbc/finbench/transaction/sf" + scaleFactor  + ".properties";
         // Load the properties file, throw error if file is not present (and thus not supported)
         final Properties scaleFactorProperties = new Properties();
 
@@ -191,7 +191,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         Map<String,String> tmp = new HashMap<String,String>(tempFileParams);
 
         // Check if validation params creation is used. If so, set the frequencies to 1
-        if ( OperationMode.valueOf(params.get(ConsoleAndFileDriverConfiguration.MODE_ARG)) == OperationMode.create_validation )
+        if ( OperationMode.valueOf(params.get(ConsoleAndFileDriverConfiguration.MODE_ARG)) == OperationMode.CREATE_VALIDATION )
         {
             Map<String, String> freqs = new HashMap<String, String>();
             String updateInterleave = tmp.get(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE);
@@ -297,16 +297,15 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         {
             String operationEnabledString = params.get( operationEnableKey ).trim();
             Boolean operationEnabled = Boolean.parseBoolean( operationEnabledString );
-            String operationClassName = null;
-               /* LdbcFinBenchTransactionWorkloadConfiguration.LDBC_INTERACTIVE_PACKAGE_PREFIX +
+            String operationClassName =  LdbcFinBenchTransactionWorkloadConfiguration.LDBC_INTERACTIVE_PACKAGE_PREFIX +
                     LdbcFinBenchTransactionWorkloadConfiguration.removePrefix(
                         LdbcFinBenchTransactionWorkloadConfiguration.removeSuffix(
                             operationEnableKey,
                             LdbcFinBenchTransactionWorkloadConfiguration.ENABLE_SUFFIX
                         ),
                         LdbcFinBenchTransactionWorkloadConfiguration
-                            .LDBC_SNB_INTERACTIVE_PARAM_NAME_PREFIX
-                    );*/
+                            .LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX
+                    );
             try
             {
                 Class operationClass = ClassLoaderHelper.loadClass( operationClassName );
