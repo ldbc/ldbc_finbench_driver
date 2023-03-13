@@ -254,24 +254,20 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         }
         try
         {
-            /*longReadInterleavesAsMilli = new HashMap<>();
-            longReadInterleavesAsMilli.put( LdbcQuery1.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_1_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery2.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_2_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery3a.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_3a_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery3b.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_3b_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery4.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_4_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery5.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_5_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery6.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_6_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery7.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_7_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery8.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_8_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery9.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_9_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery10.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_10_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery11.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_11_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery12.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_12_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery13a.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_13a_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery13b.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_13b_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery14a.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_14a_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( LdbcQuery14b.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_14b_INTERLEAVE_KEY ).trim() ) );*/
+            longReadInterleavesAsMilli = new HashMap<>();
+            longReadInterleavesAsMilli.put( ComplexRead1.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_1_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead2.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_2_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead3.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_3_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead4.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_4_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead5.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_5_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead6.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_6_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead7.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_7_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead8.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_8_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead9.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_9_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead10.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_10_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead11.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_11_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead12.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_12_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put( ComplexRead13.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_13_INTERLEAVE_KEY ).trim() ) );
 
         }
         catch ( NumberFormatException e )
@@ -297,7 +293,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         {
             String operationEnabledString = params.get( operationEnableKey ).trim();
             Boolean operationEnabled = Boolean.parseBoolean( operationEnabledString );
-            String operationClassName =  LdbcFinBenchTransactionWorkloadConfiguration.LDBC_INTERACTIVE_PACKAGE_PREFIX +
+            String operationClassName =  LdbcFinBenchTransactionWorkloadConfiguration.LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX +
                     LdbcFinBenchTransactionWorkloadConfiguration.removePrefix(
                         LdbcFinBenchTransactionWorkloadConfiguration.removeSuffix(
                             operationEnableKey,

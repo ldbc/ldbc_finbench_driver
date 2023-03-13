@@ -3,16 +3,13 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
 import static java.lang.String.format;
 
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.time.Instant;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader.EventDecoder;
-import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
@@ -85,7 +82,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 long id = rs.getLong(1);
                 Date startTime = new Date(rs.getTimestamp(2).getTime());
                 Date endTime = new Date(rs.getTimestamp(3).getTime());
@@ -106,7 +103,8 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead1: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -118,13 +116,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead2: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -136,13 +135,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead3: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -154,13 +154,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead4: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -172,13 +173,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead5: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -190,13 +192,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead6: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -208,13 +211,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead7: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -226,13 +230,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead8: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -244,13 +249,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead9: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -262,13 +268,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead10: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -280,13 +287,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead11: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -298,13 +306,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead12: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 
@@ -316,13 +325,14 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
+            /*try {
                 // TODO read params and remove the line
                 rs.getTimestamp(1);
                 return null;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead13: %s", e));
-            }
+            }*/
+            return null;
         }
     }
 }

@@ -87,13 +87,13 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String INSERTS_DIRECTORY = "inserts";
     public static final String INSERTS_DATE_COLUMN = "creationDate";
 
-    public static final String LDBC_INTERACTIVE_PACKAGE_PREFIX =
+    public static final String LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX =
         removeSuffix( ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName() );
 
     /*
      * Operation Interleave
      */
-    public static final String INTERLEAVE_SUFFIX = "_interleave";
+    public static final String INTERLEAVE_SUFFIX = "_transaction";
     public static final String READ_OPERATION_1_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead1.class.getSimpleName() + INTERLEAVE_SUFFIX;
     public static final String READ_OPERATION_2_INTERLEAVE_KEY =
@@ -265,34 +265,38 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     /*
      * Read Operation Parameters
      */
-    public static final String READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param.csv";
-    public static final String READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param.csv";
-    public static final String READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param.csv";
-    public static final String READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param.csv";
-    public static final String READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param.csv";
-    public static final String READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param.csv";
-    public static final String READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param.csv";
-    public static final String READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param.csv";
-    public static final String READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param.csv";
-    public static final String READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param.csv";
-    public static final String READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param.csv";
-    public static final String READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.csv";
-    public static final String READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.csv";
-    public static final List<String> READ_OPERATION_PARAMS_FILENAMES = Lists.newArrayList(
-        READ_OPERATION_1_PARAMS_FILENAME,
-        READ_OPERATION_2_PARAMS_FILENAME,
-        READ_OPERATION_3_PARAMS_FILENAME,
-        READ_OPERATION_4_PARAMS_FILENAME,
-        READ_OPERATION_5_PARAMS_FILENAME,
-        READ_OPERATION_6_PARAMS_FILENAME,
-        READ_OPERATION_7_PARAMS_FILENAME,
-        READ_OPERATION_8_PARAMS_FILENAME,
-        READ_OPERATION_9_PARAMS_FILENAME,
-        READ_OPERATION_10_PARAMS_FILENAME,
-        READ_OPERATION_11_PARAMS_FILENAME,
-        READ_OPERATION_12_PARAMS_FILENAME,
-        READ_OPERATION_13_PARAMS_FILENAME
-    );
+    public static final String READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param.parquet";
+    public static final String READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param.parquet";
+    public static final String READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param.parquet";
+    public static final String READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param.parquet";
+    public static final String READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param.parquet";
+    public static final String READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param.parquet";
+    public static final String READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param.parquet";
+    public static final String READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param.parquet";
+    public static final String READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param.parquet";
+    public static final String READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param.parquet";
+    public static final String READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param.parquet";
+    public static final String READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.parquet";
+    public static final String READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.parquet";
+    public static final Map<Integer, String> READ_OPERATION_PARAMS_FILENAMES = typeToOperationParameterFilename();
+    private static Map<Integer,String> typeToOperationParameterFilename()
+    {
+        Map<Integer,String> mapping = new HashMap<>();
+        mapping.put(ComplexRead1.TYPE, READ_OPERATION_1_PARAMS_FILENAME);
+        mapping.put(ComplexRead2.TYPE, READ_OPERATION_2_PARAMS_FILENAME);
+        mapping.put(ComplexRead3.TYPE, READ_OPERATION_3_PARAMS_FILENAME);
+        mapping.put(ComplexRead4.TYPE, READ_OPERATION_4_PARAMS_FILENAME);
+        mapping.put(ComplexRead5.TYPE, READ_OPERATION_5_PARAMS_FILENAME);
+        mapping.put(ComplexRead6.TYPE, READ_OPERATION_6_PARAMS_FILENAME);
+        mapping.put(ComplexRead7.TYPE, READ_OPERATION_7_PARAMS_FILENAME);
+        mapping.put(ComplexRead8.TYPE, READ_OPERATION_8_PARAMS_FILENAME);
+        mapping.put(ComplexRead9.TYPE, READ_OPERATION_9_PARAMS_FILENAME);
+        mapping.put(ComplexRead10.TYPE, READ_OPERATION_10_PARAMS_FILENAME);
+        mapping.put(ComplexRead11.TYPE, READ_OPERATION_11_PARAMS_FILENAME);
+        mapping.put(ComplexRead12.TYPE, READ_OPERATION_12_PARAMS_FILENAME);
+        mapping.put(ComplexRead13.TYPE, READ_OPERATION_13_PARAMS_FILENAME);
+        return mapping;
+    }
     /*
      * Write Operation Parameters
      */
@@ -578,8 +582,22 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping( )
     {
         Map<Class<? extends Operation>, String> classToFileNameMapping = new HashMap<>();
-        // Inserts
+        // Inserts TODO INSERTS_DIRECTORY
         classToFileNameMapping.put( Write1.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write2.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write3.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write4.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write5.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write6.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write7.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write8.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write9.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write10.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write11.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write12.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write13.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write14.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put( Write15.class, INSERTS_DIRECTORY + "/Person.parquet" );
         return classToFileNameMapping;
     }
 
