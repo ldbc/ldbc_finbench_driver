@@ -37,7 +37,7 @@ public class Driver {
                 loggingServiceFactory,
                 systemTimeSource);
             Driver driver = new Driver();
-            DriverMode<?> driverMode = driver.getClientModeFor(controlService);
+            DriverMode<?> driverMode = driver.getDriverModeFor(controlService);
             driverMode.init();
             driverMode.startExecutionAndAwaitCompletion();
 
@@ -46,7 +46,7 @@ public class Driver {
             loggingService.info(errMsg);
             System.exit(1);
         } catch (Exception e) {
-            loggingService.info("Client terminated unexpectedly\n" + ConcurrentErrorReporter.stackTraceToString(e));
+            loggingService.info("Driver terminated unexpectedly\n" + ConcurrentErrorReporter.stackTraceToString(e));
             System.exit(1);
         } finally {
             if (null != controlService) {
@@ -59,10 +59,10 @@ public class Driver {
      * Create instance of operation mode.
      *
      * @param controlService ControlService with loaded DriverConfiguration
-     * @return ClientMode object with specified operation mode
+     * @return DriverMode object with specified operation mode
      * @throws DriverException When one or more required parameters are missing
      */
-    public DriverMode<?> getClientModeFor(ControlService controlService) throws DriverException {
+    public DriverMode<?> getDriverModeFor(ControlService controlService) throws DriverException {
         if (controlService.configuration().shouldPrintHelpString()) {
             return new PrintHelpMode(controlService);
         }
@@ -76,13 +76,13 @@ public class Driver {
         OperationMode mode = OperationMode.valueOf(controlService.configuration().mode());
 
         switch (mode) {
-            case create_validation:
+            case CREATE_VALIDATION:
                 return new CreateValidationParamsMode(controlService, RANDOM_SEED);
-            case create_statistics:
+            case CREATE_STATISTICS:
                 return new CalculateWorkloadStatisticsMode( controlService, RANDOM_SEED );
-            case validate_database:
+            case VALIDATE_DATABASE:
                 return new ValidateDatabaseMode(controlService);
-            case execute_benchmark:
+            case EXECUTE_BENCHMARK:
             default: // Execute benchmark is default behaviour
                 return new ExecuteWorkloadMode(controlService, new SystemTimeSource(), RANDOM_SEED);
         }
