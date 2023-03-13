@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MapUtils {
     public static <K, V> String prettyPrint(Map<K, V> map) {
@@ -199,5 +200,20 @@ public class MapUtils {
         Properties properties = new Properties();
         properties.load(propertiesInputStream);
         return propertiesToMap(properties);
+    }
+
+    /**
+     * Inverts the keys and values in a map.
+     * NOTE: This method is unsafe as it assumes no duplicate values
+     * @param <V>
+     * @param <K>
+     * @param map The map to invert
+     * @return Inverted map
+     */
+    public static <V, K> Map<V, K> invertMap(Map<K, V> map) {
+        Map<V, K> inversedMap = map.entrySet()
+            .stream()
+            .collect(Collectors.toMap(Entry::getValue, Entry::getKey));
+        return inversedMap;
     }
 }

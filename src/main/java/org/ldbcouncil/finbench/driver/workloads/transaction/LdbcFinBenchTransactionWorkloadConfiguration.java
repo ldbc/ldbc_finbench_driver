@@ -77,6 +77,16 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final UpdateStreamParser DEFAULT_UPDATE_STREAM_PARSER = UpdateStreamParser.CHAR_SEEKER;
     public static final String LDBC_transaction_PACKAGE_PREFIX =
         removeSuffix(ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName());
+
+
+    public static final String BATCH_SIZE = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "batch_size";
+
+    // Default batch size denotes 24 hours of data
+    public static final long DEFAULT_BATCH_SIZE = 24l;
+
+    public static final int BUFFERED_QUEUE_SIZE = 4;
+    public static final String INSERTS_DIRECTORY = "inserts";
+    public static final String INSERTS_DATE_COLUMN = "creationDate";
     /*
      * Operation Interleave
      */
@@ -557,5 +567,27 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         REGEX,
         CHAR_SEEKER,
         CHAR_SEEKER_THREAD
+    }
+
+    /**
+     * Get mapping of update operation and filename containing the events
+     */
+    public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping( )
+    {
+        Map<Class<? extends Operation>, String> classToFileNameMapping = new HashMap<>();
+        // Inserts
+        classToFileNameMapping.put( Write1.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        return classToFileNameMapping;
+    }
+
+    /**
+     * Get mapping of update operation and filename containing the events
+     */
+    public static Map<Class<? extends Operation>, String> getUpdateStreamClassToDateColumn( )
+    {
+        Map<Class<? extends Operation>, String> classToDateColumnNameMapping = new HashMap<>();
+        // TODO add every update
+        classToDateColumnNameMapping.put( Write1.class, INSERTS_DATE_COLUMN);
+        return classToDateColumnNameMapping;
     }
 }
