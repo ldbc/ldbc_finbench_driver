@@ -87,11 +87,11 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long id = rs.getLong("id");
-                Date startTime = new Date(rs.getLong("startTime"));
-                Date endTime = new Date(rs.getLong("endTime"));
-                int truncationLimit = rs.getInt("truncationLimit");
-                Blob truncationOrderBlob = rs.getBlob("truncationOrder");
+                long id = rs.getLong(1);
+                Date startTime = new Date(rs.getLong(2));
+                Date endTime = new Date(rs.getLong(3));
+                int truncationLimit = rs.getInt(4);
+                Blob truncationOrderBlob = rs.getBlob(5);
                 String truncationOrderString = new String(truncationOrderBlob.getBytes(0,
                     (int) truncationOrderBlob.length()));
                 TruncationOrder truncationOrder = TruncationOrder.valueOf(truncationOrderString);
