@@ -140,11 +140,6 @@
             <version>${agrona-version}</version>
         </dependency>
         <dependency>
-            <artifactId>common</artifactId>
-            <groupId>org.ldbcouncil.finbench</groupId>
-            <version>0.1.0-alpha</version>
-        </dependency>
-        <dependency>
             <artifactId>dummy</artifactId>
             <groupId>org.ldbcouncil.finbench</groupId>
             <version>0.1.0-alpha</version>

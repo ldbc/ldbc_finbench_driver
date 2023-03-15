@@ -15,8 +15,7 @@ public class BatchedOperationStreamReader {
 
     public BatchedOperationStreamReader(
         ParquetLoader loader
-    )
-    {
+    ) {
         this.loader = loader;
     }
 
@@ -24,8 +23,7 @@ public class BatchedOperationStreamReader {
         File operationFile,
         String viewName,
         String batchColumn
-    ) throws WorkloadException, SQLException
-    {
+    ) throws WorkloadException, SQLException {
         loader.createViewOnParquetFile(
             operationFile.getAbsolutePath(),
             viewName
@@ -40,15 +38,12 @@ public class BatchedOperationStreamReader {
         long batchSize,
         String viewName,
         String batchColumnName
-    ) throws WorkloadException
-    {
+    ) throws WorkloadException {
         Iterator<Operation> opStream;
 
-        try
-        {
+        try {
             opStream = loader.getOperationStreamBatch(decoder, viewName, batchColumnName, offset, batchSize);
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             throw new WorkloadException("Error loading batched operation stream with view: " + viewName);
         }

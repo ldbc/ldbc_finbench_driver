@@ -67,6 +67,13 @@ public class WorkloadRunner {
         return workloadRunnerFuture;
     }
 
+    private enum WorkloadRunnerThreadState {
+        NOT_STARTED,
+        RUNNING,
+        COMPLETED_SUCCEEDED,
+        COMPLETED_FAILED
+    }
+
     private static class WorkloadRunnerFuture implements Future<ConcurrentErrorReporter> {
         private final WorkloadRunnerThread workloadRunnerThread;
         private final TimeSource timeSource;
@@ -226,16 +233,8 @@ public class WorkloadRunner {
         }
     }
 
-    private enum WorkloadRunnerThreadState {
-        NOT_STARTED,
-        RUNNING,
-        COMPLETED_SUCCEEDED,
-        COMPLETED_FAILED
-    }
-
     private static class WorkloadRunnerThread extends Thread {
         private final Spinner spinner;
-        private WorkloadStatusThread workloadStatusThread;
         private final ConcurrentErrorReporter errorReporter;
         private final OperationExecutor executorForAsynchronous;
         private final List<OperationExecutor> executorsForBlocking = new ArrayList<>();
@@ -243,11 +242,7 @@ public class WorkloadRunner {
         private final List<OperationStreamExecutorService> blockingStreamExecutorServices = new ArrayList<>();
         private final long statusDisplayIntervalAsMilli;
         private final AtomicReference<WorkloadRunnerThreadState> stateRef;
-
-        private enum ShutdownType {
-            NORMAL,
-            FORCED
-        }
+        private WorkloadStatusThread workloadStatusThread;
 
         public WorkloadRunnerThread(TimeSource timeSource,
                                     Db db,
@@ -304,9 +299,45 @@ public class WorkloadRunner {
                 errorReporter,
                 asynchronousStream,
                 executorForAsynchronous,
-                completionTimeWriterForAsynchronous,
-                completionTimeService
+                completionTimeWriterForAsynchronous
             );
+            /*for ( WorkloadStreams.WorkloadStreamDefinition blockingStream :
+            workloadStreams.blockingStreamDefinitions() )
+            {
+                // only create a completion time writer for an executor if it contains at least one READ_WRITE operation
+                // otherwise it will cause completion time to stall
+                CompletionTimeWriter completionTimeWriterForBlocking;
+                try
+                {
+                    completionTimeWriterForBlocking = (blockingStream.dependencyOperations().hasNext())
+                        ? completionTimeService.newCompletionTimeWriter()
+                        : DUMMY_COMPLETION_TIME_WRITER;
+                }
+                catch ( CompletionTimeException e )
+                {
+                    throw new WorkloadException( "Error while attempting to create completion time writer", e );
+                }
+                OperationExecutor executorForBlocking = new SameThreadOperationExecutor(
+                    db,
+                    blockingStream,
+                    completionTimeWriterForBlocking,
+                    completionTimeService,
+                    spinner,
+                    timeSource,
+                    errorReporter,
+                    metricsService,
+                    blockingStream.childOperationGenerator()
+                );
+                this.executorsForBlocking.add( executorForBlocking );
+                this.blockingStreamExecutorServices.add(
+                    new OperationStreamExecutorService(
+                        errorReporter,
+                        blockingStream,
+                        executorForBlocking,
+                        completionTimeWriterForBlocking
+                    )
+                );
+            }*/
             this.stateRef = new AtomicReference<>(WorkloadRunnerThreadState.NOT_STARTED);
         }
 
@@ -448,6 +479,11 @@ public class WorkloadRunner {
                     // do nothing
                 }
             }
+        }
+
+        private enum ShutdownType {
+            NORMAL,
+            FORCED
         }
     }
 }

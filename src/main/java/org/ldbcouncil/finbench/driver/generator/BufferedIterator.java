@@ -7,37 +7,30 @@ import java.util.Iterator;
 import org.ldbcouncil.finbench.driver.Operation;
 
 public class BufferedIterator implements Iterator<Operation> {
-    
-    private Iterator<Operation> currentOperationStream = Collections.emptyIterator();
-    private final OperationStreamBuffer operationStreamBuffer;
 
+    private final OperationStreamBuffer operationStreamBuffer;
+    private Iterator<Operation> currentOperationStream = Collections.emptyIterator();
     private boolean isEmpty = false;
 
     public BufferedIterator(
         OperationStreamBuffer operationStreamBuffer
-    )
-    {
+    ) {
         this.operationStreamBuffer = operationStreamBuffer;
     }
 
-    public void init()
-    {
+    public void init() {
         currentOperationStream = operationStreamBuffer.next();
     }
 
     @Override
-    public boolean hasNext() 
-    {
-        if(!currentOperationStream.hasNext() && !isEmpty)
-        {
+    public boolean hasNext() {
+        if (!currentOperationStream.hasNext() && !isEmpty) {
             currentOperationStream = operationStreamBuffer.next();
-            if (currentOperationStream == null)
-            {
+            if (currentOperationStream == null) {
                 currentOperationStream = Collections.emptyIterator();
                 isEmpty = true;
             }
-            if (!currentOperationStream.hasNext())
-            {
+            if (!currentOperationStream.hasNext()) {
                 isEmpty = true;
             }
         }
@@ -45,21 +38,16 @@ public class BufferedIterator implements Iterator<Operation> {
     }
 
     @Override
-    public Operation next()
-    {
-        if(hasNext())
-        {
+    public Operation next() {
+        if (hasNext()) {
             return currentOperationStream.next();
-        }
-        else
-        {
+        } else {
             return null;
         }
     }
 
     @Override
-    public void remove()
-    {
-        throw new UnsupportedOperationException( format( "%s does not support remove()", getClass().getSimpleName() ) );
+    public void remove() {
+        throw new UnsupportedOperationException(format("%s does not support remove()", getClass().getSimpleName()));
     }
 }

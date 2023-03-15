@@ -41,10 +41,23 @@ import org.ldbcouncil.finbench.driver.generator.RandomDataGeneratorFactory;
 import org.ldbcouncil.finbench.driver.util.ClassLoaderHelper;
 import org.ldbcouncil.finbench.driver.util.ClassLoadingException;
 import org.ldbcouncil.finbench.driver.util.MapUtils;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
 
 // TODO: implement this
 public class LdbcFinBenchTransactionWorkload extends Workload {
-    private Map<Integer,Long> longReadInterleavesAsMilli;
+    private Map<Integer, Long> longReadInterleavesAsMilli;
     private File parametersDir;
     private File updatesDir;
     private long updateInterleaveAsMilli;
@@ -59,6 +72,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     private Set<Class<? extends Operation>> enabledUpdateOperationTypes;
 
     private RunnableOperationStreamBatchLoader runnableBatchLoader;
+
     @Override
     public Map<Integer, Class<? extends Operation>> operationTypeToClassMapping() {
         return LdbcFinBenchTransactionWorkloadConfiguration.operationTypeToClassMapping();
@@ -69,232 +83,230 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         List<String> compulsoryKeys = Lists.newArrayList();
 
         // Check operation mode, default is execute_benchmark
-        if (params.containsKey(ConsoleAndFileDriverConfiguration.MODE_ARG)){
+        if (params.containsKey(ConsoleAndFileDriverConfiguration.MODE_ARG)) {
             operationMode = OperationMode.valueOf(params.get(ConsoleAndFileDriverConfiguration.MODE_ARG));
         }
 
         // Validation mode does not require parameter directory
-        if (operationMode != OperationMode.VALIDATE_DATABASE )
-        {
-            compulsoryKeys.add( LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY );
+        if (operationMode != OperationMode.VALIDATE_DATABASE) {
+            compulsoryKeys.add(LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY);
         }
 
-        if (params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.BATCH_SIZE)){
+        if (params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.BATCH_SIZE)) {
             batchSize = Double.parseDouble(params.get(LdbcFinBenchTransactionWorkloadConfiguration.BATCH_SIZE));
-        }
-        else
-        {
+        } else {
             batchSize = LdbcFinBenchTransactionWorkloadConfiguration.DEFAULT_BATCH_SIZE;
         }
 
-        compulsoryKeys.addAll( LdbcFinBenchTransactionWorkloadConfiguration.LONG_READ_OPERATION_ENABLE_KEYS );
-        compulsoryKeys.addAll( LdbcFinBenchTransactionWorkloadConfiguration.WRITE_OPERATION_ENABLE_KEYS );
-        compulsoryKeys.addAll( LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_OPERATION_ENABLE_KEYS );
+        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.LONG_READ_OPERATION_ENABLE_KEYS);
+        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.WRITE_OPERATION_ENABLE_KEYS);
+        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_OPERATION_ENABLE_KEYS);
 
         Set<String> missingPropertyParameters =
-            LdbcFinBenchTransactionWorkloadConfiguration.missingParameters( params, compulsoryKeys );
-        if ( !missingPropertyParameters.isEmpty() )
-        {
-            throw new WorkloadException( format( "Workload could not initialize due to missing parameters: %s",
-                missingPropertyParameters.toString() ) );
+            LdbcFinBenchTransactionWorkloadConfiguration.missingParameters(params, compulsoryKeys);
+        if (!missingPropertyParameters.isEmpty()) {
+            throw new WorkloadException(format("Workload could not initialize due to missing parameters: %s",
+                missingPropertyParameters.toString()));
         }
 
-        if ( params.containsKey( LdbcFinBenchTransactionWorkloadConfiguration.UPDATES_DIRECTORY ) )
-        {
-            updatesDir = new File( params.get( LdbcFinBenchTransactionWorkloadConfiguration.UPDATES_DIRECTORY ).trim() );
-            if ( !updatesDir.exists() )
-            {
+        if (params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.UPDATES_DIRECTORY)) {
+            updatesDir = new File(params.get(LdbcFinBenchTransactionWorkloadConfiguration.UPDATES_DIRECTORY).trim());
+            if (!updatesDir.exists()) {
                 throw new WorkloadException(
-                    format( "Updates directory does not exist%nDirectory: %s",
-                        updatesDir.getAbsolutePath() ) );
+                    format("Updates directory does not exist%nDirectory: %s",
+                        updatesDir.getAbsolutePath()));
             }
-            if ( !updatesDir.isDirectory() )
-            {
+            if (!updatesDir.isDirectory()) {
                 throw new WorkloadException(
-                    format( "Updates directory is not a directory%nDirectory: %s",
-                        updatesDir.getAbsolutePath() ) );
+                    format("Updates directory is not a directory%nDirectory: %s",
+                        updatesDir.getAbsolutePath()));
             }
         }
 
-        if (operationMode != OperationMode.VALIDATE_DATABASE)
-        {
-            parametersDir = new File( params.get( LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY ).trim() );
-            if ( !parametersDir.exists() )
-            {
+        if (operationMode != OperationMode.VALIDATE_DATABASE) {
+            parametersDir =
+                new File(params.get(LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY).trim());
+            if (!parametersDir.exists()) {
                 throw new WorkloadException(
-                    format( "Parameters directory does not exist: %s", parametersDir.getAbsolutePath() ) );
+                    format("Parameters directory does not exist: %s", parametersDir.getAbsolutePath()));
             }
-           /* for ( String readOperationParamsFilename :
-                LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_PARAMS_FILENAMES.values() )
-            {
-                File readOperationParamsFile = new File( parametersDir, readOperationParamsFilename );
-                if ( !readOperationParamsFile.exists() )
-                {
+            for (String readOperationParamsFilename :
+                LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_PARAMS_FILENAMES.values()) {
+                File readOperationParamsFile = new File(parametersDir, readOperationParamsFilename);
+                if (!readOperationParamsFile.exists()) {
                     throw new WorkloadException(
-                        format( "Read operation parameters file does not exist: %s",
-                            readOperationParamsFile.getAbsolutePath() ) );
+                        format("Read operation parameters file does not exist: %s",
+                            readOperationParamsFile.getAbsolutePath()));
                 }
-            }*/
+            }
         }
 
-        enabledLongReadOperationTypes = getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.LONG_READ_OPERATION_ENABLE_KEYS, params);
-        enabledShortReadOperationTypes = getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_OPERATION_ENABLE_KEYS, params);
-        if ( !enabledShortReadOperationTypes.isEmpty() )
-        {
-            if ( !params.containsKey( LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION ) )
-            {
-                throw new WorkloadException( format( "Configuration parameter missing: %s",
-                    LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION ) );
+        enabledLongReadOperationTypes =
+            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.LONG_READ_OPERATION_ENABLE_KEYS,
+                params);
+        enabledShortReadOperationTypes =
+            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_OPERATION_ENABLE_KEYS,
+                params);
+        if (!enabledShortReadOperationTypes.isEmpty()) {
+            if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION)) {
+                throw new WorkloadException(format("Configuration parameter missing: %s",
+                    LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION));
             }
             shortReadDissipationFactor = Double.parseDouble(
-                params.get( LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION ).trim()
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION).trim()
             );
-            if ( shortReadDissipationFactor < 0 || shortReadDissipationFactor > 1 )
-            {
+            if (shortReadDissipationFactor < 0 || shortReadDissipationFactor > 1) {
                 throw new WorkloadException(
-                    format( "Configuration parameter %s should be in interval [1.0,0.0] but is: %s",
-                        LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION , shortReadDissipationFactor ) );
+                    format("Configuration parameter %s should be in interval [1.0,0.0] but is: %s",
+                        LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION,
+                        shortReadDissipationFactor));
             }
         }
 
-        enabledWriteOperationTypes = getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.WRITE_OPERATION_ENABLE_KEYS, params);
-        //enabledDeleteOperationTypes = getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.DELETE_OPERATION_ENABLE_KEYS, params);
+        enabledWriteOperationTypes =
+            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.WRITE_OPERATION_ENABLE_KEYS,
+                params);
+        //enabledDeleteOperationTypes = getEnabledOperationsHashset
+        // (LdbcFinBenchTransactionWorkloadConfiguration.DELETE_OPERATION_ENABLE_KEYS, params);
         enabledUpdateOperationTypes = new HashSet<Class<? extends Operation>>(enabledWriteOperationTypes);
         // enabledUpdateOperationTypes.addAll(enabledDeleteOperationTypes);
         // First load the scale factor from the provided properties file, then load the frequency keys from resources
-        if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR))
-        {
+        if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR)) {
             // if SCALE_FACTOR is missing but writes are enabled it is an error
             throw new WorkloadException(
-                format( "Workload could not initialize. Missing parameter: %s",
-                    LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR ) );
+                format("Workload could not initialize. Missing parameter: %s",
+                    LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR));
         }
 
-        String scaleFactor = params.get( LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR ).trim();
+        String scaleFactor = params.get(LdbcFinBenchTransactionWorkloadConfiguration.SCALE_FACTOR).trim();
         // Load the frequencyKeys for the appropiate scale factor if that scale factor is supported
 
-        String scaleFactorPropertiesPath = "configuration/ldbc/finbench/transaction/sf" + scaleFactor  + ".properties";
+        String scaleFactorPropertiesPath = "configuration/ldbc/finbench/transaction/sf" + scaleFactor + ".properties";
         // Load the properties file, throw error if file is not present (and thus not supported)
         final Properties scaleFactorProperties = new Properties();
 
         try (final InputStream stream =
                  this.getClass().getClassLoader().getResourceAsStream(scaleFactorPropertiesPath)) {
             scaleFactorProperties.load(stream);
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             throw new WorkloadException(
-                format( "Workload could not initialize. Scale factor %s not supported. %s",
+                format("Workload could not initialize. Scale factor %s not supported. %s",
                     scaleFactor, e));
         }
 
-        Map<String,String> tempFileParams = MapUtils.propertiesToMap( scaleFactorProperties );
-        Map<String,String> tmp = new HashMap<String,String>(tempFileParams);
+        Map<String, String> tempFileParams = MapUtils.propertiesToMap(scaleFactorProperties);
+        Map<String, String> tmp = new HashMap<String, String>(tempFileParams);
 
         // Check if validation params creation is used. If so, set the frequencies to 1
-        if ( OperationMode.valueOf(params.get(ConsoleAndFileDriverConfiguration.MODE_ARG)) == OperationMode.CREATE_VALIDATION )
-        {
+        if (OperationMode.valueOf(params.get(ConsoleAndFileDriverConfiguration.MODE_ARG))
+            == OperationMode.CREATE_VALIDATION) {
             Map<String, String> freqs = new HashMap<String, String>();
             String updateInterleave = tmp.get(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE);
             freqs.put(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE, updateInterleave);
-            for (String operationFrequencyKey : LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_FREQUENCY_KEYS) {
+            for (String operationFrequencyKey :
+                LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_FREQUENCY_KEYS) {
                 freqs.put(operationFrequencyKey, "1");
             }
             freqs.keySet().removeAll(params.keySet());
             params.putAll(freqs);
-        }
-        else
-        {
+        } else {
             tmp.keySet().removeAll(params.keySet());
             params.putAll(tmp);
         }
 
         List<String> frequencyKeys =
-            Lists.newArrayList( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_FREQUENCY_KEYS );
+            Lists.newArrayList(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_FREQUENCY_KEYS);
         Set<String> missingFrequencyKeys = LdbcFinBenchTransactionWorkloadConfiguration
-            .missingParameters( params, frequencyKeys );
+            .missingParameters(params, frequencyKeys);
 
-        if ( enabledUpdateOperationTypes.isEmpty() &&
-            !params.containsKey( LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE ) )
-        {
+        if (enabledUpdateOperationTypes.isEmpty()
+            && !params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE)) {
             // if UPDATE_INTERLEAVE is missing and writes are disabled set it to DEFAULT
             params.put(
                 LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE,
                 LdbcFinBenchTransactionWorkloadConfiguration.DEFAULT_UPDATE_INTERLEAVE
             );
         }
-        if ( !params.containsKey( LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE ) )
-        {
+        if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE)) {
             // if UPDATE_INTERLEAVE is missing but writes are enabled it is an error
             throw new WorkloadException(
-                format( "Workload could not initialize. Missing parameter: %s",
-                    LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE ) );
+                format("Workload could not initialize. Missing parameter: %s",
+                    LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE));
         }
         updateInterleaveAsMilli =
-            Integer.parseInt( params.get( LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE ).trim() );
+            Integer.parseInt(params.get(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE).trim());
 
-        if ( missingFrequencyKeys.isEmpty() )
-        {
+        if (missingFrequencyKeys.isEmpty()) {
             // all frequency arguments were given, compute interleave based on frequencies
-            params = LdbcFinBenchTransactionWorkloadConfiguration.convertFrequenciesToInterleaves( params );
-        }
-        else
-        {
+            params = LdbcFinBenchTransactionWorkloadConfiguration.convertFrequenciesToInterleaves(params);
+        } else {
             // if any frequencies are not set, there should be specified interleave times for read queries
             Set<String> missingInterleaveKeys = LdbcFinBenchTransactionWorkloadConfiguration.missingParameters(
                 params,
                 LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_INTERLEAVE_KEYS
             );
-            if ( !missingInterleaveKeys.isEmpty() )
-            {
-                throw new WorkloadException( format(
-                    "Workload could not initialize. One of the following groups of parameters should be set: %s " +
-                        "or %s",
-                    missingFrequencyKeys.toString(), missingInterleaveKeys.toString() ) );
+            if (!missingInterleaveKeys.isEmpty()) {
+                throw new WorkloadException(format(
+                    "Workload could not initialize. One of the following groups of parameters should be set: %s "
+                        + "or %s",
+                    missingFrequencyKeys.toString(), missingInterleaveKeys.toString()));
             }
         }
-        try
-        {
+        try {
             longReadInterleavesAsMilli = new HashMap<>();
-            longReadInterleavesAsMilli.put( ComplexRead1.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_1_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead2.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_2_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead3.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_3_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead4.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_4_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead5.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_5_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead6.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_6_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead7.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_7_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead8.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_8_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead9.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_9_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead10.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_10_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead11.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_11_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead12.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_12_INTERLEAVE_KEY ).trim() ) );
-            longReadInterleavesAsMilli.put( ComplexRead13.TYPE, Long.parseLong(params.get( LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_13_INTERLEAVE_KEY ).trim() ) );
+            longReadInterleavesAsMilli.put(ComplexRead1.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_1_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead2.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_2_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead3.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_3_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead4.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_4_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead5.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_5_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead6.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_6_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead7.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_7_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead8.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_8_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead9.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_9_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead10.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_10_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead11.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_11_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead12.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_12_INTERLEAVE_KEY).trim()));
+            longReadInterleavesAsMilli.put(ComplexRead13.TYPE, Long.parseLong(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_13_INTERLEAVE_KEY).trim()));
 
-        }
-        catch ( NumberFormatException e )
-        {
-            throw new WorkloadException( "Unable to parse one of the read operation interleave values", e );
+        } catch (NumberFormatException e) {
+            throw new WorkloadException("Unable to parse one of the read operation interleave values", e);
         }
 
         this.compressionRatio = Double.parseDouble(
-            params.get( ConsoleAndFileDriverConfiguration.TIME_COMPRESSION_RATIO_ARG ).trim()
+            params.get(ConsoleAndFileDriverConfiguration.TIME_COMPRESSION_RATIO_ARG).trim()
         );
     }
 
     /**
      * Create set with enabled operation keys
+     *
      * @param enabledOperationKeys
      * @param params
      * @return
      */
-    private Set<Class<? extends Operation>> getEnabledOperationsHashset(List<String> enabledOperationKeys, Map<String,String> params) throws WorkloadException
-    {
+    private Set<Class<? extends Operation>> getEnabledOperationsHashset(List<String> enabledOperationKeys,
+                                                                        Map<String, String> params)
+        throws WorkloadException {
         Set<Class<? extends Operation>> enabledOperationTypes = new HashSet<>();
-        for ( String operationEnableKey : enabledOperationKeys )
-        {
-            String operationEnabledString = params.get( operationEnableKey ).trim();
-            Boolean operationEnabled = Boolean.parseBoolean( operationEnabledString );
-            String operationClassName =  LdbcFinBenchTransactionWorkloadConfiguration.LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX +
-                    LdbcFinBenchTransactionWorkloadConfiguration.removePrefix(
+        for (String operationEnableKey : enabledOperationKeys) {
+            String operationEnabledString = params.get(operationEnableKey).trim();
+            Boolean operationEnabled = Boolean.parseBoolean(operationEnabledString);
+            String operationClassName =
+                LdbcFinBenchTransactionWorkloadConfiguration.LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX
+                    + LdbcFinBenchTransactionWorkloadConfiguration.removePrefix(
                         LdbcFinBenchTransactionWorkloadConfiguration.removeSuffix(
                             operationEnableKey,
                             LdbcFinBenchTransactionWorkloadConfiguration.ENABLE_SUFFIX
@@ -302,21 +314,17 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
                         LdbcFinBenchTransactionWorkloadConfiguration
                             .LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX
                     );
-            try
-            {
-                Class operationClass = ClassLoaderHelper.loadClass( operationClassName );
-                if ( operationEnabled )
-                {
-                    enabledOperationTypes.add( operationClass );
+            try {
+                Class operationClass = ClassLoaderHelper.loadClass(operationClassName);
+                if (operationEnabled) {
+                    enabledOperationTypes.add(operationClass);
                 }
 
-            }
-            catch ( ClassLoadingException e )
-            {
+            } catch (ClassLoadingException e) {
                 throw new WorkloadException(
                     format(
                         "Unable to load operation class for parameter: %s%nGuessed incorrect class name: %s",
-                        operationEnableKey, operationClassName ),
+                        operationEnableKey, operationClassName),
                     e
                 );
             }
@@ -331,14 +339,15 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
 
     @Override
     protected void onClose() throws IOException {
-        if (runnableBatchLoader != null && !runnableBatchLoader.isInterrupted()){
+        if (runnableBatchLoader != null && !runnableBatchLoader.isInterrupted()) {
             runnableBatchLoader.interrupt();
         }
     }
 
     /**
      * Peek the first operation and fetch the operation start time.
-     * @param updateStream The Iterator with update operations
+     *
+     * @param updateStream             The Iterator with update operations
      * @param workloadStartTimeAsMilli The initial start time as milli
      * @return New workload start time as milli
      * @throws WorkloadException
@@ -346,18 +355,14 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     private long getOperationStreamStartTime(
         Iterator<Operation> updateStream,
         long workloadStartTimeAsMilli
-    ) throws WorkloadException
-    {
-        PeekingIterator<Operation> unfilteredUpdateOperations = Iterators.peekingIterator( updateStream );
-        try
-        {
-            if ( unfilteredUpdateOperations.hasNext() && unfilteredUpdateOperations.peek().scheduledStartTimeAsMilli() < workloadStartTimeAsMilli )
-            {
+    ) throws WorkloadException {
+        PeekingIterator<Operation> unfilteredUpdateOperations = Iterators.peekingIterator(updateStream);
+        try {
+            if (unfilteredUpdateOperations.hasNext()
+                && unfilteredUpdateOperations.peek().scheduledStartTimeAsMilli() < workloadStartTimeAsMilli) {
                 workloadStartTimeAsMilli = unfilteredUpdateOperations.peek().scheduledStartTimeAsMilli();
             }
-        }
-        catch ( NoSuchElementException e )
-        {
+        } catch (NoSuchElementException e) {
             // do nothing, exception just means that stream was empty
         }
         return workloadStartTimeAsMilli;
@@ -366,9 +371,10 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
 
     /**
      * Get the operation streams (substitution parameters)
-     * @param gf Generator factory to use
+     *
+     * @param gf                       Generator factory to use
      * @param workloadStartTimeAsMilli The workloadStartTimeAsMilli
-     * @param loader Loader to open the csv files
+     * @param loader                   Loader to open the csv files
      * @return List of operation streams
      * @throws WorkloadException
      */
@@ -376,8 +382,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         GeneratorFactory gf,
         long workloadStartTimeAsMilli,
         ParquetLoader loader
-    ) throws WorkloadException
-    {
+    ) throws WorkloadException {
         List<Iterator<?>> asynchronousNonDependencyStreamsList = new ArrayList<>();
         /*
          * Create read operation streams, with specified interleaves
@@ -386,69 +391,72 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         Map<Integer, EventStreamReader.EventDecoder<Operation>> decoders = QueryEventStreamReader.getDecoders();
         Map<Class<? extends Operation>, Integer> classToTypeMap = MapUtils.invertMap(operationTypeToClassMapping());
         for (Class enabledClass : enabledLongReadOperationTypes) {
-            Integer type = classToTypeMap.get( enabledClass );
+            Integer type = classToTypeMap.get(enabledClass);
             Iterator<Operation> eventOperationStream = readOperationStream.readOperationStream(
                 decoders.get(type),
-                new File( parametersDir, LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_PARAMS_FILENAMES.get( type ))
+                new File(parametersDir,
+                    LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_PARAMS_FILENAMES.get(type))
             );
-            long readOperationInterleaveAsMilli = longReadInterleavesAsMilli.get( type );
+            long readOperationInterleaveAsMilli = longReadInterleavesAsMilli.get(type);
             Iterator<Long> operationStartTimes =
-                gf.incrementing( workloadStartTimeAsMilli + readOperationInterleaveAsMilli,
-                    readOperationInterleaveAsMilli );
+                gf.incrementing(workloadStartTimeAsMilli + readOperationInterleaveAsMilli,
+                    readOperationInterleaveAsMilli);
 
             Iterator<Operation> operationStream = gf.assignStartTimes(
                 operationStartTimes,
-                new QueryEventStreamReader(gf.repeating( eventOperationStream ))
+                new QueryEventStreamReader(gf.repeating(eventOperationStream))
             );
-            asynchronousNonDependencyStreamsList.add( operationStream );
+            asynchronousNonDependencyStreamsList.add(operationStream);
         }
         return asynchronousNonDependencyStreamsList;
     }
 
     /**
      * Create Short read operations
-     * @param hasDbConnected: Whether a database is connected
+     *
+     * @param hasDbConnected Whether a database is connected
      * @return
      */
-    private LdbcFinbenchShortReadGenerator getShortReadGenerator(boolean hasDbConnected)
-    {
-        RandomDataGeneratorFactory randomFactory = new RandomDataGeneratorFactory( 42l );
+    private LdbcFinbenchShortReadGenerator getShortReadGenerator(boolean hasDbConnected) {
+        RandomDataGeneratorFactory randomFactory = new RandomDataGeneratorFactory(42L);
         double initialProbability = 1.0;
 
+        Queue<Long> accountIdBuffer;
         Queue<Long> personIdBuffer;
-        Queue<Long> messageIdBuffer;
-        // LdbcFinbenchShortReadGenerator.SCHEDULED_START_TIME_POLICY scheduledStartTimePolicy;
-        // LdbcFinbenchShortReadGenerator.BufferReplenishFun bufferReplenishFun;
-        if (hasDbConnected)
-        {
-            // TODO add new Short Read Rule
-            /*personIdBuffer = LdbcSnbShortReadGenerator.synchronizedCircularQueueBuffer( 1024 );
-            messageIdBuffer = LdbcSnbShortReadGenerator.synchronizedCircularQueueBuffer( 1024 );
-            scheduledStartTimePolicy = LdbcSnbShortReadGenerator.SCHEDULED_START_TIME_POLICY.PREVIOUS_OPERATION_ACTUAL_FINISH_TIME;
-            bufferReplenishFun = new LdbcSnbShortReadGenerator.ResultBufferReplenishFun(personIdBuffer, messageIdBuffer );*/
+        Queue<Long> companyIdBuffer;
+        LdbcFinbenchShortReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
+        LdbcFinbenchShortReadGenerator.BufferReplenishFun bufferReplenishFun;
+        if (hasDbConnected) {
+            accountIdBuffer = LdbcFinbenchShortReadGenerator.synchronizedCircularQueueBuffer(1024);
+            personIdBuffer = LdbcFinbenchShortReadGenerator.synchronizedCircularQueueBuffer(1024);
+            companyIdBuffer = LdbcFinbenchShortReadGenerator.synchronizedCircularQueueBuffer(1024);
+            scheduledStartTimePolicy =
+                LdbcFinbenchShortReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_ACTUAL_FINISH_TIME;
+            bufferReplenishFun =
+                new LdbcFinbenchShortReadGenerator.ResultBufferReplenishFun(accountIdBuffer, personIdBuffer,
+                    companyIdBuffer);
+        } else {
+            accountIdBuffer = LdbcFinbenchShortReadGenerator.constantBuffer(1);
+            personIdBuffer = LdbcFinbenchShortReadGenerator.constantBuffer(1);
+            companyIdBuffer = LdbcFinbenchShortReadGenerator.constantBuffer(1);
+            scheduledStartTimePolicy =
+                LdbcFinbenchShortReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_SCHEDULED_START_TIME;
+            bufferReplenishFun = new LdbcFinbenchShortReadGenerator.NoOpBufferReplenishFun();
         }
-        else
-        {
-            // TODO add new Short Read Rule
-            /*personIdBuffer = LdbcSnbShortReadGenerator.constantBuffer( 1 );
-            messageIdBuffer = LdbcSnbShortReadGenerator.constantBuffer( 1 );
-            scheduledStartTimePolicy = LdbcSnbShortReadGenerator.SCHEDULED_START_TIME_POLICY.PREVIOUS_OPERATION_SCHEDULED_START_TIME;
-            bufferReplenishFun = new LdbcSnbShortReadGenerator.NoOpBufferReplenishFun();*/
-        }
-        return null;
-        /*return new LdbcFinbenchShortReadGenerator(
+        return new LdbcFinbenchShortReadGenerator(
             initialProbability,
             shortReadDissipationFactor,
             updateInterleaveAsMilli,
             enabledShortReadOperationTypes,
             compressionRatio,
+            accountIdBuffer,
             personIdBuffer,
-            messageIdBuffer,
+            companyIdBuffer,
             randomFactory,
             longReadInterleavesAsMilli,
             scheduledStartTimePolicy,
             bufferReplenishFun
-        );*/
+        );
     }
 
 
@@ -469,8 +477,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         try {
             DuckDbParquetExtractor db = new DuckDbParquetExtractor();
             loader = new ParquetLoader(db);
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new WorkloadException(format("Error creating loader for operation streams %s", e));
         }
 
@@ -478,8 +485,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         try {
             DuckDbParquetExtractor db = new DuckDbParquetExtractor();
             updateLoader = new ParquetLoader(db);
-        }
-        catch (SQLException e){
+        } catch (SQLException e) {
             throw new WorkloadException(format("Error creating updateLoader for operation streams %s", e));
         }
 
@@ -487,18 +493,15 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         /*
          * WRITES
          */
-        if (!enabledUpdateOperationTypes.isEmpty())
-        {
+        if (!enabledUpdateOperationTypes.isEmpty()) {
             asynchronousDependencyStreams = setBatchedUpdateStreams(gf, workloadStartTimeAsMilli, updateLoader);
-            workloadStartTimeAsMilli = getOperationStreamStartTime(asynchronousDependencyStreams, workloadStartTimeAsMilli);
-        }
-        else
-        {
+            workloadStartTimeAsMilli =
+                getOperationStreamStartTime(asynchronousDependencyStreams, workloadStartTimeAsMilli);
+        } else {
             asynchronousDependencyStreams = Collections.emptyIterator();
         }
 
-        if ( Long.MAX_VALUE == workloadStartTimeAsMilli )
-        {
+        if (Long.MAX_VALUE == workloadStartTimeAsMilli) {
             workloadStartTimeAsMilli = 0;
         }
 
@@ -520,8 +523,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
          * SHORT READS
          */
         ChildOperationGenerator shortReadsChildGenerator = null;
-        if ( !enabledShortReadOperationTypes.isEmpty() )
-        {
+        if (!enabledShortReadOperationTypes.isEmpty()) {
             shortReadsChildGenerator = getShortReadGenerator(hasDbConnected);
         }
 
@@ -552,9 +554,8 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         GeneratorFactory gf,
         long workloadStartTimeAsMilli,
         ParquetLoader loader
-    ) throws WorkloadException
-    {
-        long batchSizeInMillis = Math.round(TimeUnit.HOURS.toMillis( 1 ) * batchSize);
+    ) throws WorkloadException {
+        long batchSizeInMillis = Math.round(TimeUnit.HOURS.toMillis(1) * batchSize);
 
         Set<Class<? extends Operation>> dependencyUpdateOperationTypes = Sets.<Class<? extends Operation>>newHashSet();
 
@@ -564,7 +565,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
 
         int batchQueueSize = LdbcFinBenchTransactionWorkloadConfiguration.BUFFERED_QUEUE_SIZE;
 
-        BlockingQueue<Iterator<Operation>> blockingQueue = new LinkedBlockingQueue<>( batchQueueSize );
+        BlockingQueue<Iterator<Operation>> blockingQueue = new LinkedBlockingQueue<>(batchQueueSize);
         runnableBatchLoader = new RunnableOperationStreamBatchLoader(
             loader,
             gf,
@@ -576,7 +577,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         runnableBatchLoader.start();
 
         OperationStreamBuffer buffer = new OperationStreamBuffer(blockingQueue);
-        BufferedIterator bufferedIterator =  new BufferedIterator(buffer);
+        BufferedIterator bufferedIterator = new BufferedIterator(buffer);
         bufferedIterator.init();
         return bufferedIterator;
     }

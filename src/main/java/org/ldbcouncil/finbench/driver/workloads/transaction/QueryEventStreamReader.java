@@ -92,9 +92,11 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 Date endTime = new Date(rs.getLong("endTime"));
                 int truncationLimit = rs.getInt("truncationLimit");
                 Blob truncationOrderBlob = rs.getBlob("truncationOrder");
-                String truncationOrderString = new String(truncationOrderBlob.getBytes(0, (int) truncationOrderBlob.length()));
+                String truncationOrderString = new String(truncationOrderBlob.getBytes(0,
+                    (int) truncationOrderBlob.length()));
                 TruncationOrder truncationOrder = TruncationOrder.valueOf(truncationOrderString);
-                // TODO dependencyTimeStamp & expiryTimeStamp, if Complex Queries need dependencyTimeStamp, we should add the time in the params
+                // TODO dependencyTimeStamp & expiryTimeStamp, if Complex Queries need dependencyTimeStamp,
+                //  we should add the time in the params
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead1(

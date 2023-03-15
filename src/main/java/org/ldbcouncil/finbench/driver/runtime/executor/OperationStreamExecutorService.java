@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldbcouncil.finbench.driver.WorkloadStreams;
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeReader;
 import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeWriter;
 
 public class OperationStreamExecutorService {
@@ -23,8 +22,7 @@ public class OperationStreamExecutorService {
         ConcurrentErrorReporter errorReporter,
         WorkloadStreams.WorkloadStreamDefinition streamDefinition,
         OperationExecutor operationExecutor,
-        CompletionTimeWriter completionTimeWriter,
-        CompletionTimeReader completionTimeReader
+        CompletionTimeWriter completionTimeWriter
     ) {
         this.errorReporter = errorReporter;
         if (streamDefinition.dependencyOperations().hasNext() || streamDefinition.nonDependencyOperations().hasNext()) {
@@ -34,8 +32,7 @@ public class OperationStreamExecutorService {
                 streamDefinition,
                 hasFinished,
                 forceThreadToTerminate,
-                completionTimeWriter,
-                completionTimeReader);
+                completionTimeWriter);
         } else {
             this.operationStreamExecutorServiceThread = null;
             executing.set(true);

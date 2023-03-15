@@ -47,6 +47,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -81,14 +82,14 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String BATCH_SIZE = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "batch_size";
 
     // Default batch size denotes 24 hours of data
-    public static final long DEFAULT_BATCH_SIZE = 24l;
+    public static final long DEFAULT_BATCH_SIZE = 24L;
 
     public static final int BUFFERED_QUEUE_SIZE = 4;
     public static final String INSERTS_DIRECTORY = "inserts";
     public static final String INSERTS_DATE_COLUMN = "creationDate";
 
     public static final String LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX =
-        removeSuffix( ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName() );
+        removeSuffix(ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName());
 
     /*
      * Operation Interleave
@@ -279,9 +280,13 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.parquet";
     public static final String READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.parquet";
     public static final Map<Integer, String> READ_OPERATION_PARAMS_FILENAMES = typeToOperationParameterFilename();
-    private static Map<Integer,String> typeToOperationParameterFilename()
-    {
-        Map<Integer,String> mapping = new HashMap<>();
+    /*
+     * Write Operation Parameters
+     */
+    public static final String PIPE_SEPARATOR_REGEX = "\\|";
+
+    private static Map<Integer, String> typeToOperationParameterFilename() {
+        Map<Integer, String> mapping = new HashMap<>();
         mapping.put(ComplexRead1.TYPE, READ_OPERATION_1_PARAMS_FILENAME);
         mapping.put(ComplexRead2.TYPE, READ_OPERATION_2_PARAMS_FILENAME);
         mapping.put(ComplexRead3.TYPE, READ_OPERATION_3_PARAMS_FILENAME);
@@ -297,10 +302,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         mapping.put(ComplexRead13.TYPE, READ_OPERATION_13_PARAMS_FILENAME);
         return mapping;
     }
-    /*
-     * Write Operation Parameters
-     */
-    public static final String PIPE_SEPARATOR_REGEX = "\\|";
 
     private static Map<Integer, String> typeToInterleaveKeyMapping() {
         Map<Integer, String> mapping = new HashMap<>();
@@ -569,46 +570,44 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         return FileUtils.filesWithSuffixInDirectory(directory, "_person.csv");
     }
 
-    // The parser implementation to use when reading update events
-    public enum UpdateStreamParser {
-        REGEX,
-        CHAR_SEEKER,
-        CHAR_SEEKER_THREAD
-    }
-
     /**
      * Get mapping of update operation and filename containing the events
      */
-    public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping( )
-    {
+    public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping() {
         Map<Class<? extends Operation>, String> classToFileNameMapping = new HashMap<>();
         // Inserts TODO INSERTS_DIRECTORY
-        classToFileNameMapping.put( Write1.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write2.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write3.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write4.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write5.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write6.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write7.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write8.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write9.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write10.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write11.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write12.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write13.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write14.class, INSERTS_DIRECTORY + "/Person.parquet" );
-        classToFileNameMapping.put( Write15.class, INSERTS_DIRECTORY + "/Person.parquet" );
+        classToFileNameMapping.put(Write1.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write2.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write3.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write4.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write5.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write6.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write7.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write8.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write9.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write10.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write11.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write12.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write13.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write14.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write15.class, INSERTS_DIRECTORY + "/Person.parquet");
         return classToFileNameMapping;
     }
 
     /**
      * Get mapping of update operation and filename containing the events
      */
-    public static Map<Class<? extends Operation>, String> getUpdateStreamClassToDateColumn( )
-    {
+    public static Map<Class<? extends Operation>, String> getUpdateStreamClassToDateColumn() {
         Map<Class<? extends Operation>, String> classToDateColumnNameMapping = new HashMap<>();
         // TODO add every update
-        classToDateColumnNameMapping.put( Write1.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write1.class, INSERTS_DATE_COLUMN);
         return classToDateColumnNameMapping;
+    }
+
+    // The parser implementation to use when reading update events
+    public enum UpdateStreamParser {
+        REGEX,
+        CHAR_SEEKER,
+        CHAR_SEEKER_THREAD
     }
 }
