@@ -61,9 +61,9 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write7;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
-public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
+public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator {
     private final double initialProbability;
-    private final LdbcShortQueryFactory[] shortReadFactories;
+    private final LdbcSimpleQueryFactory[] simpleQueryFactories;
     private final double[] probabilityDegradationFactors;
     private final Queue<Long> accountIdBuffer;
     private final Queue<Long> personIdBuffer;
@@ -71,18 +71,18 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
     private final long[] interleavesAsMilli;
     private final BufferReplenishFun bufferReplenishFun;
 
-    public LdbcFinbenchShortReadGenerator(double initialProbability,
-                                          double probabilityDegradationFactor,
-                                          long updateInterleaveAsMilli,
-                                          Set<Class<? extends Operation>> enabledShortReadOperationTypes,
-                                          double compressionRatio,
-                                          Queue<Long> accountIdBuffer,
-                                          Queue<Long> personIdBuffer,
-                                          Queue<Long> companyIdBuffer,
-                                          RandomDataGeneratorFactory randomFactory,
-                                          Map<Integer, Long> longReadInterleaves,
-                                          ScheduledStartTimePolicy scheduledStartTimePolicy,
-                                          BufferReplenishFun bufferReplenishFun) {
+    public LdbcFinbenchSimpleReadGenerator(double initialProbability,
+                                           double probabilityDegradationFactor,
+                                           long updateInterleaveAsMilli,
+                                           Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
+                                           double compressionRatio,
+                                           Queue<Long> accountIdBuffer,
+                                           Queue<Long> personIdBuffer,
+                                           Queue<Long> companyIdBuffer,
+                                           RandomDataGeneratorFactory randomFactory,
+                                           Map<Integer, Long> longReadInterleaves,
+                                           ScheduledStartTimePolicy scheduledStartTimePolicy,
+                                           BufferReplenishFun bufferReplenishFun) {
         this.initialProbability = initialProbability;
         this.accountIdBuffer = accountIdBuffer;
         this.personIdBuffer = personIdBuffer;
@@ -116,7 +116,7 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
 
         int maxOperationType = Ordering.<Integer>natural().max(ComplexRead13.TYPE, SimpleRead8.TYPE,
             ReadWrite3.TYPE) + 1;
-        this.shortReadFactories = new LdbcShortQueryFactory[maxOperationType];
+        this.simpleQueryFactories = new LdbcSimpleQueryFactory[maxOperationType];
         this.probabilityDegradationFactors = new double[maxOperationType];
         for (int i = 0; i < probabilityDegradationFactors.length; i++) {
             probabilityDegradationFactors[i] = 0;
@@ -132,23 +132,23 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
             S6_INDEX -> true/false
             S7_INDEX -> true/false
          */
-        boolean[] enabledShortReads = new boolean[maxOperationType];
-        enabledShortReads[SimpleRead1.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead1.class);
-        enabledShortReads[SimpleRead2.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead2.class);
-        enabledShortReads[SimpleRead3.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead3.class);
-        enabledShortReads[SimpleRead4.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead4.class);
-        enabledShortReads[SimpleRead5.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead5.class);
-        enabledShortReads[SimpleRead6.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead6.class);
-        enabledShortReads[SimpleRead7.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead7.class);
-        enabledShortReads[SimpleRead8.TYPE] =
-            enabledShortReadOperationTypes.contains(SimpleRead8.class);
+        boolean[] enabledSimpleReads = new boolean[maxOperationType];
+        enabledSimpleReads[SimpleRead1.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead1.class);
+        enabledSimpleReads[SimpleRead2.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead2.class);
+        enabledSimpleReads[SimpleRead3.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead3.class);
+        enabledSimpleReads[SimpleRead4.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead4.class);
+        enabledSimpleReads[SimpleRead5.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead5.class);
+        enabledSimpleReads[SimpleRead6.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead6.class);
+        enabledSimpleReads[SimpleRead7.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead7.class);
+        enabledSimpleReads[SimpleRead8.TYPE] =
+            enabledSimpleReadOperationTypes.contains(SimpleRead8.class);
 
         /*
         MAPPING
@@ -160,23 +160,23 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
             S6_INDEX -> S6
             S7_INDEX -> S7
          */
-        LdbcShortQueryFactory[] baseShortReadFactories = new LdbcShortQueryFactory[maxOperationType];
-        baseShortReadFactories[SimpleRead1.TYPE] =
-            new LdbcShortQuery1Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead2.TYPE] =
-            new LdbcShortQuery2Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead3.TYPE] =
-            new LdbcShortQuery3Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead4.TYPE] =
-            new LdbcShortQuery4Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead5.TYPE] =
-            new LdbcShortQuery5Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead6.TYPE] =
-            new LdbcShortQuery6Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead7.TYPE] =
-            new LdbcShortQuery7Factory(scheduledStartTimePolicy);
-        baseShortReadFactories[SimpleRead8.TYPE] =
-            new LdbcShortQuery7Factory(scheduledStartTimePolicy);
+        LdbcSimpleQueryFactory[] baseSimpleReadFactories = new LdbcSimpleQueryFactory[maxOperationType];
+        baseSimpleReadFactories[SimpleRead1.TYPE] =
+            new LdbcSimpleQuery1Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead2.TYPE] =
+            new LdbcSimpleQuery2Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead3.TYPE] =
+            new LdbcSimpleQuery3Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead4.TYPE] =
+            new LdbcSimpleQuery4Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead5.TYPE] =
+            new LdbcSimpleQuery5Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead6.TYPE] =
+            new LdbcSimpleQuery6Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead7.TYPE] =
+            new LdbcSimpleQuery7Factory(scheduledStartTimePolicy);
+        baseSimpleReadFactories[SimpleRead8.TYPE] =
+            new LdbcSimpleQuery7Factory(scheduledStartTimePolicy);
 
         /*
         FACTORIES
@@ -188,35 +188,35 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
             S6_INDEX -> <if> (false == ENABLED[S6]) <then> ERROR
             S7_INDEX -> <if> (false == ENABLED[S7]) <then> ERROR
          */
-        if (!enabledShortReads[SimpleRead1.TYPE]) {
-            shortReadFactories[SimpleRead1.TYPE] =
+        if (!enabledSimpleReads[SimpleRead1.TYPE]) {
+            simpleQueryFactories[SimpleRead1.TYPE] =
                 new ErrorFactory(SimpleRead1.class);
         }
-        if (!enabledShortReads[SimpleRead2.TYPE]) {
-            shortReadFactories[SimpleRead2.TYPE] = new ErrorFactory(SimpleRead2.class);
+        if (!enabledSimpleReads[SimpleRead2.TYPE]) {
+            simpleQueryFactories[SimpleRead2.TYPE] = new ErrorFactory(SimpleRead2.class);
         }
-        if (!enabledShortReads[SimpleRead3.TYPE]) {
-            shortReadFactories[SimpleRead3.TYPE] =
+        if (!enabledSimpleReads[SimpleRead3.TYPE]) {
+            simpleQueryFactories[SimpleRead3.TYPE] =
                 new ErrorFactory(SimpleRead3.class);
         }
-        if (!enabledShortReads[SimpleRead4.TYPE]) {
-            shortReadFactories[SimpleRead4.TYPE] =
+        if (!enabledSimpleReads[SimpleRead4.TYPE]) {
+            simpleQueryFactories[SimpleRead4.TYPE] =
                 new ErrorFactory(SimpleRead4.class);
         }
-        if (!enabledShortReads[SimpleRead5.TYPE]) {
-            shortReadFactories[SimpleRead5.TYPE] =
+        if (!enabledSimpleReads[SimpleRead5.TYPE]) {
+            simpleQueryFactories[SimpleRead5.TYPE] =
                 new ErrorFactory(SimpleRead5.class);
         }
-        if (!enabledShortReads[SimpleRead6.TYPE]) {
-            shortReadFactories[SimpleRead6.TYPE] =
+        if (!enabledSimpleReads[SimpleRead6.TYPE]) {
+            simpleQueryFactories[SimpleRead6.TYPE] =
                 new ErrorFactory(SimpleRead6.class);
         }
-        if (!enabledShortReads[SimpleRead7.TYPE]) {
-            shortReadFactories[SimpleRead7.TYPE] =
+        if (!enabledSimpleReads[SimpleRead7.TYPE]) {
+            simpleQueryFactories[SimpleRead7.TYPE] =
                 new ErrorFactory(SimpleRead7.class);
         }
-        if (!enabledShortReads[SimpleRead8.TYPE]) {
-            shortReadFactories[SimpleRead8.TYPE] =
+        if (!enabledSimpleReads[SimpleRead8.TYPE]) {
+            simpleQueryFactories[SimpleRead8.TYPE] =
                 new ErrorFactory(SimpleRead8.class);
         }
 
@@ -224,26 +224,26 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         (FIRST_PERSON,FIRST_PERSON_INDEX) = ...
         (FIRST_MESSAGE,FIRST_MESSAGE_INDEX) = ...
          */
-        Tuple2<Integer, LdbcShortQueryFactory> firstAccountQueryAndIndex =
-            firstAccountQueryOrNoOp(enabledShortReadOperationTypes, randomFactory, 0, initialProbability,
+        Tuple2<Integer, LdbcSimpleQueryFactory> firstAccountQueryAndIndex =
+            firstAccountQueryOrNoOp(enabledSimpleReadOperationTypes, randomFactory, 0, initialProbability,
                 scheduledStartTimePolicy);
-        Tuple2<Integer, LdbcShortQueryFactory> firstPersonQueryAndIndex =
-            firstPersonQueryOrNoOp(enabledShortReadOperationTypes, randomFactory, 0, initialProbability,
+        Tuple2<Integer, LdbcSimpleQueryFactory> firstPersonQueryAndIndex =
+            firstPersonQueryOrNoOp(enabledSimpleReadOperationTypes, randomFactory, 0, initialProbability,
                 scheduledStartTimePolicy);
-        Tuple2<Integer, LdbcShortQueryFactory> firstCompanyQueryAndIndex =
-            firstCompanyQueryOrNoOp(enabledShortReadOperationTypes, randomFactory, 0, initialProbability,
+        Tuple2<Integer, LdbcSimpleQueryFactory> firstCompanyQueryAndIndex =
+            firstCompanyQueryOrNoOp(enabledSimpleReadOperationTypes, randomFactory, 0, initialProbability,
                 scheduledStartTimePolicy);
 
 
-        LdbcShortQueryFactory firstAccountQuery = (Integer.MAX_VALUE == firstAccountQueryAndIndex._1())
+        LdbcSimpleQueryFactory firstAccountQuery = (Integer.MAX_VALUE == firstAccountQueryAndIndex._1())
             ? ((Integer.MAX_VALUE == firstPersonQueryAndIndex._1())
             ? firstCompanyQueryAndIndex._2() : firstPersonQueryAndIndex._2()) : firstAccountQueryAndIndex._2();
 
-        LdbcShortQueryFactory firstPersonQuery = (Integer.MAX_VALUE == firstPersonQueryAndIndex._1())
+        LdbcSimpleQueryFactory firstPersonQuery = (Integer.MAX_VALUE == firstPersonQueryAndIndex._1())
             ? ((Integer.MAX_VALUE == firstCompanyQueryAndIndex._1())
             ? firstAccountQueryAndIndex._2() : firstCompanyQueryAndIndex._2()) : firstPersonQueryAndIndex._2();
 
-        LdbcShortQueryFactory firstCompanyQuery = (Integer.MAX_VALUE == firstCompanyQueryAndIndex._1())
+        LdbcSimpleQueryFactory firstCompanyQuery = (Integer.MAX_VALUE == firstCompanyQueryAndIndex._1())
             ? ((Integer.MAX_VALUE == firstAccountQueryAndIndex._1())
             ? firstPersonQueryAndIndex._2() : firstAccountQueryAndIndex._2()) : firstCompanyQueryAndIndex._2();
 
@@ -251,17 +251,18 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         /*
         RANDOM_FIRST = RANDOM(FIRST_PERSON,FIRST_MESSAGE)
          */
-        LdbcShortQueryFactory randomFirstQuery =
-            selectRandomFirstShortQuery(firstAccountQueryAndIndex, firstPersonQueryAndIndex, firstCompanyQueryAndIndex);
+        LdbcSimpleQueryFactory randomFirstQuery =
+            selectRandomFirstSimpleQuery(firstAccountQueryAndIndex, firstPersonQueryAndIndex,
+                firstCompanyQueryAndIndex);
 
         /*
         LAST_ACCOUNT_INDEX = ...
         LAST_PERSON_INDEX = ...
         LAST_COMPANY_INDEX = ...
          */
-        int lastAccountQueryIndex = lastAccountQueryIndex(enabledShortReadOperationTypes);
-        int lastPersonQueryIndex = lastPersonQueryIndex(enabledShortReadOperationTypes);
-        int lastCompanyQueryIndex = lastCompanyQueryIndex(enabledShortReadOperationTypes);
+        int lastAccountQueryIndex = lastAccountQueryIndex(enabledSimpleReadOperationTypes);
+        int lastPersonQueryIndex = lastPersonQueryIndex(enabledSimpleReadOperationTypes);
+        int lastCompanyQueryIndex = lastCompanyQueryIndex(enabledSimpleReadOperationTypes);
 
         if (Integer.MAX_VALUE != lastAccountQueryIndex) {
             probabilityDegradationFactors[lastAccountQueryIndex] = probabilityDegradationFactor;
@@ -278,48 +279,48 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
             [LONG_READ_INDEXES] -> RANDOM_FIRST
             [UPDATE_INDEXES] -> NO_OP
          */
-        shortReadFactories[ComplexRead1.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead2.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead3.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead4.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead5.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead6.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead7.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead8.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead9.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead10.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead11.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead12.TYPE] = randomFirstQuery;
-        shortReadFactories[ComplexRead13.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead1.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead2.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead3.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead4.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead5.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead6.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead7.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead8.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead9.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead10.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead11.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead12.TYPE] = randomFirstQuery;
+        simpleQueryFactories[ComplexRead13.TYPE] = randomFirstQuery;
 
-        shortReadFactories[Write1.TYPE] = new NoOpFactory();
-        shortReadFactories[Write2.TYPE] = new NoOpFactory();
-        shortReadFactories[Write3.TYPE] = new NoOpFactory();
-        shortReadFactories[Write4.TYPE] = new NoOpFactory();
-        shortReadFactories[Write5.TYPE] = new NoOpFactory();
-        shortReadFactories[Write6.TYPE] = new NoOpFactory();
-        shortReadFactories[Write7.TYPE] = new NoOpFactory();
-        shortReadFactories[Write8.TYPE] = new NoOpFactory();
-        shortReadFactories[Write9.TYPE] = new NoOpFactory();
-        shortReadFactories[Write10.TYPE] = new NoOpFactory();
-        shortReadFactories[Write11.TYPE] = new NoOpFactory();
-        shortReadFactories[Write12.TYPE] = new NoOpFactory();
-        shortReadFactories[Write13.TYPE] = new NoOpFactory();
-        shortReadFactories[Write14.TYPE] = new NoOpFactory();
-        shortReadFactories[Write15.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write1.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write2.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write3.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write4.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write5.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write6.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write7.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write8.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write9.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write10.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write11.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write12.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write13.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write14.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write15.TYPE] = new NoOpFactory();
 
-        shortReadFactories[ReadWrite1.TYPE] = new NoOpFactory();
-        shortReadFactories[ReadWrite2.TYPE] = new NoOpFactory();
-        shortReadFactories[ReadWrite3.TYPE] = new NoOpFactory();
+        simpleQueryFactories[ReadWrite1.TYPE] = new NoOpFactory();
+        simpleQueryFactories[ReadWrite2.TYPE] = new NoOpFactory();
+        simpleQueryFactories[ReadWrite3.TYPE] = new NoOpFactory();
 
-        shortReadFactories[SimpleRead1.TYPE] = null;
-        shortReadFactories[SimpleRead2.TYPE] = null;
-        shortReadFactories[SimpleRead3.TYPE] = null;
-        shortReadFactories[SimpleRead4.TYPE] = null;
-        shortReadFactories[SimpleRead5.TYPE] = null;
-        shortReadFactories[SimpleRead6.TYPE] = null;
-        shortReadFactories[SimpleRead7.TYPE] = null;
-        shortReadFactories[SimpleRead8.TYPE] = null;
+        simpleQueryFactories[SimpleRead1.TYPE] = null;
+        simpleQueryFactories[SimpleRead2.TYPE] = null;
+        simpleQueryFactories[SimpleRead3.TYPE] = null;
+        simpleQueryFactories[SimpleRead4.TYPE] = null;
+        simpleQueryFactories[SimpleRead5.TYPE] = null;
+        simpleQueryFactories[SimpleRead6.TYPE] = null;
+        simpleQueryFactories[SimpleRead7.TYPE] = null;
+        simpleQueryFactories[SimpleRead8.TYPE] = null;
 
         /*
         FACTORIES
@@ -329,13 +330,13 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
                 LAST_MESSAGE_INDEX (S4/S5/S6/S7) -> FIRST_PERSON
          */
         if (Integer.MAX_VALUE != lastAccountQueryIndex) {
-            shortReadFactories[lastAccountQueryIndex] = firstPersonQuery;
+            simpleQueryFactories[lastAccountQueryIndex] = firstPersonQuery;
         }
         if (Integer.MAX_VALUE != lastPersonQueryIndex) {
-            shortReadFactories[lastPersonQueryIndex] = firstCompanyQuery;
+            simpleQueryFactories[lastPersonQueryIndex] = firstCompanyQuery;
         }
         if (Integer.MAX_VALUE != lastCompanyQueryIndex) {
-            shortReadFactories[lastCompanyQueryIndex] = firstAccountQuery;
+            simpleQueryFactories[lastCompanyQueryIndex] = firstAccountQuery;
         }
 
         /*
@@ -360,32 +361,32 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
          */
 
         for (int i = SimpleRead1.TYPE; i <= SimpleRead6.TYPE; i++) {
-            if (enabledShortReads[i] && null == shortReadFactories[i]) {
-                int index = indexOfNextEnabled(enabledShortReads, i);
+            if (enabledSimpleReads[i] && null == simpleQueryFactories[i]) {
+                int index = indexOfNextEnabled(enabledSimpleReads, i);
                 if (index > lastAccountQueryIndex) {
-                    shortReadFactories[i] = firstPersonQuery;
+                    simpleQueryFactories[i] = firstPersonQuery;
                 } else {
-                    shortReadFactories[i] = baseShortReadFactories[index];
+                    simpleQueryFactories[i] = baseSimpleReadFactories[index];
                 }
             }
         }
         for (int i = SimpleRead7.TYPE; i <= SimpleRead7.TYPE; i++) {
-            if (enabledShortReads[i] && null == shortReadFactories[i]) {
-                int index = indexOfNextEnabled(enabledShortReads, i);
+            if (enabledSimpleReads[i] && null == simpleQueryFactories[i]) {
+                int index = indexOfNextEnabled(enabledSimpleReads, i);
                 if (index > lastPersonQueryIndex) {
-                    shortReadFactories[i] = firstCompanyQuery;
+                    simpleQueryFactories[i] = firstCompanyQuery;
                 } else {
-                    shortReadFactories[i] = baseShortReadFactories[index];
+                    simpleQueryFactories[i] = baseSimpleReadFactories[index];
                 }
             }
         }
         for (int i = SimpleRead8.TYPE; i <= SimpleRead8.TYPE; i++) {
-            if (enabledShortReads[i] && null == shortReadFactories[i]) {
-                int index = indexOfNextEnabled(enabledShortReads, i);
+            if (enabledSimpleReads[i] && null == simpleQueryFactories[i]) {
+                int index = indexOfNextEnabled(enabledSimpleReads, i);
                 if (index > lastCompanyQueryIndex) {
-                    shortReadFactories[i] = firstAccountQuery;
+                    simpleQueryFactories[i] = firstAccountQuery;
                 } else {
-                    shortReadFactories[i] = baseShortReadFactories[index];
+                    simpleQueryFactories[i] = baseSimpleReadFactories[index];
                 }
             }
         }
@@ -489,143 +490,143 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         };
     }
 
-    private int indexOfNextEnabled(boolean[] enabledShortReads, int shortReadType) {
-        for (int i = shortReadType + 1; i <= SimpleRead8.TYPE; i++) {
-            if (enabledShortReads[i]) {
+    private int indexOfNextEnabled(boolean[] enabledSimpleReads, int simpleReadType) {
+        for (int i = simpleReadType + 1; i <= SimpleRead8.TYPE; i++) {
+            if (enabledSimpleReads[i]) {
                 return i;
             }
         }
         return Integer.MAX_VALUE;
     }
 
-    private Tuple2<Integer, LdbcShortQueryFactory> firstAccountQueryOrNoOp(
-        Set<Class<? extends Operation>> enabledShortReadOperationTypes,
+    private Tuple2<Integer, LdbcSimpleQueryFactory> firstAccountQueryOrNoOp(
+        Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
         RandomDataGeneratorFactory randomFactory,
         double minProbability,
         double maxProbability,
         ScheduledStartTimePolicy scheduledStartTimePolicy) {
-        if (enabledShortReadOperationTypes.contains(SimpleRead1.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead1.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead1.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery1Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery1Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead2.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead2.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead2.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery2Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery2Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead3.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead3.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead3.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead4.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead4.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead3.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead5.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead5.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead3.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead6.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead6.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead3.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
         } else {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 Integer.MAX_VALUE,
                 new NoOpFactory()
             );
         }
     }
 
-    private Tuple2<Integer, LdbcShortQueryFactory> firstPersonQueryOrNoOp(
-        Set<Class<? extends Operation>> enabledShortReadOperationTypes,
+    private Tuple2<Integer, LdbcSimpleQueryFactory> firstPersonQueryOrNoOp(
+        Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
         RandomDataGeneratorFactory randomFactory,
         double minProbability,
         double maxProbability,
         ScheduledStartTimePolicy scheduledStartTimePolicy) {
-        if (enabledShortReadOperationTypes.contains(SimpleRead7.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead7.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead7.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery1Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery1Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
         } else {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 Integer.MAX_VALUE,
                 new NoOpFactory()
             );
         }
     }
 
-    private Tuple2<Integer, LdbcShortQueryFactory> firstCompanyQueryOrNoOp(
-        Set<Class<? extends Operation>> enabledShortReadOperationTypes,
+    private Tuple2<Integer, LdbcSimpleQueryFactory> firstCompanyQueryOrNoOp(
+        Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
         RandomDataGeneratorFactory randomFactory,
         double minProbability,
         double maxProbability,
         ScheduledStartTimePolicy scheduledStartTimePolicy) {
-        if (enabledShortReadOperationTypes.contains(SimpleRead8.class)) {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead8.class)) {
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead8.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcShortQuery1Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery1Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
         } else {
-            return Tuple.<Integer, LdbcShortQueryFactory>tuple2(
+            return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 Integer.MAX_VALUE,
                 new NoOpFactory()
             );
         }
     }
 
-    private int lastAccountQueryIndex(Set<Class<? extends Operation>> enabledShortReadOperationTypes) {
-        if (enabledShortReadOperationTypes.contains(SimpleRead1.class)) {
+    private int lastAccountQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead1.class)) {
             return SimpleRead6.TYPE;
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead2.class)) {
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead2.class)) {
             return SimpleRead5.TYPE;
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead3.class)) {
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead3.class)) {
             return SimpleRead4.TYPE;
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead4.class)) {
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead4.class)) {
             return SimpleRead3.TYPE;
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead5.class)) {
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead5.class)) {
             return SimpleRead2.TYPE;
-        } else if (enabledShortReadOperationTypes.contains(SimpleRead6.class)) {
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead6.class)) {
             return SimpleRead1.TYPE;
         } else {
             return Integer.MAX_VALUE;
         }
     }
 
-    private int lastPersonQueryIndex(Set<Class<? extends Operation>> enabledShortReadOperationTypes) {
-        if (enabledShortReadOperationTypes.contains(SimpleRead7.class)) {
+    private int lastPersonQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead7.class)) {
             return SimpleRead7.TYPE;
         } else {
             return Integer.MAX_VALUE;
         }
     }
 
-    private int lastCompanyQueryIndex(Set<Class<? extends Operation>> enabledShortReadOperationTypes) {
-        if (enabledShortReadOperationTypes.contains(SimpleRead8.class)) {
+    private int lastCompanyQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead8.class)) {
             return SimpleRead8.TYPE;
         } else {
             return Integer.MAX_VALUE;
         }
     }
 
-    private LdbcShortQueryFactory selectRandomFirstShortQuery(
-        Tuple2<Integer, LdbcShortQueryFactory> firstAccountQueryAndIndex,
-        Tuple2<Integer, LdbcShortQueryFactory> firstPersonQueryAndIndex,
-        Tuple2<Integer, LdbcShortQueryFactory> firstCompanyQueryAndIndex) {
+    private LdbcSimpleQueryFactory selectRandomFirstSimpleQuery(
+        Tuple2<Integer, LdbcSimpleQueryFactory> firstAccountQueryAndIndex,
+        Tuple2<Integer, LdbcSimpleQueryFactory> firstPersonQueryAndIndex,
+        Tuple2<Integer, LdbcSimpleQueryFactory> firstCompanyQueryAndIndex) {
         if (!firstAccountQueryAndIndex._1().equals(Integer.MAX_VALUE)) {
             return firstAccountQueryAndIndex._2();
         } else if (!firstPersonQueryAndIndex._1().equals(Integer.MAX_VALUE)) {
@@ -651,7 +652,7 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         long actualStartTimeAsMilli,
         long runDurationAsNano) throws WorkloadException {
         bufferReplenishFun.replenish(operation, result);
-        return shortReadFactories[operation.type()].create(
+        return simpleQueryFactories[operation.type()].create(
             accountIdBuffer,
             personIdBuffer,
             companyIdBuffer,
@@ -684,10 +685,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
     }
 
     /*
-    LdbcShortQueryFactory
+    LdbcSimpleQueryFactory
      */
 
-    private interface LdbcShortQueryFactory {
+    private interface LdbcSimpleQueryFactory {
         Operation create(
             Queue<Long> accountIdBuffer,
             Queue<Long> personIdBuffer,
@@ -735,7 +736,8 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
                     }
                     break;
                 }
-                default: break;
+                default:
+                    break;
                 /* case LdbcQuery2.TYPE:
                 {
                     List<LdbcQuery2Result> typedResults = (List<LdbcQuery2Result>) result;
@@ -849,48 +851,48 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
                     }
                     break;
                 }
-                case LdbcShortQuery2PersonPosts.TYPE:
+                case LdbcSimpleQuery2PersonPosts.TYPE:
                 {
-                    List<LdbcShortQuery2PersonPostsResult> typedResults = (List<LdbcShortQuery2PersonPostsResult>)
+                    List<LdbcSimpleQuery2PersonPostsResult> typedResults = (List<LdbcSimpleQuery2PersonPostsResult>)
                     result;
                     for ( int i = 0; i < typedResults.size(); i++ )
                     {
-                        LdbcShortQuery2PersonPostsResult typedResult = typedResults.get( i );
+                        LdbcSimpleQuery2PersonPostsResult typedResult = typedResults.get( i );
                         personIdBuffer.add( typedResult.getOriginalPostAuthorId() );
                         messageIdBuffer.add( typedResult.getMessageId() );
                         messageIdBuffer.add( typedResult.getOriginalPostId() );
                     }
                     break;
                 }
-                case LdbcShortQuery3PersonFriends.TYPE:
+                case LdbcSimpleQuery3PersonFriends.TYPE:
                 {
-                    List<LdbcShortQuery3PersonFriendsResult> typedResults =
-                        (List<LdbcShortQuery3PersonFriendsResult>) result;
+                    List<LdbcSimpleQuery3PersonFriendsResult> typedResults =
+                        (List<LdbcSimpleQuery3PersonFriendsResult>) result;
                     for ( int i = 0; i < typedResults.size(); i++ )
                     {
                         personIdBuffer.add( typedResults.get( i ).getPersonId() );
                     }
                     break;
                 }
-                case LdbcShortQuery5MessageCreator.TYPE:
+                case LdbcSimpleQuery5MessageCreator.TYPE:
                 {
-                    LdbcShortQuery5MessageCreatorResult typedResult = (LdbcShortQuery5MessageCreatorResult) result;
+                    LdbcSimpleQuery5MessageCreatorResult typedResult = (LdbcSimpleQuery5MessageCreatorResult) result;
                     personIdBuffer.add( typedResult.getPersonId() );
                     break;
                 }
-                case LdbcShortQuery6MessageForum.TYPE:
+                case LdbcSimpleQuery6MessageForum.TYPE:
                 {
-                    LdbcShortQuery6MessageForumResult typedResult = (LdbcShortQuery6MessageForumResult) result;
+                    LdbcSimpleQuery6MessageForumResult typedResult = (LdbcSimpleQuery6MessageForumResult) result;
                     personIdBuffer.add( typedResult.getModeratorId() );
                     break;
                 }
-                case LdbcShortQuery7MessageReplies.TYPE:
+                case LdbcSimpleQuery7MessageReplies.TYPE:
                 {
-                    List<LdbcShortQuery7MessageRepliesResult> typedResults =
-                        (List<LdbcShortQuery7MessageRepliesResult>) result;
+                    List<LdbcSimpleQuery7MessageRepliesResult> typedResults =
+                        (List<LdbcSimpleQuery7MessageRepliesResult>) result;
                     for ( int i = 0; i < typedResults.size(); i++ )
                     {
-                        LdbcShortQuery7MessageRepliesResult typedResult = typedResults.get( i );
+                        LdbcSimpleQuery7MessageRepliesResult typedResult = typedResults.get( i );
                         personIdBuffer.add( typedResult.getReplyAuthorId() );
                         messageIdBuffer.add( typedResult.getCommentId() );
                     }
@@ -900,7 +902,7 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class NoOpFactory implements LdbcShortQueryFactory {
+    private class NoOpFactory implements LdbcSimpleQueryFactory {
         @Override
         public Operation create(
             Queue<Long> accountIdBuffer,
@@ -919,7 +921,7 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class ErrorFactory implements LdbcShortQueryFactory {
+    private class ErrorFactory implements LdbcSimpleQueryFactory {
         private final Class operationType;
 
         private ErrorFactory(Class operationType) {
@@ -936,7 +938,7 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
             long previousOperationRunDurationAsNano,
             double state) {
             throw new RuntimeException(
-                format("Encountered disabled short read: %s - it should not have been executed",
+                format("Encountered disabled simple read: %s - it should not have been executed",
                     operationType.getSimpleName()));
         }
 
@@ -946,14 +948,14 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class CoinTossingFactory implements LdbcShortQueryFactory {
+    private class CoinTossingFactory implements LdbcSimpleQueryFactory {
         private final RandomDataGenerator random;
-        private final LdbcShortQueryFactory innerFactory;
+        private final LdbcSimpleQueryFactory innerFactory;
         private final double min;
         private final double max;
 
         private CoinTossingFactory(RandomDataGenerator random,
-                                   LdbcShortQueryFactory innerFactory,
+                                   LdbcSimpleQueryFactory innerFactory,
                                    double min,
                                    double max) {
             this.random = random;
@@ -993,12 +995,12 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class RoundRobbinFactory implements LdbcShortQueryFactory {
-        private final LdbcShortQueryFactory[] innerFactories;
+    private class RoundRobbinFactory implements LdbcSimpleQueryFactory {
+        private final LdbcSimpleQueryFactory[] innerFactories;
         private final int innerFactoriesCount;
         private int nextFactoryIndex;
 
-        private RoundRobbinFactory(LdbcShortQueryFactory... innerFactories) {
+        private RoundRobbinFactory(LdbcSimpleQueryFactory... innerFactories) {
             this.innerFactories = innerFactories;
             this.innerFactoriesCount = innerFactories.length;
             this.nextFactoryIndex = -1;
@@ -1038,10 +1040,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery1Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery1Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery1Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery1Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1094,10 +1096,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery2Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery2Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery2Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery2Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1150,10 +1152,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery3Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery3Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery3Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery3Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1206,10 +1208,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery4Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery4Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery4Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery4Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1262,10 +1264,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery5Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery5Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery5Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery5Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1322,10 +1324,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
     ScheduledStartTimeFactory
      */
 
-    private class LdbcShortQuery6Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery6Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery6Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery6Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1378,10 +1380,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery7Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery7Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery7Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery7Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
@@ -1434,10 +1436,10 @@ public class LdbcFinbenchShortReadGenerator implements ChildOperationGenerator {
         }
     }
 
-    private class LdbcShortQuery8Factory implements LdbcShortQueryFactory {
+    private class LdbcSimpleQuery8Factory implements LdbcSimpleQueryFactory {
         private final ScheduledStartTimeFactory scheduledStartTimeFactory;
 
-        private LdbcShortQuery8Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
+        private LdbcSimpleQuery8Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
             switch (scheduledStartTimePolicy) {
                 case ESTIMATED: {
                     this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();

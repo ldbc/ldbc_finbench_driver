@@ -60,7 +60,7 @@ public class Extractors {
     private final LongExtractor long_;
     private final IntExtractor int_;
     private final CharExtractor char_;
-    private final ShortExtractor short_;
+    private final ShortExtractor SIMPLE_;
     private final ByteExtractor byte_;
     private final BooleanExtractor boolean_;
     private final FloatExtractor float_;
@@ -96,7 +96,7 @@ public class Extractors {
             add(long_ = new LongExtractor());
             add(int_ = new IntExtractor());
             add(char_ = new CharExtractor());
-            add(short_ = new ShortExtractor());
+            add(SIMPLE_ = new ShortExtractor());
             add(byte_ = new ByteExtractor());
             add(boolean_ = new BooleanExtractor());
             add(float_ = new FloatExtractor());
@@ -204,8 +204,8 @@ public class Extractors {
         return char_;
     }
 
-    public ShortExtractor short_() {
-        return short_;
+    public ShortExtractor SIMPLE_() {
+        return SIMPLE_;
     }
 
     public ByteExtractor byte_() {

@@ -62,11 +62,11 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     private File updatesDir;
     private long updateInterleaveAsMilli;
     private double compressionRatio;
-    private double shortReadDissipationFactor;
+    private double simpleReadDissipationFactor;
     private OperationMode operationMode;
     private double batchSize;
     private Set<Class<? extends Operation>> enabledLongReadOperationTypes;
-    private Set<Class<? extends Operation>> enabledShortReadOperationTypes;
+    private Set<Class<? extends Operation>> enabledSimpleReadOperationTypes;
     private Set<Class<? extends Operation>> enabledWriteOperationTypes;
     private Set<Class<? extends Operation>> enabledDeleteOperationTypes;
     private Set<Class<? extends Operation>> enabledUpdateOperationTypes;
@@ -98,9 +98,9 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             batchSize = LdbcFinBenchTransactionWorkloadConfiguration.DEFAULT_BATCH_SIZE;
         }
 
-        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.LONG_READ_OPERATION_ENABLE_KEYS);
+        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_ENABLE_KEYS);
         compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.WRITE_OPERATION_ENABLE_KEYS);
-        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_OPERATION_ENABLE_KEYS);
+        compulsoryKeys.addAll(LdbcFinBenchTransactionWorkloadConfiguration.SIMPLE_READ_OPERATION_ENABLE_KEYS);
 
         Set<String> missingPropertyParameters =
             LdbcFinBenchTransactionWorkloadConfiguration.missingParameters(params, compulsoryKeys);
@@ -131,7 +131,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
                     format("Parameters directory does not exist: %s", parametersDir.getAbsolutePath()));
             }
             for (String readOperationParamsFilename :
-                LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_PARAMS_FILENAMES.values()) {
+                LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_PARAMS_FILENAMES.values()) {
                 File readOperationParamsFile = new File(parametersDir, readOperationParamsFilename);
                 if (!readOperationParamsFile.exists()) {
                     throw new WorkloadException(
@@ -142,24 +142,24 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         }
 
         enabledLongReadOperationTypes =
-            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.LONG_READ_OPERATION_ENABLE_KEYS,
+            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_ENABLE_KEYS,
                 params);
-        enabledShortReadOperationTypes =
-            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_OPERATION_ENABLE_KEYS,
+        enabledSimpleReadOperationTypes =
+            getEnabledOperationsHashset(LdbcFinBenchTransactionWorkloadConfiguration.SIMPLE_READ_OPERATION_ENABLE_KEYS,
                 params);
-        if (!enabledShortReadOperationTypes.isEmpty()) {
-            if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION)) {
+        if (!enabledSimpleReadOperationTypes.isEmpty()) {
+            if (!params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.simple_read_dissipation)) {
                 throw new WorkloadException(format("Configuration parameter missing: %s",
-                    LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION));
+                    LdbcFinBenchTransactionWorkloadConfiguration.simple_read_dissipation));
             }
-            shortReadDissipationFactor = Double.parseDouble(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION).trim()
+            simpleReadDissipationFactor = Double.parseDouble(
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.simple_read_dissipation).trim()
             );
-            if (shortReadDissipationFactor < 0 || shortReadDissipationFactor > 1) {
+            if (simpleReadDissipationFactor < 0 || simpleReadDissipationFactor > 1) {
                 throw new WorkloadException(
                     format("Configuration parameter %s should be in interval [1.0,0.0] but is: %s",
-                        LdbcFinBenchTransactionWorkloadConfiguration.SHORT_READ_DISSIPATION,
-                        shortReadDissipationFactor));
+                        LdbcFinBenchTransactionWorkloadConfiguration.simple_read_dissipation,
+                        simpleReadDissipationFactor));
             }
         }
 
@@ -204,7 +204,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             String updateInterleave = tmp.get(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE);
             freqs.put(LdbcFinBenchTransactionWorkloadConfiguration.UPDATE_INTERLEAVE, updateInterleave);
             for (String operationFrequencyKey :
-                LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_FREQUENCY_KEYS) {
+                LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_FREQUENCY_KEYS) {
                 freqs.put(operationFrequencyKey, "1");
             }
             freqs.keySet().removeAll(params.keySet());
@@ -215,7 +215,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         }
 
         List<String> frequencyKeys =
-            Lists.newArrayList(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_FREQUENCY_KEYS);
+            Lists.newArrayList(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_FREQUENCY_KEYS);
         Set<String> missingFrequencyKeys = LdbcFinBenchTransactionWorkloadConfiguration
             .missingParameters(params, frequencyKeys);
 
@@ -243,7 +243,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             // if any frequencies are not set, there should be specified interleave times for read queries
             Set<String> missingInterleaveKeys = LdbcFinBenchTransactionWorkloadConfiguration.missingParameters(
                 params,
-                LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_INTERLEAVE_KEYS
+                LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_INTERLEAVE_KEYS
             );
             if (!missingInterleaveKeys.isEmpty()) {
                 throw new WorkloadException(format(
@@ -255,31 +255,44 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         try {
             longReadInterleavesAsMilli = new HashMap<>();
             longReadInterleavesAsMilli.put(ComplexRead1.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_1_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_1_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead2.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_2_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_2_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead3.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_3_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_3_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead4.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_4_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_4_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead5.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_5_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_5_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead6.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_6_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_6_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead7.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_7_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_7_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead8.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_8_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_8_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead9.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_9_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_9_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead10.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_10_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead11.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_11_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead12.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_12_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY)
+                    .trim()));
             longReadInterleavesAsMilli.put(ComplexRead13.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_13_INTERLEAVE_KEY).trim()));
+                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY)
+                    .trim()));
 
         } catch (NumberFormatException e) {
             throw new WorkloadException("Unable to parse one of the read operation interleave values", e);
@@ -307,13 +320,13 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             String operationClassName =
                 LdbcFinBenchTransactionWorkloadConfiguration.LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX
                     + LdbcFinBenchTransactionWorkloadConfiguration.removePrefix(
-                        LdbcFinBenchTransactionWorkloadConfiguration.removeSuffix(
-                            operationEnableKey,
-                            LdbcFinBenchTransactionWorkloadConfiguration.ENABLE_SUFFIX
-                        ),
-                        LdbcFinBenchTransactionWorkloadConfiguration
-                            .LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX
-                    );
+                    LdbcFinBenchTransactionWorkloadConfiguration.removeSuffix(
+                        operationEnableKey,
+                        LdbcFinBenchTransactionWorkloadConfiguration.ENABLE_SUFFIX
+                    ),
+                    LdbcFinBenchTransactionWorkloadConfiguration
+                        .LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX
+                );
             try {
                 Class operationClass = ClassLoaderHelper.loadClass(operationClassName);
                 if (operationEnabled) {
@@ -395,7 +408,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             Iterator<Operation> eventOperationStream = readOperationStream.readOperationStream(
                 decoders.get(type),
                 new File(parametersDir,
-                    LdbcFinBenchTransactionWorkloadConfiguration.READ_OPERATION_PARAMS_FILENAMES.get(type))
+                    LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_PARAMS_FILENAMES.get(type))
             );
             long readOperationInterleaveAsMilli = longReadInterleavesAsMilli.get(type);
             Iterator<Long> operationStartTimes =
@@ -412,42 +425,42 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     }
 
     /**
-     * Create Short read operations
+     * Create Simple read operations
      *
      * @param hasDbConnected Whether a database is connected
      * @return
      */
-    private LdbcFinbenchShortReadGenerator getShortReadGenerator(boolean hasDbConnected) {
+    private LdbcFinbenchSimpleReadGenerator getSimpleReadGenerator(boolean hasDbConnected) {
         RandomDataGeneratorFactory randomFactory = new RandomDataGeneratorFactory(42L);
         double initialProbability = 1.0;
 
         Queue<Long> accountIdBuffer;
         Queue<Long> personIdBuffer;
         Queue<Long> companyIdBuffer;
-        LdbcFinbenchShortReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
-        LdbcFinbenchShortReadGenerator.BufferReplenishFun bufferReplenishFun;
+        LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
+        LdbcFinbenchSimpleReadGenerator.BufferReplenishFun bufferReplenishFun;
         if (hasDbConnected) {
-            accountIdBuffer = LdbcFinbenchShortReadGenerator.synchronizedCircularQueueBuffer(1024);
-            personIdBuffer = LdbcFinbenchShortReadGenerator.synchronizedCircularQueueBuffer(1024);
-            companyIdBuffer = LdbcFinbenchShortReadGenerator.synchronizedCircularQueueBuffer(1024);
+            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
+            personIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
+            companyIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
             scheduledStartTimePolicy =
-                LdbcFinbenchShortReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_ACTUAL_FINISH_TIME;
+                LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_ACTUAL_FINISH_TIME;
             bufferReplenishFun =
-                new LdbcFinbenchShortReadGenerator.ResultBufferReplenishFun(accountIdBuffer, personIdBuffer,
+                new LdbcFinbenchSimpleReadGenerator.ResultBufferReplenishFun(accountIdBuffer, personIdBuffer,
                     companyIdBuffer);
         } else {
-            accountIdBuffer = LdbcFinbenchShortReadGenerator.constantBuffer(1);
-            personIdBuffer = LdbcFinbenchShortReadGenerator.constantBuffer(1);
-            companyIdBuffer = LdbcFinbenchShortReadGenerator.constantBuffer(1);
+            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
+            personIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
+            companyIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
             scheduledStartTimePolicy =
-                LdbcFinbenchShortReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_SCHEDULED_START_TIME;
-            bufferReplenishFun = new LdbcFinbenchShortReadGenerator.NoOpBufferReplenishFun();
+                LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_SCHEDULED_START_TIME;
+            bufferReplenishFun = new LdbcFinbenchSimpleReadGenerator.NoOpBufferReplenishFun();
         }
-        return new LdbcFinbenchShortReadGenerator(
+        return new LdbcFinbenchSimpleReadGenerator(
             initialProbability,
-            shortReadDissipationFactor,
+            simpleReadDissipationFactor,
             updateInterleaveAsMilli,
-            enabledShortReadOperationTypes,
+            enabledSimpleReadOperationTypes,
             compressionRatio,
             accountIdBuffer,
             personIdBuffer,
@@ -520,11 +533,11 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         );
 
         /*
-         * SHORT READS
+         * SIMPLE READS
          */
-        ChildOperationGenerator shortReadsChildGenerator = null;
-        if (!enabledShortReadOperationTypes.isEmpty()) {
-            shortReadsChildGenerator = getShortReadGenerator(hasDbConnected);
+        ChildOperationGenerator simpleReadsChildGenerator = null;
+        if (!enabledSimpleReadOperationTypes.isEmpty()) {
+            simpleReadsChildGenerator = getSimpleReadGenerator(hasDbConnected);
         }
 
         /*
@@ -535,7 +548,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             dependencyAsynchronousOperationTypes,
             asynchronousDependencyStreams,
             asynchronousNonDependencyStreams,
-            shortReadsChildGenerator
+            simpleReadsChildGenerator
         );
 
         return ldbcFinbenchWorkloadStreams;
@@ -546,7 +559,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         Set<Class> enabledOperations = new HashSet<>();
         enabledOperations.addAll(enabledLongReadOperationTypes);
         enabledOperations.addAll(enabledUpdateOperationTypes);
-        enabledOperations.addAll(enabledShortReadOperationTypes);
+        enabledOperations.addAll(enabledSimpleReadOperationTypes);
         return enabledOperations;
     }
 

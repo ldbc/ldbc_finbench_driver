@@ -76,8 +76,6 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static final String THREADS_ARG = "tc";
     public static final int THREADS_DEFAULT = 1;
     public static final String THREADS_DEFAULT_STRING = Integer.toString(THREADS_DEFAULT);
-    private static final String THREADS_DESCRIPTION =
-        format("number of worker threads to execute with (default: %s)", THREADS_DEFAULT_STRING);
     public static final String SHOW_STATUS_ARG = "s";
     public static final int SHOW_STATUS_DEFAULT = 2;
     public static final String SHOW_STATUS_DEFAULT_STRING = Integer.toString(SHOW_STATUS_DEFAULT);
@@ -103,15 +101,17 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static final String SKIP_COUNT_ARG = "sk";
     public static final long SKIP_COUNT_DEFAULT = 0;
     public static final String SKIP_COUNT_DEFAULT_STRING = Long.toString(SKIP_COUNT_DEFAULT);
-    private static final String SKIP_COUNT_DESCRIPTION =
-        format("number of operations to skip over before beginning execution (default: %s)", SKIP_COUNT_DEFAULT_STRING);
     public static final String WARMUP_COUNT_ARG = "wu";
     public static final long WARMUP_COUNT_DEFAULT = 0;
     public static final String WARMUP_COUNT_DEFAULT_STRING = Long.toString(WARMUP_COUNT_DEFAULT);
-    private static final String WARMUP_COUNT_DESCRIPTION =
-        format("number of operations to execute during warmup phase (default: %s)", WARMUP_COUNT_DEFAULT_STRING);
     public static final String PROPERTY_FILE_ARG = "P";
     public static final String PROPERTY_ARG = "p";
+    private static final String THREADS_DESCRIPTION =
+        format("number of worker threads to execute with (default: %s)", THREADS_DEFAULT_STRING);
+    private static final String SKIP_COUNT_DESCRIPTION =
+        format("number of operations to skip over before beginning execution (default: %s)", SKIP_COUNT_DEFAULT_STRING);
+    private static final String WARMUP_COUNT_DESCRIPTION =
+        format("number of operations to execute during warmup phase (default: %s)", WARMUP_COUNT_DEFAULT_STRING);
     private static final TemporalUtil TEMPORAL_UTIL = new TemporalUtil();
     private static final DecimalFormat INTEGRAL_FORMAT = new DecimalFormat("###,###,###,###,###");
     private static final DecimalFormat FLOAT_FORMAT = new DecimalFormat("###,###,###,###,##0.0000000");
@@ -157,7 +157,6 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private static final String TIME_UNIT_DESCRIPTION =
         format("time unit to use when gathering metrics. default:%s, valid:%s", TIME_UNIT_DEFAULT_STRING,
             Arrays.toString(VALID_TIME_UNITS));
-    private static final Options OPTIONS = buildOptions();
     private static final String TIME_COMPRESSION_RATIO_ARG_LONG = "time_compression_ratio";
     private static final String TIME_COMPRESSION_RATIO_DESCRIPTION = "change duration between operations of workload";
     private static final String SPINNER_SLEEP_DURATION_ARG_LONG = "spinner_wait_duration";
@@ -171,6 +170,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private static final String PROPERTY_DESCRIPTION =
         "properties to be passed to DB and Workload - these will override properties loaded from files";
     private static final char COMMANDLINE_SEPARATOR_CHAR = '|';
+    private static final Options OPTIONS = buildOptions();
     private final Map<String, String> paramsMap;
     private final String mode;
     private final String name;
@@ -348,7 +348,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static ConsoleAndFileDriverConfiguration fromParamsMap(Map<String, String> paramsMap)
         throws DriverConfigurationException {
         try {
-            paramsMap = convertLongKeysToShortKeys(paramsMap);
+            paramsMap = convertComplexKeysToSimpleKeys(paramsMap);
 
             if (paramsMap.containsKey(TIME_UNIT_ARG)) {
                 assertValidTimeUnit(paramsMap.get(TIME_UNIT_ARG));
@@ -495,7 +495,8 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
                     tempFileProperties.load(new FileInputStream(propertyFilePath));
                     Map<String, String> tempFileParams = MapUtils.propertiesToMap(tempFileProperties);
                     boolean overwrite = true;
-                    fileParams = MapUtils.mergeMaps(convertLongKeysToShortKeys(tempFileParams), fileParams, overwrite);
+                    fileParams =
+                        MapUtils.mergeMaps(convertComplexKeysToSimpleKeys(tempFileParams), fileParams, overwrite);
                 } catch (IOException e) {
                     throw new ParseException(
                         format("Error loading properties file %s\n%s", propertyFilePath, e.getMessage()));
@@ -510,11 +511,11 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         }
 
         boolean overwrite = true;
-        return MapUtils.mergeMaps(convertLongKeysToShortKeys(fileParams), convertLongKeysToShortKeys(cmdParams),
+        return MapUtils.mergeMaps(convertComplexKeysToSimpleKeys(fileParams), convertComplexKeysToSimpleKeys(cmdParams),
             overwrite);
     }
 
-    public static Map<String, String> convertLongKeysToShortKeys(Map<String, String> paramsMap) {
+    public static Map<String, String> convertComplexKeysToSimpleKeys(Map<String, String> paramsMap) {
         paramsMap = replaceKey(paramsMap, MODE_ARG_LONG, MODE_ARG);
         paramsMap = replaceKey(paramsMap, OPERATION_COUNT_ARG_LONG, OPERATION_COUNT_ARG);
         paramsMap = replaceKey(paramsMap, NAME_ARG_LONG, NAME_ARG);
@@ -827,64 +828,64 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
      */
     @Override
     public DriverConfiguration applyArgs(Map<String, String> newParamsMap) throws DriverConfigurationException {
-        Map<String, String> newParamsMapWithShortKeys = convertLongKeysToShortKeys(newParamsMap);
-        Map<String, String> newOtherParams = MapUtils.mergeMaps(this.paramsMap, newParamsMapWithShortKeys, true);
+        Map<String, String> newParamsMapWithSimpleKeys = convertComplexKeysToSimpleKeys(newParamsMap);
+        Map<String, String> newOtherParams = MapUtils.mergeMaps(this.paramsMap, newParamsMapWithSimpleKeys, true);
 
         String newMode =
-            (newParamsMapWithShortKeys.containsKey(MODE_ARG)) ? newParamsMapWithShortKeys.get(MODE_ARG) : mode;
+            (newParamsMapWithSimpleKeys.containsKey(MODE_ARG)) ? newParamsMapWithSimpleKeys.get(MODE_ARG) : mode;
 
         String newName =
-            (newParamsMapWithShortKeys.containsKey(NAME_ARG)) ? newParamsMapWithShortKeys.get(NAME_ARG) : name;
+            (newParamsMapWithSimpleKeys.containsKey(NAME_ARG)) ? newParamsMapWithSimpleKeys.get(NAME_ARG) : name;
         String newDbClassName =
-            (newParamsMapWithShortKeys.containsKey(DB_ARG)) ? newParamsMapWithShortKeys.get(DB_ARG) : dbClassName;
+            (newParamsMapWithSimpleKeys.containsKey(DB_ARG)) ? newParamsMapWithSimpleKeys.get(DB_ARG) : dbClassName;
         String newWorkloadClassName =
-            (newParamsMapWithShortKeys.containsKey(WORKLOAD_ARG)) ? newParamsMapWithShortKeys.get(WORKLOAD_ARG)
+            (newParamsMapWithSimpleKeys.containsKey(WORKLOAD_ARG)) ? newParamsMapWithSimpleKeys.get(WORKLOAD_ARG)
                 : workloadClassName;
-        long newOperationCount = (newParamsMapWithShortKeys.containsKey(OPERATION_COUNT_ARG)) ? Long.parseLong(
-            newParamsMapWithShortKeys.get(OPERATION_COUNT_ARG)) : operationCount;
-        int newThreadCount = (newParamsMapWithShortKeys.containsKey(THREADS_ARG)) ? Integer.parseInt(
-            newParamsMapWithShortKeys.get(THREADS_ARG)) : threadCount;
+        long newOperationCount = (newParamsMapWithSimpleKeys.containsKey(OPERATION_COUNT_ARG)) ? Long.parseLong(
+            newParamsMapWithSimpleKeys.get(OPERATION_COUNT_ARG)) : operationCount;
+        int newThreadCount = (newParamsMapWithSimpleKeys.containsKey(THREADS_ARG)) ? Integer.parseInt(
+            newParamsMapWithSimpleKeys.get(THREADS_ARG)) : threadCount;
         int newStatusDisplayIntervalAsSeconds =
-            (newParamsMapWithShortKeys.containsKey(SHOW_STATUS_ARG)) ? Integer.parseInt(
-                newParamsMapWithShortKeys.get(SHOW_STATUS_ARG)) : statusDisplayIntervalAsSeconds;
-        TimeUnit newTimeUnit = (newParamsMapWithShortKeys.containsKey(TIME_UNIT_ARG)) ? TimeUnit.valueOf(
-            newParamsMapWithShortKeys.get(TIME_UNIT_ARG)) : timeUnit;
+            (newParamsMapWithSimpleKeys.containsKey(SHOW_STATUS_ARG)) ? Integer.parseInt(
+                newParamsMapWithSimpleKeys.get(SHOW_STATUS_ARG)) : statusDisplayIntervalAsSeconds;
+        TimeUnit newTimeUnit = (newParamsMapWithSimpleKeys.containsKey(TIME_UNIT_ARG)) ? TimeUnit.valueOf(
+            newParamsMapWithSimpleKeys.get(TIME_UNIT_ARG)) : timeUnit;
         String newResultDirPath =
-            (newParamsMapWithShortKeys.containsKey(RESULT_DIR_PATH_ARG)) ? newParamsMapWithShortKeys.get(
+            (newParamsMapWithSimpleKeys.containsKey(RESULT_DIR_PATH_ARG)) ? newParamsMapWithSimpleKeys.get(
                 RESULT_DIR_PATH_ARG) : resultDirPath;
         double newTimeCompressionRatio =
-            (newParamsMapWithShortKeys.containsKey(TIME_COMPRESSION_RATIO_ARG)) ? Double.parseDouble(
-                newParamsMapWithShortKeys.get(TIME_COMPRESSION_RATIO_ARG)) : timeCompressionRatio;
+            (newParamsMapWithSimpleKeys.containsKey(TIME_COMPRESSION_RATIO_ARG)) ? Double.parseDouble(
+                newParamsMapWithSimpleKeys.get(TIME_COMPRESSION_RATIO_ARG)) : timeCompressionRatio;
 
         int newValidationParametersSize =
-            (newParamsMapWithShortKeys.containsKey(VALIDATION_PARAMS_SIZE_ARG)) ? Integer.parseInt(
-                newParamsMapWithShortKeys.get(VALIDATION_PARAMS_SIZE_ARG)) : validationParametersSize;
+            (newParamsMapWithSimpleKeys.containsKey(VALIDATION_PARAMS_SIZE_ARG)) ? Integer.parseInt(
+                newParamsMapWithSimpleKeys.get(VALIDATION_PARAMS_SIZE_ARG)) : validationParametersSize;
 
         boolean newValidationSerializationCheck =
-            (newParamsMapWithShortKeys.containsKey(VALIDATION_SERIALIZATION_CHECK_ARG)) ? Boolean.parseBoolean(
-                newParamsMapWithShortKeys.get(VALIDATION_SERIALIZATION_CHECK_ARG)) : validationSerializationCheck;
+            (newParamsMapWithSimpleKeys.containsKey(VALIDATION_SERIALIZATION_CHECK_ARG)) ? Boolean.parseBoolean(
+                newParamsMapWithSimpleKeys.get(VALIDATION_SERIALIZATION_CHECK_ARG)) : validationSerializationCheck;
 
         String newDatabaseValidationFilePath =
-            (newParamsMapWithShortKeys.containsKey(DB_VALIDATION_FILE_PATH_ARG)) ? newParamsMapWithShortKeys.get(
+            (newParamsMapWithSimpleKeys.containsKey(DB_VALIDATION_FILE_PATH_ARG)) ? newParamsMapWithSimpleKeys.get(
                 DB_VALIDATION_FILE_PATH_ARG) : databaseValidationFilePath;
         long newSpinnerSleepDurationAsMilli =
-            (newParamsMapWithShortKeys.containsKey(SPINNER_SLEEP_DURATION_ARG)) ? Long.parseLong(
-                (newParamsMapWithShortKeys.get(SPINNER_SLEEP_DURATION_ARG))) : spinnerSleepDurationAsMilli;
-        boolean newPrintHelp = (newParamsMapWithShortKeys.containsKey(HELP_ARG)) ? Boolean.parseBoolean(
-            newParamsMapWithShortKeys.get(HELP_ARG)) : printHelp;
+            (newParamsMapWithSimpleKeys.containsKey(SPINNER_SLEEP_DURATION_ARG)) ? Long.parseLong(
+                (newParamsMapWithSimpleKeys.get(SPINNER_SLEEP_DURATION_ARG))) : spinnerSleepDurationAsMilli;
+        boolean newPrintHelp = (newParamsMapWithSimpleKeys.containsKey(HELP_ARG)) ? Boolean.parseBoolean(
+            newParamsMapWithSimpleKeys.get(HELP_ARG)) : printHelp;
         boolean newRecordDelayedOperations =
-            (newParamsMapWithShortKeys.containsKey(RECORD_DELAYED_OPERATIONS_ARG)) ? Boolean.parseBoolean(
-                newParamsMapWithShortKeys.get(RECORD_DELAYED_OPERATIONS_ARG)) : recordDelayedOperations;
+            (newParamsMapWithSimpleKeys.containsKey(RECORD_DELAYED_OPERATIONS_ARG)) ? Boolean.parseBoolean(
+                newParamsMapWithSimpleKeys.get(RECORD_DELAYED_OPERATIONS_ARG)) : recordDelayedOperations;
 
         boolean newIgnoreScheduledStartTimes =
-            (newParamsMapWithShortKeys.containsKey(IGNORE_SCHEDULED_START_TIMES_ARG)) ? Boolean.parseBoolean(
-                newParamsMapWithShortKeys.get(IGNORE_SCHEDULED_START_TIMES_ARG)) : ignoreScheduledStartTimes;
-        long newWarmupCount = (newParamsMapWithShortKeys.containsKey(WARMUP_COUNT_ARG)) ? Long.parseLong(
-            newParamsMapWithShortKeys.get(WARMUP_COUNT_ARG)) : warmupCount;
-        long newSkipCount = (newParamsMapWithShortKeys.containsKey(SKIP_COUNT_ARG)) ? Long.parseLong(
-            newParamsMapWithShortKeys.get(SKIP_COUNT_ARG)) : skipCount;
-        boolean newFlushLog = (newParamsMapWithShortKeys.containsKey(FLUSH_LOG_ARG)) ? Boolean.parseBoolean(
-            newParamsMapWithShortKeys.get(FLUSH_LOG_ARG)) : flushLog;
+            (newParamsMapWithSimpleKeys.containsKey(IGNORE_SCHEDULED_START_TIMES_ARG)) ? Boolean.parseBoolean(
+                newParamsMapWithSimpleKeys.get(IGNORE_SCHEDULED_START_TIMES_ARG)) : ignoreScheduledStartTimes;
+        long newWarmupCount = (newParamsMapWithSimpleKeys.containsKey(WARMUP_COUNT_ARG)) ? Long.parseLong(
+            newParamsMapWithSimpleKeys.get(WARMUP_COUNT_ARG)) : warmupCount;
+        long newSkipCount = (newParamsMapWithSimpleKeys.containsKey(SKIP_COUNT_ARG)) ? Long.parseLong(
+            newParamsMapWithSimpleKeys.get(SKIP_COUNT_ARG)) : skipCount;
+        boolean newFlushLog = (newParamsMapWithSimpleKeys.containsKey(FLUSH_LOG_ARG)) ? Boolean.parseBoolean(
+            newParamsMapWithSimpleKeys.get(FLUSH_LOG_ARG)) : flushLog;
 
         return new ConsoleAndFileDriverConfiguration(newOtherParams, newMode, newName, newDbClassName,
             newWorkloadClassName, newOperationCount, newThreadCount, newStatusDisplayIntervalAsSeconds, newTimeUnit,
@@ -1161,7 +1162,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         Set<String> excludedKeys = coreConfigurationParameterKeys();
 
         Map<String, String> filteredParamsMap =
-            MapUtils.copyExcludingKeys(convertLongKeysToShortKeys(paramsMap), excludedKeys);
+            MapUtils.copyExcludingKeys(convertComplexKeysToSimpleKeys(paramsMap), excludedKeys);
         if (!filteredParamsMap.isEmpty()) {
             sb.append("\t").append("User-defined parameters:").append("\n");
             sb.append(MapUtils.prettyPrint(filteredParamsMap, "\t\t"));

@@ -65,10 +65,10 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     // directory containing forum and person update event streams
     public static final String UPDATES_DIRECTORY = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "updates_dir";
 
-    // Short reads random walk dissipation rate, in the interval [1.0-0.0]
-    // Higher values translate to shorter walks and therefore fewer short reads
-    public static final String SHORT_READ_DISSIPATION =
-        LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "short_read_dissipation";
+    // Simple reads random walk dissipation rate, in the interval [1.0-0.0]
+    // Higher values translate to shorter walks and therefore fewer simple reads
+    public static final String simple_read_dissipation =
+        LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "simple_read_dissipation";
 
     // Average distance between updates in simulation time
     public static final String UPDATE_INTERLEAVE = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "update_interleave";
@@ -95,91 +95,91 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
      * Operation Interleave
      */
     public static final String INTERLEAVE_SUFFIX = "_transaction";
-    public static final String READ_OPERATION_1_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_1_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead1.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_2_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_2_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead2.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_3_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_3_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead3.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_4_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_4_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead4.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_5_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_5_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead5.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_6_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_6_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead6.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_7_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_7_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead7.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_8_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_8_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead8.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_9_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_9_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead9.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_10_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead10.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_11_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead11.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_12_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead12.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String READ_OPERATION_13_INTERLEAVE_KEY =
+    public static final String COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead13.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final List<String> READ_OPERATION_INTERLEAVE_KEYS = Lists.newArrayList(
-        READ_OPERATION_1_INTERLEAVE_KEY,
-        READ_OPERATION_2_INTERLEAVE_KEY,
-        READ_OPERATION_3_INTERLEAVE_KEY,
-        READ_OPERATION_4_INTERLEAVE_KEY,
-        READ_OPERATION_5_INTERLEAVE_KEY,
-        READ_OPERATION_6_INTERLEAVE_KEY,
-        READ_OPERATION_7_INTERLEAVE_KEY,
-        READ_OPERATION_8_INTERLEAVE_KEY,
-        READ_OPERATION_9_INTERLEAVE_KEY,
-        READ_OPERATION_10_INTERLEAVE_KEY,
-        READ_OPERATION_11_INTERLEAVE_KEY,
-        READ_OPERATION_12_INTERLEAVE_KEY,
-        READ_OPERATION_13_INTERLEAVE_KEY);
+    public static final List<String> COMPLEX_READ_OPERATION_INTERLEAVE_KEYS = Lists.newArrayList(
+        COMPLEX_READ_OPERATION_1_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_2_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_3_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_4_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_5_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_6_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_7_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_8_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_9_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY,
+        COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY);
     public static final Map<Integer, String> OPERATION_TYPE_TO_INTERLEAVE_KEY_MAPPING = typeToInterleaveKeyMapping();
     /*
      * Operation frequency
      */
     public static final String FREQUENCY_SUFFIX = "_freq";
-    public static final String READ_OPERATION_1_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_1_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead1.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_2_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_2_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead2.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_3_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_3_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead3.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_4_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_4_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead4.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_5_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_5_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead5.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_6_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_6_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead6.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_7_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_7_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead7.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_8_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_8_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead8.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_9_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_9_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead9.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_10_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_10_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead10.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_11_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_11_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead11.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_12_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_12_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead12.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String READ_OPERATION_13_FREQUENCY_KEY =
+    public static final String COMPLEX_READ_OPERATION_13_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead13.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final List<String> READ_OPERATION_FREQUENCY_KEYS = Lists.newArrayList(
-        READ_OPERATION_1_FREQUENCY_KEY,
-        READ_OPERATION_2_FREQUENCY_KEY,
-        READ_OPERATION_3_FREQUENCY_KEY,
-        READ_OPERATION_4_FREQUENCY_KEY,
-        READ_OPERATION_5_FREQUENCY_KEY,
-        READ_OPERATION_6_FREQUENCY_KEY,
-        READ_OPERATION_7_FREQUENCY_KEY,
-        READ_OPERATION_8_FREQUENCY_KEY,
-        READ_OPERATION_9_FREQUENCY_KEY,
-        READ_OPERATION_10_FREQUENCY_KEY,
-        READ_OPERATION_11_FREQUENCY_KEY,
-        READ_OPERATION_12_FREQUENCY_KEY,
-        READ_OPERATION_13_FREQUENCY_KEY
+    public static final List<String> COMPLEX_READ_OPERATION_FREQUENCY_KEYS = Lists.newArrayList(
+        COMPLEX_READ_OPERATION_1_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_2_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_3_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_4_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_5_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_6_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_7_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_8_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_9_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_10_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_11_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_12_FREQUENCY_KEY,
+        COMPLEX_READ_OPERATION_13_FREQUENCY_KEY
     );
     // Default value in case there is no update stream
     public static final String DEFAULT_UPDATE_INTERLEAVE = "1";
@@ -187,51 +187,51 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
      * Operation Enable
      */
     public static final String ENABLE_SUFFIX = "_enable";
-    public static final String LONG_READ_OPERATION_1_ENABLE_KEY = asEnableKey(ComplexRead1.class);
-    public static final String LONG_READ_OPERATION_2_ENABLE_KEY = asEnableKey(ComplexRead2.class);
-    public static final String LONG_READ_OPERATION_3_ENABLE_KEY = asEnableKey(ComplexRead3.class);
-    public static final String LONG_READ_OPERATION_4_ENABLE_KEY = asEnableKey(ComplexRead4.class);
-    public static final String LONG_READ_OPERATION_5_ENABLE_KEY = asEnableKey(ComplexRead5.class);
-    public static final String LONG_READ_OPERATION_6_ENABLE_KEY = asEnableKey(ComplexRead6.class);
-    public static final String LONG_READ_OPERATION_7_ENABLE_KEY = asEnableKey(ComplexRead7.class);
-    public static final String LONG_READ_OPERATION_8_ENABLE_KEY = asEnableKey(ComplexRead8.class);
-    public static final String LONG_READ_OPERATION_9_ENABLE_KEY = asEnableKey(ComplexRead9.class);
-    public static final String LONG_READ_OPERATION_10_ENABLE_KEY = asEnableKey(ComplexRead10.class);
-    public static final String LONG_READ_OPERATION_11_ENABLE_KEY = asEnableKey(ComplexRead11.class);
-    public static final String LONG_READ_OPERATION_12_ENABLE_KEY = asEnableKey(ComplexRead12.class);
-    public static final String LONG_READ_OPERATION_13_ENABLE_KEY = asEnableKey(ComplexRead13.class);
-    public static final List<String> LONG_READ_OPERATION_ENABLE_KEYS = Lists.newArrayList(
-        LONG_READ_OPERATION_1_ENABLE_KEY,
-        LONG_READ_OPERATION_2_ENABLE_KEY,
-        LONG_READ_OPERATION_3_ENABLE_KEY,
-        LONG_READ_OPERATION_4_ENABLE_KEY,
-        LONG_READ_OPERATION_5_ENABLE_KEY,
-        LONG_READ_OPERATION_6_ENABLE_KEY,
-        LONG_READ_OPERATION_7_ENABLE_KEY,
-        LONG_READ_OPERATION_8_ENABLE_KEY,
-        LONG_READ_OPERATION_9_ENABLE_KEY,
-        LONG_READ_OPERATION_10_ENABLE_KEY,
-        LONG_READ_OPERATION_11_ENABLE_KEY,
-        LONG_READ_OPERATION_12_ENABLE_KEY,
-        LONG_READ_OPERATION_13_ENABLE_KEY
+    public static final String COMPLEX_READ_OPERATION_1_ENABLE_KEY = asEnableKey(ComplexRead1.class);
+    public static final String COMPLEX_READ_OPERATION_2_ENABLE_KEY = asEnableKey(ComplexRead2.class);
+    public static final String COMPLEX_READ_OPERATION_3_ENABLE_KEY = asEnableKey(ComplexRead3.class);
+    public static final String COMPLEX_READ_OPERATION_4_ENABLE_KEY = asEnableKey(ComplexRead4.class);
+    public static final String COMPLEX_READ_OPERATION_5_ENABLE_KEY = asEnableKey(ComplexRead5.class);
+    public static final String COMPLEX_READ_OPERATION_6_ENABLE_KEY = asEnableKey(ComplexRead6.class);
+    public static final String COMPLEX_READ_OPERATION_7_ENABLE_KEY = asEnableKey(ComplexRead7.class);
+    public static final String COMPLEX_READ_OPERATION_8_ENABLE_KEY = asEnableKey(ComplexRead8.class);
+    public static final String COMPLEX_READ_OPERATION_9_ENABLE_KEY = asEnableKey(ComplexRead9.class);
+    public static final String COMPLEX_READ_OPERATION_10_ENABLE_KEY = asEnableKey(ComplexRead10.class);
+    public static final String COMPLEX_READ_OPERATION_11_ENABLE_KEY = asEnableKey(ComplexRead11.class);
+    public static final String COMPLEX_READ_OPERATION_12_ENABLE_KEY = asEnableKey(ComplexRead12.class);
+    public static final String COMPLEX_READ_OPERATION_13_ENABLE_KEY = asEnableKey(ComplexRead13.class);
+    public static final List<String> COMPLEX_READ_OPERATION_ENABLE_KEYS = Lists.newArrayList(
+        COMPLEX_READ_OPERATION_1_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_2_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_3_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_4_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_5_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_6_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_7_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_8_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_9_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_10_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_11_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_12_ENABLE_KEY,
+        COMPLEX_READ_OPERATION_13_ENABLE_KEY
     );
-    public static final String SHORT_READ_OPERATION_1_ENABLE_KEY = asEnableKey(SimpleRead1.class);
-    public static final String SHORT_READ_OPERATION_2_ENABLE_KEY = asEnableKey(SimpleRead2.class);
-    public static final String SHORT_READ_OPERATION_3_ENABLE_KEY = asEnableKey(SimpleRead3.class);
-    public static final String SHORT_READ_OPERATION_4_ENABLE_KEY = asEnableKey(SimpleRead4.class);
-    public static final String SHORT_READ_OPERATION_5_ENABLE_KEY = asEnableKey(SimpleRead5.class);
-    public static final String SHORT_READ_OPERATION_6_ENABLE_KEY = asEnableKey(SimpleRead6.class);
-    public static final String SHORT_READ_OPERATION_7_ENABLE_KEY = asEnableKey(SimpleRead7.class);
-    public static final String SHORT_READ_OPERATION_8_ENABLE_KEY = asEnableKey(SimpleRead8.class);
-    public static final List<String> SHORT_READ_OPERATION_ENABLE_KEYS = Lists.newArrayList(
-        SHORT_READ_OPERATION_1_ENABLE_KEY,
-        SHORT_READ_OPERATION_2_ENABLE_KEY,
-        SHORT_READ_OPERATION_3_ENABLE_KEY,
-        SHORT_READ_OPERATION_4_ENABLE_KEY,
-        SHORT_READ_OPERATION_5_ENABLE_KEY,
-        SHORT_READ_OPERATION_6_ENABLE_KEY,
-        SHORT_READ_OPERATION_7_ENABLE_KEY,
-        SHORT_READ_OPERATION_8_ENABLE_KEY
+    public static final String SIMPLE_READ_OPERATION_1_ENABLE_KEY = asEnableKey(SimpleRead1.class);
+    public static final String SIMPLE_READ_OPERATION_2_ENABLE_KEY = asEnableKey(SimpleRead2.class);
+    public static final String SIMPLE_READ_OPERATION_3_ENABLE_KEY = asEnableKey(SimpleRead3.class);
+    public static final String SIMPLE_READ_OPERATION_4_ENABLE_KEY = asEnableKey(SimpleRead4.class);
+    public static final String SIMPLE_READ_OPERATION_5_ENABLE_KEY = asEnableKey(SimpleRead5.class);
+    public static final String SIMPLE_READ_OPERATION_6_ENABLE_KEY = asEnableKey(SimpleRead6.class);
+    public static final String SIMPLE_READ_OPERATION_7_ENABLE_KEY = asEnableKey(SimpleRead7.class);
+    public static final String SIMPLE_READ_OPERATION_8_ENABLE_KEY = asEnableKey(SimpleRead8.class);
+    public static final List<String> SIMPLE_READ_OPERATION_ENABLE_KEYS = Lists.newArrayList(
+        SIMPLE_READ_OPERATION_1_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_2_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_3_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_4_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_5_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_6_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_7_ENABLE_KEY,
+        SIMPLE_READ_OPERATION_8_ENABLE_KEY
     );
     public static final String WRITE_OPERATION_1_ENABLE_KEY = asEnableKey(Write1.class);
     public static final String WRITE_OPERATION_2_ENABLE_KEY = asEnableKey(Write2.class);
@@ -266,20 +266,21 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     /*
      * Read Operation Parameters
      */
-    public static final String READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param.parquet";
-    public static final String READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param.parquet";
-    public static final String READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param.parquet";
-    public static final String READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param.parquet";
-    public static final String READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param.parquet";
-    public static final String READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param.parquet";
-    public static final String READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param.parquet";
-    public static final String READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param.parquet";
-    public static final String READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param.parquet";
-    public static final String READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param.parquet";
-    public static final String READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param.parquet";
-    public static final String READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.parquet";
-    public static final String READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.parquet";
-    public static final Map<Integer, String> READ_OPERATION_PARAMS_FILENAMES = typeToOperationParameterFilename();
+    public static final String COMPLEX_READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.parquet";
+    public static final Map<Integer, String> COMPLEX_READ_OPERATION_PARAMS_FILENAMES =
+        typeToOperationParameterFilename();
     /*
      * Write Operation Parameters
      */
@@ -287,37 +288,37 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
 
     private static Map<Integer, String> typeToOperationParameterFilename() {
         Map<Integer, String> mapping = new HashMap<>();
-        mapping.put(ComplexRead1.TYPE, READ_OPERATION_1_PARAMS_FILENAME);
-        mapping.put(ComplexRead2.TYPE, READ_OPERATION_2_PARAMS_FILENAME);
-        mapping.put(ComplexRead3.TYPE, READ_OPERATION_3_PARAMS_FILENAME);
-        mapping.put(ComplexRead4.TYPE, READ_OPERATION_4_PARAMS_FILENAME);
-        mapping.put(ComplexRead5.TYPE, READ_OPERATION_5_PARAMS_FILENAME);
-        mapping.put(ComplexRead6.TYPE, READ_OPERATION_6_PARAMS_FILENAME);
-        mapping.put(ComplexRead7.TYPE, READ_OPERATION_7_PARAMS_FILENAME);
-        mapping.put(ComplexRead8.TYPE, READ_OPERATION_8_PARAMS_FILENAME);
-        mapping.put(ComplexRead9.TYPE, READ_OPERATION_9_PARAMS_FILENAME);
-        mapping.put(ComplexRead10.TYPE, READ_OPERATION_10_PARAMS_FILENAME);
-        mapping.put(ComplexRead11.TYPE, READ_OPERATION_11_PARAMS_FILENAME);
-        mapping.put(ComplexRead12.TYPE, READ_OPERATION_12_PARAMS_FILENAME);
-        mapping.put(ComplexRead13.TYPE, READ_OPERATION_13_PARAMS_FILENAME);
+        mapping.put(ComplexRead1.TYPE, COMPLEX_READ_OPERATION_1_PARAMS_FILENAME);
+        mapping.put(ComplexRead2.TYPE, COMPLEX_READ_OPERATION_2_PARAMS_FILENAME);
+        mapping.put(ComplexRead3.TYPE, COMPLEX_READ_OPERATION_3_PARAMS_FILENAME);
+        mapping.put(ComplexRead4.TYPE, COMPLEX_READ_OPERATION_4_PARAMS_FILENAME);
+        mapping.put(ComplexRead5.TYPE, COMPLEX_READ_OPERATION_5_PARAMS_FILENAME);
+        mapping.put(ComplexRead6.TYPE, COMPLEX_READ_OPERATION_6_PARAMS_FILENAME);
+        mapping.put(ComplexRead7.TYPE, COMPLEX_READ_OPERATION_7_PARAMS_FILENAME);
+        mapping.put(ComplexRead8.TYPE, COMPLEX_READ_OPERATION_8_PARAMS_FILENAME);
+        mapping.put(ComplexRead9.TYPE, COMPLEX_READ_OPERATION_9_PARAMS_FILENAME);
+        mapping.put(ComplexRead10.TYPE, COMPLEX_READ_OPERATION_10_PARAMS_FILENAME);
+        mapping.put(ComplexRead11.TYPE, COMPLEX_READ_OPERATION_11_PARAMS_FILENAME);
+        mapping.put(ComplexRead12.TYPE, COMPLEX_READ_OPERATION_12_PARAMS_FILENAME);
+        mapping.put(ComplexRead13.TYPE, COMPLEX_READ_OPERATION_13_PARAMS_FILENAME);
         return mapping;
     }
 
     private static Map<Integer, String> typeToInterleaveKeyMapping() {
         Map<Integer, String> mapping = new HashMap<>();
-        mapping.put(ComplexRead1.TYPE, READ_OPERATION_1_INTERLEAVE_KEY);
-        mapping.put(ComplexRead2.TYPE, READ_OPERATION_2_INTERLEAVE_KEY);
-        mapping.put(ComplexRead3.TYPE, READ_OPERATION_3_INTERLEAVE_KEY);
-        mapping.put(ComplexRead4.TYPE, READ_OPERATION_4_INTERLEAVE_KEY);
-        mapping.put(ComplexRead5.TYPE, READ_OPERATION_5_INTERLEAVE_KEY);
-        mapping.put(ComplexRead6.TYPE, READ_OPERATION_6_INTERLEAVE_KEY);
-        mapping.put(ComplexRead7.TYPE, READ_OPERATION_7_INTERLEAVE_KEY);
-        mapping.put(ComplexRead8.TYPE, READ_OPERATION_8_INTERLEAVE_KEY);
-        mapping.put(ComplexRead9.TYPE, READ_OPERATION_9_INTERLEAVE_KEY);
-        mapping.put(ComplexRead10.TYPE, READ_OPERATION_10_INTERLEAVE_KEY);
-        mapping.put(ComplexRead11.TYPE, READ_OPERATION_11_INTERLEAVE_KEY);
-        mapping.put(ComplexRead12.TYPE, READ_OPERATION_12_INTERLEAVE_KEY);
-        mapping.put(ComplexRead13.TYPE, READ_OPERATION_13_INTERLEAVE_KEY);
+        mapping.put(ComplexRead1.TYPE, COMPLEX_READ_OPERATION_1_INTERLEAVE_KEY);
+        mapping.put(ComplexRead2.TYPE, COMPLEX_READ_OPERATION_2_INTERLEAVE_KEY);
+        mapping.put(ComplexRead3.TYPE, COMPLEX_READ_OPERATION_3_INTERLEAVE_KEY);
+        mapping.put(ComplexRead4.TYPE, COMPLEX_READ_OPERATION_4_INTERLEAVE_KEY);
+        mapping.put(ComplexRead5.TYPE, COMPLEX_READ_OPERATION_5_INTERLEAVE_KEY);
+        mapping.put(ComplexRead6.TYPE, COMPLEX_READ_OPERATION_6_INTERLEAVE_KEY);
+        mapping.put(ComplexRead7.TYPE, COMPLEX_READ_OPERATION_7_INTERLEAVE_KEY);
+        mapping.put(ComplexRead8.TYPE, COMPLEX_READ_OPERATION_8_INTERLEAVE_KEY);
+        mapping.put(ComplexRead9.TYPE, COMPLEX_READ_OPERATION_9_INTERLEAVE_KEY);
+        mapping.put(ComplexRead10.TYPE, COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY);
+        mapping.put(ComplexRead11.TYPE, COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY);
+        mapping.put(ComplexRead12.TYPE, COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY);
+        mapping.put(ComplexRead13.TYPE, COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY);
         return mapping;
     }
 
@@ -328,51 +329,51 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static Map<String, String> convertFrequenciesToInterleaves(Map<String, String> params) {
         Integer updateDistance = Integer.parseInt(params.get(UPDATE_INTERLEAVE));
 
-        Integer interleave = Integer.parseInt(params.get(READ_OPERATION_1_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_1_INTERLEAVE_KEY, interleave.toString());
+        Integer interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_1_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_1_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_2_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_2_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_2_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_2_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_3_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_3_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_3_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_3_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_4_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_4_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_4_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_4_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_5_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_5_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_5_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_5_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_6_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_6_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_6_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_6_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_7_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_7_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_7_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_7_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_8_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_8_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_8_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_8_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_9_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_9_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_9_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_9_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_10_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_10_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_10_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_11_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_11_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_11_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_12_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_12_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_12_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY, interleave.toString());
 
-        interleave = Integer.parseInt(params.get(READ_OPERATION_13_FREQUENCY_KEY)) * updateDistance;
-        params.put(READ_OPERATION_13_INTERLEAVE_KEY, interleave.toString());
+        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_13_FREQUENCY_KEY)) * updateDistance;
+        params.put(COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY, interleave.toString());
 
         return params;
     }
 
     public static Map<String, String> defaultConfigSF1() throws IOException {
         String filename = "/configuration/ldbc/finbench/transaction/sf_internal_test.properties";
-        return ConsoleAndFileDriverConfiguration.convertLongKeysToShortKeys(resourceToMap(filename));
+        return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(resourceToMap(filename));
     }
 
     private static Map<String, String> resourceToMap(String filename) throws IOException {
@@ -388,7 +389,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         Map<String, String> params = withoutWrites(
             defaultConfigSF1()
         );
-        return ConsoleAndFileDriverConfiguration.convertLongKeysToShortKeys(params);
+        return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
     public static Map<String, String> withOnly(
@@ -396,31 +397,31 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         Class<? extends Operation>... operationClasses)
         throws DriverConfigurationException, IOException {
         Map<String, String> params = withoutWrites(
-            withoutShortReads(
+            withoutSimpleReads(
                 withoutLongReads(originalParams)
             )
         );
         for (Class<? extends Operation> operationClass : operationClasses) {
             params.put(asEnableKey(operationClass), "true");
         }
-        return ConsoleAndFileDriverConfiguration.convertLongKeysToShortKeys(params);
+        return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
     public static boolean hasReads(Map<String, String> params) {
         return Lists.newArrayList(
-            LONG_READ_OPERATION_1_ENABLE_KEY,
-            LONG_READ_OPERATION_2_ENABLE_KEY,
-            LONG_READ_OPERATION_3_ENABLE_KEY,
-            LONG_READ_OPERATION_4_ENABLE_KEY,
-            LONG_READ_OPERATION_5_ENABLE_KEY,
-            LONG_READ_OPERATION_6_ENABLE_KEY,
-            LONG_READ_OPERATION_7_ENABLE_KEY,
-            LONG_READ_OPERATION_8_ENABLE_KEY,
-            LONG_READ_OPERATION_9_ENABLE_KEY,
-            LONG_READ_OPERATION_10_ENABLE_KEY,
-            LONG_READ_OPERATION_11_ENABLE_KEY,
-            LONG_READ_OPERATION_12_ENABLE_KEY,
-            LONG_READ_OPERATION_13_ENABLE_KEY).stream().anyMatch(key -> isSet(params, key));
+            COMPLEX_READ_OPERATION_1_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_2_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_3_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_4_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_5_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_6_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_7_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_8_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_9_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_10_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_11_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_12_ENABLE_KEY,
+            COMPLEX_READ_OPERATION_13_ENABLE_KEY).stream().anyMatch(key -> isSet(params, key));
     }
 
     public static boolean hasWrites(Map<String, String> params) {
@@ -439,17 +440,17 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         return params.containsKey(key) && null != params.get(key) && Boolean.parseBoolean(params.get(key));
     }
 
-    public static Map<String, String> withoutShortReads(Map<String, String> originalParams)
+    public static Map<String, String> withoutSimpleReads(Map<String, String> originalParams)
         throws DriverConfigurationException, IOException {
         Map<String, String> params = MapUtils.copyExcludingKeys(originalParams, new HashSet<>());
-        params.put(SHORT_READ_OPERATION_1_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_2_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_3_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_4_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_5_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_6_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_7_ENABLE_KEY, "false");
-        return ConsoleAndFileDriverConfiguration.convertLongKeysToShortKeys(params);
+        params.put(SIMPLE_READ_OPERATION_1_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_2_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_3_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_4_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_5_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_6_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_7_ENABLE_KEY, "false");
+        return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
     public static Map<String, String> withoutWrites(Map<String, String> originalParams)
@@ -463,33 +464,33 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         params.put(WRITE_OPERATION_6_ENABLE_KEY, "false");
         params.put(WRITE_OPERATION_7_ENABLE_KEY, "false");
         params.put(WRITE_OPERATION_8_ENABLE_KEY, "false");
-        return ConsoleAndFileDriverConfiguration.convertLongKeysToShortKeys(params);
+        return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
     public static Map<String, String> withoutLongReads(Map<String, String> originalParams)
         throws DriverConfigurationException, IOException {
         Map<String, String> params = MapUtils.copyExcludingKeys(originalParams, new HashSet<String>());
-        params.put(LONG_READ_OPERATION_1_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_2_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_3_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_4_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_5_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_6_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_7_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_8_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_9_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_10_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_11_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_12_ENABLE_KEY, "false");
-        params.put(LONG_READ_OPERATION_13_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_1_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_2_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_3_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_4_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_5_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_6_ENABLE_KEY, "false");
-        params.put(SHORT_READ_OPERATION_7_ENABLE_KEY, "false");
-        return ConsoleAndFileDriverConfiguration.convertLongKeysToShortKeys(params);
+        params.put(COMPLEX_READ_OPERATION_1_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_2_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_3_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_4_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_5_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_6_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_7_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_8_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_9_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_10_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_11_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_12_ENABLE_KEY, "false");
+        params.put(COMPLEX_READ_OPERATION_13_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_1_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_2_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_3_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_4_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_5_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_6_ENABLE_KEY, "false");
+        params.put(SIMPLE_READ_OPERATION_7_ENABLE_KEY, "false");
+        return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
     public static Map<Integer, Class<? extends Operation>> operationTypeToClassMapping() {
