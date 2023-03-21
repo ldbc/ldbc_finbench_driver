@@ -2,3 +2,7 @@
 target/
 .vscode/
 *.iml
+validation_params.csv
+results/
+validation_params-failed-actual.json
+validation_params-failed-expected.json

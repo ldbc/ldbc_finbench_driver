@@ -4,7 +4,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadStreams;
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
-import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeReader;
 import org.ldbcouncil.finbench.driver.runtime.coordination.CompletionTimeWriter;
 import org.ldbcouncil.finbench.driver.runtime.scheduling.Spinner;
 
@@ -22,8 +21,7 @@ class OperationStreamExecutorServiceThread extends Thread {
                                                 WorkloadStreams.WorkloadStreamDefinition streamDefinition,
                                                 AtomicBoolean hasFinished,
                                                 AtomicBoolean forcedTerminate,
-                                                CompletionTimeWriter completionTimeWriter,
-                                                CompletionTimeReader completionTimeReader
+                                                CompletionTimeWriter completionTimeWriter
     ) {
         super(OperationStreamExecutorServiceThread.class.getSimpleName() + "-" + System.currentTimeMillis());
         this.operationExecutor = operationExecutor;
@@ -32,8 +30,7 @@ class OperationStreamExecutorServiceThread extends Thread {
         this.forcedTerminate = forcedTerminate;
         this.initiatedTimeSubmittingOperationRetriever = new InitiatedTimeSubmittingOperationRetriever(
             streamDefinition,
-            completionTimeWriter,
-            completionTimeReader
+            completionTimeWriter
         );
     }
 

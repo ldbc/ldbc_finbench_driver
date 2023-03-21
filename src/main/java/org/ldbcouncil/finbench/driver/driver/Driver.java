@@ -79,8 +79,7 @@ public class Driver {
             case CREATE_VALIDATION:
                 return new CreateValidationParamsMode(controlService, RANDOM_SEED);
             case CREATE_STATISTICS:
-                // TODO add statistics
-                // return new CalculateWorkloadStatisticsMode(controlService, RANDOM_SEED);
+                return new CalculateWorkloadStatisticsMode(controlService, RANDOM_SEED);
             case VALIDATE_DATABASE:
                 return new ValidateDatabaseMode(controlService);
             case EXECUTE_BENCHMARK:
