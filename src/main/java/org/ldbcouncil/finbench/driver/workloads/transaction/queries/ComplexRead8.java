@@ -33,14 +33,14 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
     public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
-    private final float threshold;
+    private final long threshold;
     private final Date startTime;
     private final Date endTime;
     private final int truncationLimit;
     private final TruncationOrder truncationOrder;
 
     public ComplexRead8(@JsonProperty(ID) long id,
-                        @JsonProperty(THRESHOLD) float threshold,
+                        @JsonProperty(THRESHOLD) long threshold,
                         @JsonProperty(START_TIME) Date startTime,
                         @JsonProperty(END_TIME) Date endTime,
                         @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
@@ -57,7 +57,7 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
         return id;
     }
 
-    public float getThreshold() {
+    public long getThreshold() {
         return threshold;
     }
 
