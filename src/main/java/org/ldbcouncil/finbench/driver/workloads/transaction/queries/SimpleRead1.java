@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload simple read query 1:
- * -- Exact Account properties query --
- * Given an Account id, find the properties of the specific Account.
+ * -- Exact account query --
+ * Given an id of an Account, find the properties of the specific Account.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

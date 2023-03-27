@@ -6,8 +6,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 or withdraw by at most 3 steps from the account the Loan deposits. Note that the transfer paths of
 edge1, edge2, edge3 and edge4 are in a specific time range between start_time and end_time. Amount
 of each transfers or withdrawals between the account and the upstream account should exceed
-a specified ratio of the upstream transfer. Return all the amount ratio (ratio1, ratio2, and ratio3)
-groupby the accounts’s id at each step in descending order.
+a specified threshold of the upstream transfer. Return all the accounts’ id in the downstream of
+loan, their final ratio and their distanceFromLoan.
+Note: Upstream means the last edge in the trace.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,27 +26,27 @@ import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
     public static final int TYPE = 8;
     public static final String ID = "id";
-    public static final String RATIO = "ratio";
+    public static final String THRESHOLD = "threshold";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
     public static final String TRUNCATION_LIMIT = "truncationLimit";
     public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
-    private final float ratio;
+    private final float threshold;
     private final Date startTime;
     private final Date endTime;
     private final int truncationLimit;
     private final TruncationOrder truncationOrder;
 
     public ComplexRead8(@JsonProperty(ID) long id,
-                        @JsonProperty(RATIO) float ratio,
+                        @JsonProperty(THRESHOLD) float threshold,
                         @JsonProperty(START_TIME) Date startTime,
                         @JsonProperty(END_TIME) Date endTime,
                         @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
                         @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
         this.id = id;
-        this.ratio = ratio;
+        this.threshold = threshold;
         this.startTime = startTime;
         this.endTime = endTime;
         this.truncationLimit = truncationLimit;
@@ -56,8 +57,8 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
         return id;
     }
 
-    public float getRatio() {
-        return ratio;
+    public float getThreshold() {
+        return threshold;
     }
 
     public Date getStartTime() {
@@ -85,7 +86,7 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
             .put(ID, id)
-            .put(RATIO, ratio)
+            .put(THRESHOLD, threshold)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
             .put(TRUNCATION_LIMIT, truncationLimit)
@@ -108,7 +109,7 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
         }
         ComplexRead8 that = (ComplexRead8) o;
         return id == that.id
-            && ratio == that.ratio
+            && threshold == that.threshold
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime)
             && truncationLimit == that.truncationLimit
@@ -117,7 +118,7 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, ratio, startTime, endTime, truncationLimit, truncationOrder);
+        return Objects.hash(id, threshold, startTime, endTime, truncationLimit, truncationOrder);
     }
 
     @Override
@@ -125,8 +126,8 @@ public class ComplexRead8 extends Operation<List<ComplexRead8Result>> {
         return "ComplexRead8{"
             + "id="
             + id
-            + ", ratio="
-            + ratio
+            + ", threshold="
+            + threshold
             + ", startTime="
             + startTime
             + ", endTime="

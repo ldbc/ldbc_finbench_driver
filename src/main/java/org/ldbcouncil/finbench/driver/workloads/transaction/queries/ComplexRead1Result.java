@@ -4,31 +4,39 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead1Result {
-    public static final String COUNT_MEDIUM = "countMedium";
-    public static final String MEDIUM_TYPE = "mediumType";
+    public static final String OTHER_ID = "otherId";
+    public static final String ACCOUNT_DISTANCE = "accountDistance";
     public static final String MEDIUM_ID = "mediumId";
-    private final long countMedium;
+    public static final String MEDIUM_TYPE = "mediumType";
+    private final long otherId;
+    private final int accountDistance;
+    private final long mediumId;
     private final String mediumType;
-    private final String mediumId;
 
-    public ComplexRead1Result(@JsonProperty(COUNT_MEDIUM) long countMedium,
-                              @JsonProperty(MEDIUM_TYPE) String mediumType,
-                              @JsonProperty(MEDIUM_ID) String mediumId) {
-        this.countMedium = countMedium;
-        this.mediumType = mediumType;
+    public ComplexRead1Result(@JsonProperty(OTHER_ID) long otherId,
+                              @JsonProperty(ACCOUNT_DISTANCE) int accountDistance,
+                              @JsonProperty(MEDIUM_ID) long mediumId,
+                              @JsonProperty(MEDIUM_TYPE) String mediumType) {
+        this.otherId = otherId;
+        this.accountDistance = accountDistance;
         this.mediumId = mediumId;
+        this.mediumType = mediumType;
     }
 
-    public long getCountMedium() {
-        return countMedium;
+    public long getOtherId() {
+        return otherId;
+    }
+
+    public int getAccountDistance() {
+        return accountDistance;
+    }
+
+    public long getMediumId() {
+        return mediumId;
     }
 
     public String getMediumType() {
         return mediumType;
-    }
-
-    public String getMediumId() {
-        return mediumId;
     }
 
     @Override
@@ -40,25 +48,28 @@ public class ComplexRead1Result {
             return false;
         }
         ComplexRead1Result that = (ComplexRead1Result) o;
-        return countMedium == that.countMedium
-            && Objects.equals(mediumType, that.mediumType)
-            && Objects.equals(mediumId, that.mediumId);
+        return otherId == that.otherId
+            && accountDistance == that.accountDistance
+            && mediumId == that.mediumId
+            && Objects.equals(mediumType, that.mediumType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(countMedium, mediumType, mediumId);
+        return Objects.hash(otherId, accountDistance, mediumId, mediumType);
     }
 
     @Override
     public String toString() {
         return "ComplexRead1Result{"
-            + "countMedium="
-            + countMedium
-            + ", mediumType="
-            + mediumType
+            + "otherId="
+            + otherId
+            + ", accountDistance="
+            + accountDistance
             + ", mediumId="
             + mediumId
+            + ", mediumType="
+            + mediumType
             + '}';
     }
 }

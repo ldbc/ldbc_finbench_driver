@@ -3,8 +3,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload complex read query 11:
  * -- Final share analysis in investor relationship --
  * Given a Company, find all the Companies and Persons the Company invests by at most k steps. Then
-calculate the final share ratio of the investors to the given company groupby the investor in de-
-scending order.
+calculate the final share ratio of the investors to the given company groupby the investor in descending order.
+* Final share ratio means the final shareholding ratio of each investor in the company.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

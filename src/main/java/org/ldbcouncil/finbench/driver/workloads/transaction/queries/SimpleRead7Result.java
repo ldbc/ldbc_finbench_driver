@@ -4,15 +4,15 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class SimpleRead7Result {
-    public static final String DST_ACCOUNT_ID = "dstAccountId";
-    private final long dstAccountId;
+    public static final String COMP = "comp";
+    private final long comp;
 
-    public SimpleRead7Result(@JsonProperty(DST_ACCOUNT_ID) long dstAccountId) {
-        this.dstAccountId = dstAccountId;
+    public SimpleRead7Result(@JsonProperty(COMP) long comp) {
+        this.comp = comp;
     }
 
-    public long getDstAccountId() {
-        return dstAccountId;
+    public long getComp() {
+        return comp;
     }
 
     @Override
@@ -24,19 +24,19 @@ public class SimpleRead7Result {
             return false;
         }
         SimpleRead7Result that = (SimpleRead7Result) o;
-        return dstAccountId == that.dstAccountId;
+        return comp == that.comp;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dstAccountId);
+        return Objects.hash(comp);
     }
 
     @Override
     public String toString() {
         return "SimpleRead7Result{"
-            + "dstAccountId="
-            + dstAccountId
+            + "comp="
+            + comp
             + '}';
     }
 }

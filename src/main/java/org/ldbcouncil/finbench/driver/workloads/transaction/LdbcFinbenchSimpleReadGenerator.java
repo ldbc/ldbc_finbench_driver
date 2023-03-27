@@ -731,7 +731,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
                 case ComplexRead1.TYPE: {
                     List<ComplexRead1Result> typedResults = (List<ComplexRead1Result>) result;
                     for (int i = 0; i < typedResults.size(); i++) {
-                        accountIdBuffer.add(Long.parseLong(typedResults.get(i).getMediumId()));
+                        accountIdBuffer.add(typedResults.get(i).getMediumId());
                         // personIdBuffer.add( typedResults.get( i ) );
                     }
                     break;
@@ -1134,7 +1134,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead2(id, id, null, null); //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead2(id, null, null); //TODO new SimpleRead2(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1190,7 +1190,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead3(id); //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead3(id, 0, null, null); //TODO new SimpleRead2(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1302,7 +1302,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead5(id, null, null); //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead5(id, 0, null, null); //TODO new SimpleRead2(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1362,7 +1362,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead6(id);  //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead6(id, null, null);  //TODO new SimpleRead2(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1418,7 +1418,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead7(id, null, null); //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead7(id); //TODO new SimpleRead2(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1474,7 +1474,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead8(id, 0, null, null);  //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead8(id);  //TODO new SimpleRead2(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,

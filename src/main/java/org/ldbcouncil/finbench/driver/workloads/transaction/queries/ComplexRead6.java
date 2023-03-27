@@ -4,7 +4,7 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * -- Withdrawal after Many-to-One transfer --
  * Given an account of type card and a specified time window between start_time and end_time, find
 all the connected accounts(mid) via withdrawal(edge2) satisfying, (1)More than 3 transfer-ins(edge1)
-from other accounts(mid) whose amount exceeds threshold1. (2) The amount of withdrawal(edge2)
+from other accounts(src) whose amount exceeds threshold1. (2) The amount of withdrawal(edge2)
 exceeds threshold2. Return the sum of transfer amount from src to mid, the amount from mid to
 dstCard groupby mid.
  */

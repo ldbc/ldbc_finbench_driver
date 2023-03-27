@@ -3,9 +3,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload complex read query 4:
  * -- Three accounts in a transfer cycle --
  * Given two accounts and a specified time window between start_time and end_time, find the sum
-and max of transfers (edge2 and edge3) of them via another account(otherAccount) in a specific time
-range between start_time and end_time. Return the sum and max of the transfer amount (edge2
-and edge3) groupby the otherAccount’s id.
+and max of transfers (edge2 and edge3) of them via another account(otherN) in a specific time
+range between start_time and end_time. Return the id of the other account, the sum and max of
+the transfer amount (edge2 and edge3). Return all -1 if there is no transfers found.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

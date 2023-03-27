@@ -6,11 +6,10 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 • In the very beginning, read the blocked status of related persons. The transaction aborts
 if one of them is blocked. Move to the next step if none is blocked.
 • Add a guarantee edge between the two persons inside the transaction.
-• Detect if a guarantee chain pattern formed. Calculate if the amount sum of the related
-loans in the chain exceeds a given threshold. Transaction aborts if the sum exceeds the
-threshold, and then mark the related persons as blocked in another transaction. Otherwise
-the transaction commits.
-
+• Detect if a guarantee chain pattern formed, only for the src person. Calculate if the amount
+sum of the related loans in the chain exceeds a given threshold. Transaction aborts if
+the sum exceeds the threshold, and then mark the related persons as blocked in another
+transaction. Otherwise the transaction commits.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,22 +24,26 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
     public static final int TYPE = 10003;
     public static final String SRC_ID = "srcId";
     public static final String DST_ID = "dstId";
+    public static final String CURRENT_TIME = "currentTime";
     public static final String THRESHOLD = "threshold";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
     private final long srcId;
     private final long dstId;
+    private final Date currentTime;
     private final long threshold;
     private final Date startTime;
     private final Date endTime;
 
     public ReadWrite3(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
+                      @JsonProperty(CURRENT_TIME) Date currentTime,
                       @JsonProperty(THRESHOLD) long threshold,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime) {
         this.srcId = srcId;
         this.dstId = dstId;
+        this.currentTime = currentTime;
         this.threshold = threshold;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -52,6 +55,10 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
 
     public long getDstId() {
         return dstId;
+    }
+
+    public Date getCurrentTime() {
+        return currentTime;
     }
 
     public long getThreshold() {
@@ -76,6 +83,7 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
         return ImmutableMap.<String, Object>builder()
             .put(SRC_ID, srcId)
             .put(DST_ID, dstId)
+            .put(CURRENT_TIME, currentTime)
             .put(THRESHOLD, threshold)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
@@ -98,6 +106,7 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
         ReadWrite3 that = (ReadWrite3) o;
         return srcId == that.srcId
             && dstId == that.dstId
+            && Objects.equals(currentTime, that.currentTime)
             && threshold == that.threshold
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime);
@@ -105,7 +114,7 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, threshold, startTime, endTime);
+        return Objects.hash(srcId, dstId, currentTime, threshold, startTime, endTime);
     }
 
     @Override
@@ -115,6 +124,8 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
             + srcId
             + ", dstId="
             + dstId
+            + ", currentTime="
+            + currentTime
             + ", threshold="
             + threshold
             + ", startTime="

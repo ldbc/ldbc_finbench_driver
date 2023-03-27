@@ -4,15 +4,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class SimpleRead4Result {
-    public static final String NUM_EDGE = "numEdge";
-    private final int numEdge;
+    public static final String DST_ID = "dstId";
+    public static final String NUM_EDGES = "numEdges";
+    public static final String SUM_AMOUNT = "sumAmount";
+    private final long dstId;
+    private final int numEdges;
+    private final long sumAmount;
 
-    public SimpleRead4Result(@JsonProperty(NUM_EDGE) int numEdge) {
-        this.numEdge = numEdge;
+    public SimpleRead4Result(@JsonProperty(DST_ID) long dstId,
+                             @JsonProperty(NUM_EDGES) int numEdges,
+                             @JsonProperty(SUM_AMOUNT) long sumAmount) {
+        this.dstId = dstId;
+        this.numEdges = numEdges;
+        this.sumAmount = sumAmount;
     }
 
-    public int getNumEdge() {
-        return numEdge;
+    public long getDstId() {
+        return dstId;
+    }
+
+    public int getNumEdges() {
+        return numEdges;
+    }
+
+    public long getSumAmount() {
+        return sumAmount;
     }
 
     @Override
@@ -24,19 +40,25 @@ public class SimpleRead4Result {
             return false;
         }
         SimpleRead4Result that = (SimpleRead4Result) o;
-        return numEdge == that.numEdge;
+        return dstId == that.dstId
+            && numEdges == that.numEdges
+            && sumAmount == that.sumAmount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(numEdge);
+        return Objects.hash(dstId, numEdges, sumAmount);
     }
 
     @Override
     public String toString() {
         return "SimpleRead4Result{"
-            + "numEdge="
-            + numEdge
+            + "dstId="
+            + dstId
+            + ", numEdges="
+            + numEdges
+            + ", sumAmount="
+            + sumAmount
             + '}';
     }
 }
