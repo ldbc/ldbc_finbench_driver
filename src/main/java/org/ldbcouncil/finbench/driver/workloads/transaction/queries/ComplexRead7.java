@@ -3,8 +3,10 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload complex read query 7:
  * -- Fast-in and Fast-out --
  * Given an Account and a specified time window between start_time and end_time, find all the
-transfer-in(e1) and transfer-out(e2) whose amount exceeds threshold. Return the count of src and
-dst accounts and the ratio of transfer-in amount over transfer-out amount.
+transfer-in(edge1) and transfer-out(edge2) whose amount exceeds threshold. Return the count of src
+and dst accounts and the ratio of transfer-in amount over transfer-out amount. The fast-in and fashout
+* means a tight window between start_time and end_time. Return the ratio as -1 if there is no
+edge2.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

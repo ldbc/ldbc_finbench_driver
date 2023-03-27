@@ -1,9 +1,9 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 12:
- * -- Guarantee Cycle Detection --
+ * -- Guarantee Chain Detection --
  * Given a Person and a specified time window between start_time and end_time, find all the persons
-in the gurantee chain until end and their loans applied. Return the sum of loan amount and the
+in the guarantee chain until end and their loans applied. Return the sum of loan amount and the
 count of distinct loans.
  */
 

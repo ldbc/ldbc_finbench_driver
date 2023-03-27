@@ -4,31 +4,31 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead8Result {
-    public static final String RATIO1 = "ratio1";
-    public static final String RATIO2 = "ratio2";
-    public static final String RATIO3 = "ratio3";
-    private final float ratio1;
-    private final float ratio2;
-    private final float ratio3;
+    public static final String DST_ID = "dstId";
+    public static final String RATIO = "ratio";
+    public static final String DISTANCE_FROM_LOAN = "distanceFromLoan";
+    private final long dstId;
+    private final float ratio;
+    private final int distanceFromLoan;
 
-    public ComplexRead8Result(@JsonProperty(RATIO1) float ratio1,
-                              @JsonProperty(RATIO2) float ratio2,
-                              @JsonProperty(RATIO3) float ratio3) {
-        this.ratio1 = ratio1;
-        this.ratio2 = ratio2;
-        this.ratio3 = ratio3;
+    public ComplexRead8Result(@JsonProperty(DST_ID) long dstId,
+                              @JsonProperty(RATIO) float ratio,
+                              @JsonProperty(DISTANCE_FROM_LOAN) int distanceFromLoan) {
+        this.dstId = dstId;
+        this.ratio = ratio;
+        this.distanceFromLoan = distanceFromLoan;
     }
 
-    public float getRatio1() {
-        return ratio1;
+    public long getDstId() {
+        return dstId;
     }
 
-    public float getRatio2() {
-        return ratio2;
+    public float getRatio() {
+        return ratio;
     }
 
-    public float getRatio3() {
-        return ratio3;
+    public int getDistanceFromLoan() {
+        return distanceFromLoan;
     }
 
     @Override
@@ -40,25 +40,25 @@ public class ComplexRead8Result {
             return false;
         }
         ComplexRead8Result that = (ComplexRead8Result) o;
-        return ratio1 == that.ratio1
-            && ratio2 == that.ratio2
-            && ratio3 == that.ratio3;
+        return dstId == that.dstId
+            && ratio == that.ratio
+            && distanceFromLoan == that.distanceFromLoan;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ratio1, ratio2, ratio3);
+        return Objects.hash(dstId, ratio, distanceFromLoan);
     }
 
     @Override
     public String toString() {
         return "ComplexRead8Result{"
-            + "ratio1="
-            + ratio1
-            + ", ratio2="
-            + ratio2
-            + ", ratio3="
-            + ratio3
+            + "dstId="
+            + dstId
+            + ", ratio="
+            + ratio
+            + ", distanceFromLoan="
+            + distanceFromLoan
             + '}';
     }
 }

@@ -4,14 +4,22 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead13Result {
+    public static final String COMP_ACCOUNT_ID = "compAccountId";
     public static final String SUM_EDGE2_AMOUNT = "sumEdge2Amount";
-    private final long sumEdge2Amount;
+    private final long compAccountId;
+    private final int sumEdge2Amount;
 
-    public ComplexRead13Result(@JsonProperty(SUM_EDGE2_AMOUNT) long sumEdge2Amount) {
+    public ComplexRead13Result(@JsonProperty(COMP_ACCOUNT_ID) long compAccountId,
+                               @JsonProperty(SUM_EDGE2_AMOUNT) int sumEdge2Amount) {
+        this.compAccountId = compAccountId;
         this.sumEdge2Amount = sumEdge2Amount;
     }
 
-    public long getSumEdge2Amount() {
+    public long getCompAccountId() {
+        return compAccountId;
+    }
+
+    public int getSumEdge2Amount() {
         return sumEdge2Amount;
     }
 
@@ -24,18 +32,21 @@ public class ComplexRead13Result {
             return false;
         }
         ComplexRead13Result that = (ComplexRead13Result) o;
-        return sumEdge2Amount == that.sumEdge2Amount;
+        return compAccountId == that.compAccountId
+            && sumEdge2Amount == that.sumEdge2Amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sumEdge2Amount);
+        return Objects.hash(compAccountId, sumEdge2Amount);
     }
 
     @Override
     public String toString() {
         return "ComplexRead13Result{"
-            + "sumEdge2Amount="
+            + "compAccountId="
+            + compAccountId
+            + ", sumEdge2Amount="
             + sumEdge2Amount
             + '}';
     }

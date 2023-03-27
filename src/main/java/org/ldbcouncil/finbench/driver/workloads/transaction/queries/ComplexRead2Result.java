@@ -4,19 +4,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead2Result {
+    public static final String OTHER_ID = "otherId";
     public static final String SUM_LOAN_AMOUNT = "sumLoanAmount";
     public static final String SUM_LOAN_BALANCE = "sumLoanBalance";
-    public static final String NUM_LOANS = "numLoans";
+    private final long otherId;
     private final long sumLoanAmount;
     private final long sumLoanBalance;
-    private final long numLoans;
 
-    public ComplexRead2Result(@JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
-                              @JsonProperty(SUM_LOAN_BALANCE) long sumLoanBalance,
-                              @JsonProperty(NUM_LOANS) long numLoans) {
+    public ComplexRead2Result(@JsonProperty(OTHER_ID) long otherId,
+                              @JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
+                              @JsonProperty(SUM_LOAN_BALANCE) long sumLoanBalance) {
+        this.otherId = otherId;
         this.sumLoanAmount = sumLoanAmount;
         this.sumLoanBalance = sumLoanBalance;
-        this.numLoans = numLoans;
+    }
+
+    public long getOtherId() {
+        return otherId;
     }
 
     public long getSumLoanAmount() {
@@ -25,10 +29,6 @@ public class ComplexRead2Result {
 
     public long getSumLoanBalance() {
         return sumLoanBalance;
-    }
-
-    public long getNumLoans() {
-        return numLoans;
     }
 
     @Override
@@ -40,25 +40,25 @@ public class ComplexRead2Result {
             return false;
         }
         ComplexRead2Result that = (ComplexRead2Result) o;
-        return sumLoanAmount == that.sumLoanAmount
-            && sumLoanBalance == that.sumLoanBalance
-            && numLoans == that.numLoans;
+        return otherId == that.otherId
+            && sumLoanAmount == that.sumLoanAmount
+            && sumLoanBalance == that.sumLoanBalance;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sumLoanAmount, sumLoanBalance, numLoans);
+        return Objects.hash(otherId, sumLoanAmount, sumLoanBalance);
     }
 
     @Override
     public String toString() {
         return "ComplexRead2Result{"
-            + "sumLoanAmount="
+            + "otherId="
+            + otherId
+            + ", sumLoanAmount="
             + sumLoanAmount
             + ", sumLoanBalance="
             + sumLoanBalance
-            + ", numLoans="
-            + numLoans
             + '}';
     }
 }

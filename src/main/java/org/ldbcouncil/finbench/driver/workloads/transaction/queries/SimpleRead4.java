@@ -1,10 +1,10 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload simple read query 4:
- * -- Account transfer-outs statistic over threshold --
- * Given an account(srcAccount), find all the transfer-outs(edge) from the srcAccount to a dstAccount
-where the amount exceeds threshold in a specific time range between start_time and end_time.
-Return the count of transfer-outs and the amount sum.
+ * -- Account transfer-outs over threshold --
+ * Given an account(src), find all the transfer-outs(edge) from the src to a dst where the amount
+exceeds threshold in a specific time range between start_time and end_time. Return the count of
+transfer-outs and the amount sum.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

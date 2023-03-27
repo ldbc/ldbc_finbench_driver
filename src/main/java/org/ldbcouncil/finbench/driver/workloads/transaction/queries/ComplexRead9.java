@@ -2,10 +2,11 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 9:
  * -- Money laundering with loan involved --
- * Given an account and a specified time window between start_time and end_time, find the despoit
-and repay edge between the account and a loan, the transfers-in and transfers-out. Then calculate the
-amount ratio of deposit over repay, the amount ratio of transfers-in over transfers-out, the amount
-ratio of deposit over transfers-out. Return the ratios.
+ * Given an account, a bound of transfer amount and a specified time window between start_time
+and end_time, find the despoit and repay edge between the account and a loan, the transfers-in and
+transfers-out. Then calculate the amount ratio of deposit over repay(sum of edge1 over sum of edge2),
+the amount ratio of transfers-in over transfers-out(sum of edge3 over sum of edge4), the amount ratio
+of deposit over transfers-out(sum of edge1 over sum of edge4 ). Return the ratios.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,6 +23,7 @@ import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 
 public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
     public static final int TYPE = 9;
+    public static final String ID = "id";
     public static final String THRESHOLD = "threshold";
     public static final String LOWER_BOUND = "lowerBound";
     public static final String UPPER_BOUND = "upperBound";
@@ -30,6 +32,7 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
     public static final String TRUNCATION_LIMIT = "truncationLimit";
     public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private final long id;
     private final long threshold;
     private final float lowerBound;
     private final float upperBound;
@@ -38,13 +41,15 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
     private final int truncationLimit;
     private final TruncationOrder truncationOrder;
 
-    public ComplexRead9(@JsonProperty(THRESHOLD) long threshold,
+    public ComplexRead9(@JsonProperty(ID) long id,
+                        @JsonProperty(THRESHOLD) long threshold,
                         @JsonProperty(LOWER_BOUND) float lowerBound,
                         @JsonProperty(UPPER_BOUND) float upperBound,
                         @JsonProperty(START_TIME) Date startTime,
                         @JsonProperty(END_TIME) Date endTime,
                         @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
                         @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
+        this.id = id;
         this.threshold = threshold;
         this.lowerBound = lowerBound;
         this.upperBound = upperBound;
@@ -52,6 +57,10 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
         this.endTime = endTime;
         this.truncationLimit = truncationLimit;
         this.truncationOrder = truncationOrder;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public long getThreshold() {
@@ -90,6 +99,7 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
+            .put(ID, id)
             .put(THRESHOLD, threshold)
             .put(LOWER_BOUND, lowerBound)
             .put(UPPER_BOUND, upperBound)
@@ -114,7 +124,8 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
             return false;
         }
         ComplexRead9 that = (ComplexRead9) o;
-        return threshold == that.threshold
+        return id == that.id
+            && threshold == that.threshold
             && lowerBound == that.lowerBound
             && upperBound == that.upperBound
             && Objects.equals(startTime, that.startTime)
@@ -125,13 +136,16 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(threshold, lowerBound, upperBound, startTime, endTime, truncationLimit, truncationOrder);
+        return Objects.hash(id, threshold, lowerBound, upperBound, startTime,
+            endTime, truncationLimit, truncationOrder);
     }
 
     @Override
     public String toString() {
         return "ComplexRead9{"
-            + "threshold="
+            + "id="
+            + id
+            + ", threshold="
             + threshold
             + ", lowerBound="
             + lowerBound

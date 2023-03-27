@@ -3,8 +3,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload complex read query 13:
  * -- Transfer to company amount statistics --
  * Given a Person and a specified time window between start_time and end_time, find all the company
-accounts that s/he has transferred to. Return companies and the sum of their transfer amount in
-descending order.
+accounts that s/he has transferred to. Return the ids of the companies’ accounts and the sum of
+their transfer amount in descending order.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
