@@ -2,7 +2,6 @@ package org.ldbcouncil.finbench.driver.workloads.transaction;
 
 import static java.lang.String.format;
 
-import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Instant;
@@ -66,10 +65,9 @@ public class QueryEventStreamReader implements Iterator<Operation> {
     @Override
     public Operation next() {
         Operation query = operationStream.next();
-        // TODO Whether to do Instance
-        //Operation operation = query.newInstance();
-        //operation.setDependencyTimeStamp(query.dependencyTimeStamp());
-        //operation.setExpiryTimeStamp(query.expiryTimeStamp());
+        Operation operation = query.newInstance();
+        operation.setDependencyTimeStamp(query.dependencyTimeStamp());
+        operation.setExpiryTimeStamp(query.expiryTimeStamp());
         return query;
     }
 
@@ -91,10 +89,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 Date startTime = new Date(rs.getLong(2));
                 Date endTime = new Date(rs.getLong(3));
                 int truncationLimit = rs.getInt(4);
-                Blob truncationOrderBlob = rs.getBlob(5);
-                String truncationOrderString = new String(truncationOrderBlob.getBytes(0,
-                    (int) truncationOrderBlob.length()));
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(truncationOrderString);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
                 // TODO dependencyTimeStamp & expiryTimeStamp, if Complex Queries need dependencyTimeStamp,
                 //  we should add the time in the params
                 long dependencyTimeStamp = 0;
@@ -123,14 +118,27 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                Date startTime = new Date(rs.getLong(2));
+                Date endTime = new Date(rs.getLong(3));
+                int truncationLimit = rs.getInt(4);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead2(
+                    id,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead2: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -142,14 +150,29 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id1 = rs.getLong(1);
+                long id2 = rs.getLong(2);
+                Date startTime = new Date(rs.getLong(3));
+                Date endTime = new Date(rs.getLong(4));
+                int truncationLimit = rs.getInt(5);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead3(
+                    id1,
+                    id2,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead3: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -161,14 +184,29 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id1 = rs.getLong(1);
+                long id2 = rs.getLong(2);
+                Date startTime = new Date(rs.getLong(3));
+                Date endTime = new Date(rs.getLong(4));
+                int truncationLimit = rs.getInt(5);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead4(
+                    id1,
+                    id2,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead4: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -180,14 +218,27 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                Date startTime = new Date(rs.getLong(2));
+                Date endTime = new Date(rs.getLong(3));
+                int truncationLimit = rs.getInt(4);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead5(
+                    id,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead5: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -199,14 +250,31 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                long threshold1 = rs.getLong(2);
+                long threshold2 = rs.getLong(3);
+                Date startTime = new Date(rs.getLong(4));
+                Date endTime = new Date(rs.getLong(5));
+                int truncationLimit = rs.getInt(6);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(7));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead6(
+                    id,
+                    threshold1,
+                    threshold2,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead6: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -218,14 +286,29 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                long threshold = rs.getLong(2);
+                Date startTime = new Date(rs.getLong(3));
+                Date endTime = new Date(rs.getLong(4));
+                int truncationLimit = rs.getInt(5);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead7(
+                    id,
+                    threshold,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead7: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -237,14 +320,29 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                long threshold = rs.getLong(2);
+                Date startTime = new Date(rs.getLong(3));
+                Date endTime = new Date(rs.getLong(4));
+                int truncationLimit = rs.getInt(5);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead8(
+                    id,
+                    threshold,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead8: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -256,14 +354,33 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                long threshold = rs.getLong(2);
+                float lowerbound = rs.getLong(3);
+                float upperbound = rs.getLong(4);
+                Date startTime = new Date(rs.getLong(5));
+                Date endTime = new Date(rs.getLong(6));
+                int truncationLimit = rs.getInt(7);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(8));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead9(
+                    id,
+                    threshold,
+                    lowerbound,
+                    upperbound,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead9: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -275,14 +392,25 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id1 = rs.getLong(1);
+                long id2 = rs.getLong(2);
+                Date startTime = new Date(rs.getLong(3));
+                Date endTime = new Date(rs.getLong(4));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead10(
+                    id1,
+                    id2,
+                    startTime,
+                    endTime
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead10: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -294,14 +422,21 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                int k = rs.getInt(2);
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead11(
+                    id,
+                    k
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead11: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -313,14 +448,27 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                Date startTime = new Date(rs.getLong(2));
+                Date endTime = new Date(rs.getLong(3));
+                int truncationLimit = rs.getInt(4);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead12(
+                    id,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead12: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 
@@ -332,14 +480,27 @@ public class QueryEventStreamReader implements Iterator<Operation> {
          */
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            /*try {
-                // TODO read params and remove the line
-                rs.getTimestamp(1);
-                return null;
+            try {
+                long id = rs.getLong(1);
+                Date startTime = new Date(rs.getLong(2));
+                Date endTime = new Date(rs.getLong(3));
+                int truncationLimit = rs.getInt(4);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
+                long dependencyTimeStamp = 0;
+                long expiryTimeStamp = Long.MAX_VALUE;
+                Operation query = new ComplexRead13(
+                    id,
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
+                );
+                query.setDependencyTimeStamp(dependencyTimeStamp);
+                query.setExpiryTimeStamp(expiryTimeStamp);
+                return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead13: %s", e));
-            }*/
-            return null;
+            }
         }
     }
 }

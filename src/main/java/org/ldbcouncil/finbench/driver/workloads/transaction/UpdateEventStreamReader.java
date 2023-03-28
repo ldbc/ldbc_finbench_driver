@@ -12,6 +12,9 @@ import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader.EventDecoder;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite1;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
@@ -67,6 +70,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         decoders.put(Write13.class, new EventDecoderWrite13());
         decoders.put(Write14.class, new EventDecoderWrite14());
         decoders.put(Write15.class, new EventDecoderWrite15());
+        decoders.put(ReadWrite1.class, new EventDecoderReadWrite1());
+        decoders.put(ReadWrite2.class, new EventDecoderReadWrite2());
+        decoders.put(ReadWrite3.class, new EventDecoderReadWrite3());
         return decoders;
     }
 
@@ -124,9 +130,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long companyId = rs.getLong(1);
+                String companyName = rs.getString(2);
+                long accountId = rs.getLong(3);
+                Date currentTime = new Date(rs.getTimestamp(4).getTime());
+                boolean accountBlocked = rs.getBoolean(5);
+                String accountType = rs.getString(6);
+
+                Operation operation = new Write2(
+                    companyId,
+                    companyName,
+                    accountId,
+                    currentTime,
+                    accountBlocked,
+                    accountType);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write2: %s", e));
             }
@@ -142,9 +160,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long srcId = rs.getLong(1);
+                long dstId = rs.getLong(2);
+                Date timestamp = new Date(rs.getTimestamp(3).getTime());
+                long amount = rs.getLong(4);
+
+                Operation operation = new Write3(
+                    srcId,
+                    dstId,
+                    timestamp,
+                    amount);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write3: %s", e));
             }
@@ -160,9 +186,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long srcId = rs.getLong(1);
+                long dstId = rs.getLong(2);
+                Date timestamp = new Date(rs.getTimestamp(3).getTime());
+                long amount = rs.getLong(4);
+
+                Operation operation = new Write4(
+                    srcId,
+                    dstId,
+                    timestamp,
+                    amount);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write4: %s", e));
             }
@@ -178,9 +212,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long personId = rs.getLong(1);
+                Date currentTime = new Date(rs.getTimestamp(2).getTime());
+                long loanId = rs.getLong(3);
+                long loanAmount = rs.getLong(4);
+
+                Operation operation = new Write5(
+                    personId,
+                    currentTime,
+                    loanId,
+                    loanAmount);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write5: %s", e));
             }
@@ -196,9 +238,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long companyId = rs.getLong(1);
+                Date currentTime = new Date(rs.getTimestamp(2).getTime());
+                long loanId = rs.getLong(3);
+                long loanAmount = rs.getLong(4);
+
+                Operation operation = new Write6(
+                    companyId,
+                    currentTime,
+                    loanId,
+                    loanAmount);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write6: %s", e));
             }
@@ -214,9 +264,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long accountId = rs.getLong(1);
+                long mediumId = rs.getLong(2);
+                boolean mediumBlocked = rs.getBoolean(3);
+                Date currentTime = new Date(rs.getTimestamp(4).getTime());
+
+                Operation operation = new Write7(
+                    accountId,
+                    mediumId,
+                    mediumBlocked,
+                    currentTime);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write7: %s", e));
             }
@@ -232,9 +290,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long accountId = rs.getLong(1);
+                long loanId = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long amount = rs.getLong(4);
+
+                Operation operation = new Write8(
+                    accountId,
+                    loanId,
+                    currentTime,
+                    amount);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write8: %s", e));
             }
@@ -250,9 +316,17 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long accountId = rs.getLong(1);
+                long loanId = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long amount = rs.getLong(4);
+
+                Operation operation = new Write9(
+                    accountId,
+                    loanId,
+                    currentTime,
+                    amount);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write9: %s", e));
             }
@@ -268,9 +342,11 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long accountId = rs.getLong(1);
+
+                Operation operation = new Write10(
+                    accountId);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write10: %s", e));
             }
@@ -286,9 +362,11 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long personId = rs.getLong(1);
+
+                Operation operation = new Write11(
+                    personId);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write11: %s", e));
             }
@@ -304,9 +382,11 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long mediumId = rs.getLong(1);
+
+                Operation operation = new Write12(
+                    mediumId);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write12: %s", e));
             }
@@ -322,9 +402,15 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long pid1 = rs.getLong(1);
+                long pid2 = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+
+                Operation operation = new Write13(
+                    pid1,
+                    pid2,
+                    currentTime);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write13: %s", e));
             }
@@ -340,9 +426,11 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long id = rs.getLong(1);
+
+                Operation operation = new Write14(
+                    id);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write14: %s", e));
             }
@@ -358,11 +446,106 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                // TODO write params and remove the line
-                rs.getTimestamp(1);
-                return null;
+                long id = rs.getLong(1);
+
+                Operation operation = new Write15(
+                    id);
+                return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write15: %s", e));
+            }
+        }
+    }
+
+
+    public static class EventDecoderReadWrite1 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return ReadWrite1 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long srcId = rs.getLong(1);
+                long dstId = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long amt = rs.getLong(4);
+                Date startTime = new Date(rs.getTimestamp(5).getTime());
+                Date endTime = new Date(rs.getTimestamp(6).getTime());
+
+                Operation operation = new ReadWrite1(
+                    srcId,
+                    dstId,
+                    currentTime,
+                    amt,
+                    startTime,
+                    endTime);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite1: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderReadWrite2 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return ReadWrite2 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long srcId = rs.getLong(1);
+                long dstId = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long amt = rs.getLong(4);
+                long threshold = rs.getLong(5);
+                Date startTime = new Date(rs.getTimestamp(6).getTime());
+                Date endTime = new Date(rs.getTimestamp(7).getTime());
+
+                Operation operation = new ReadWrite2(
+                    srcId,
+                    dstId,
+                    currentTime,
+                    amt,
+                    threshold,
+                    startTime,
+                    endTime);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite2: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderReadWrite3 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return ReadWrite3 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long srcId = rs.getLong(1);
+                long dstId = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long threshold = rs.getLong(4);
+                Date startTime = new Date(rs.getTimestamp(5).getTime());
+                Date endTime = new Date(rs.getTimestamp(6).getTime());
+
+                Operation operation = new ReadWrite3(
+                    srcId,
+                    dstId,
+                    currentTime,
+                    threshold,
+                    startTime,
+                    endTime);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite3: %s", e));
             }
         }
     }

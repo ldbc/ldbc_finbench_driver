@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import org.ldbcouncil.finbench.driver.generator.RandomDataGeneratorFactory;
 import org.ldbcouncil.finbench.driver.util.ClassLoaderHelper;
 import org.ldbcouncil.finbench.driver.util.ClassLoadingException;
 import org.ldbcouncil.finbench.driver.util.MapUtils;
+import org.ldbcouncil.finbench.driver.util.Tuple4;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
@@ -55,7 +57,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
 
-// TODO: implement this
 public class LdbcFinBenchTransactionWorkload extends Workload {
     private Map<Integer, Long> longReadInterleavesAsMilli;
     private File parametersDir;
@@ -434,13 +435,13 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         RandomDataGeneratorFactory randomFactory = new RandomDataGeneratorFactory(42L);
         double initialProbability = 1.0;
 
-        Queue<Long> accountIdBuffer;
+        Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
         Queue<Long> personIdBuffer;
         Queue<Long> companyIdBuffer;
         LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
         LdbcFinbenchSimpleReadGenerator.BufferReplenishFun bufferReplenishFun;
         if (hasDbConnected) {
-            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
+            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularTuple4QueueBuffer(1024);
             personIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
             companyIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
             scheduledStartTimePolicy =
@@ -449,7 +450,8 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
                 new LdbcFinbenchSimpleReadGenerator.ResultBufferReplenishFun(accountIdBuffer, personIdBuffer,
                     companyIdBuffer);
         } else {
-            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
+            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.constantTuple4Buffer(
+                new Tuple4<>(1L, 1L, new Date(), new Date()));
             personIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
             companyIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
             scheduledStartTimePolicy =

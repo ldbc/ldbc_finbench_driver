@@ -7,6 +7,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Queues;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -20,19 +21,26 @@ import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.generator.RandomDataGeneratorFactory;
 import org.ldbcouncil.finbench.driver.util.Tuple;
 import org.ldbcouncil.finbench.driver.util.Tuple2;
+import org.ldbcouncil.finbench.driver.util.Tuple4;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite2;
@@ -41,8 +49,11 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead4;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead4Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead5Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead6;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead6Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead7;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write1;
@@ -62,10 +73,11 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
 public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator {
+    private static final long THRESHOLD = 100;
     private final double initialProbability;
     private final LdbcSimpleQueryFactory[] simpleQueryFactories;
     private final double[] probabilityDegradationFactors;
-    private final Queue<Long> accountIdBuffer;
+    private final Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
     private final Queue<Long> personIdBuffer;
     private final Queue<Long> companyIdBuffer;
     private final long[] interleavesAsMilli;
@@ -76,7 +88,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
                                            long updateInterleaveAsMilli,
                                            Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
                                            double compressionRatio,
-                                           Queue<Long> accountIdBuffer,
+                                           Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
                                            Queue<Long> personIdBuffer,
                                            Queue<Long> companyIdBuffer,
                                            RandomDataGeneratorFactory randomFactory,
@@ -89,7 +101,6 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
         this.companyIdBuffer = companyIdBuffer;
         this.bufferReplenishFun = bufferReplenishFun;
 
-        // TODO the max TYPE
         int maxReadOperationType =
             Ordering.<Integer>natural().max(ComplexRead13.TYPE, SimpleRead8.TYPE) + 1;
         this.interleavesAsMilli = new long[maxReadOperationType];
@@ -396,6 +407,10 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
         return Queues.synchronizedQueue(EvictingQueue.<Long>create(bufferSize));
     }
 
+    static Queue<Tuple4<Long, Long, Date, Date>> synchronizedCircularTuple4QueueBuffer(int bufferSize) {
+        return Queues.synchronizedQueue(EvictingQueue.<Tuple4<Long, Long, Date, Date>>create(bufferSize));
+    }
+
     static Queue<Long> constantBuffer(final long value) {
         return new Queue<Long>() {
             @Override
@@ -470,6 +485,100 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
             @Override
             public boolean addAll(Collection<? extends Long> c) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public boolean removeAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public boolean retainAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public void clear() {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+        };
+    }
+
+    static Queue<Tuple4<Long, Long, Date, Date>> constantTuple4Buffer(final Tuple4<Long, Long, Date, Date> value) {
+        return new Queue<Tuple4<Long, Long, Date, Date>>() {
+            @Override
+            public boolean add(Tuple4<Long, Long, Date, Date> longValue) {
+                return true;
+            }
+
+            @Override
+            public boolean offer(Tuple4<Long, Long, Date, Date> longValue) {
+                return true;
+            }
+
+            @Override
+            public boolean remove(Object o) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public Tuple4<Long, Long, Date, Date> remove() {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public Tuple4<Long, Long, Date, Date> poll() {
+                return value;
+            }
+
+            @Override
+            public Tuple4<Long, Long, Date, Date> element() {
+                return value;
+            }
+
+            @Override
+            public Tuple4<Long, Long, Date, Date> peek() {
+                return value;
+            }
+
+            @Override
+            public int size() {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public boolean isEmpty() {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public boolean contains(Object o) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public Iterator<Tuple4<Long, Long, Date, Date>> iterator() {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public Object[] toArray() {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public <T> T[] toArray(T[] a) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public boolean containsAll(Collection<?> c) {
+                throw new UnsupportedOperationException("Method not implemented");
+            }
+
+            @Override
+            public boolean addAll(Collection<? extends Tuple4<Long, Long, Date, Date>> c) {
                 throw new UnsupportedOperationException("Method not implemented");
             }
 
@@ -690,7 +799,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
     private interface LdbcSimpleQueryFactory {
         Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -713,11 +822,12 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
     }
 
     public static class ResultBufferReplenishFun implements BufferReplenishFun {
-        private final Queue<Long> accountIdBuffer;
+        private final Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
         private final Queue<Long> personIdBuffer;
         private final Queue<Long> companyIdBuffer;
 
-        public ResultBufferReplenishFun(Queue<Long> accountIdBuffer, Queue<Long> personIdBuffer,
+        public ResultBufferReplenishFun(Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+                                        Queue<Long> personIdBuffer,
                                         Queue<Long> companyIdBuffer) {
             this.accountIdBuffer = accountIdBuffer;
             this.personIdBuffer = personIdBuffer;
@@ -726,178 +836,123 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public void replenish(Operation operation, Object result) {
-            // TODO add complex result out
             switch (operation.type()) {
                 case ComplexRead1.TYPE: {
                     List<ComplexRead1Result> typedResults = (List<ComplexRead1Result>) result;
-                    for (int i = 0; i < typedResults.size(); i++) {
-                        accountIdBuffer.add(typedResults.get(i).getMediumId());
-                        // personIdBuffer.add( typedResults.get( i ) );
+                    ComplexRead1 complexRead1 = (ComplexRead1) operation;
+                    for (ComplexRead1Result complexRead1Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead1Result.getOtherId(),
+                            THRESHOLD,
+                            complexRead1.getStartTime(),
+                            complexRead1.getEndTime()));
+                    }
+                    break;
+                }
+                case ComplexRead2.TYPE: {
+                    List<ComplexRead2Result> typedResults = (List<ComplexRead2Result>) result;
+                    ComplexRead2 complexRead2 = (ComplexRead2) operation;
+                    for (ComplexRead2Result complexRead2Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead2Result.getOtherId(),
+                            THRESHOLD,
+                            complexRead2.getStartTime(),
+                            complexRead2.getEndTime()));
+                    }
+                    break;
+                }
+                case ComplexRead4.TYPE: {
+                    List<ComplexRead4Result> typedResults = (List<ComplexRead4Result>) result;
+                    ComplexRead4 complexRead4 = (ComplexRead4) operation;
+                    for (ComplexRead4Result complexRead4Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead4Result.getOtherId(),
+                            THRESHOLD,
+                            complexRead4.getStartTime(),
+                            complexRead4.getEndTime()));
+                    }
+                    break;
+                }
+                case ComplexRead6.TYPE: {
+                    List<ComplexRead6Result> typedResults = (List<ComplexRead6Result>) result;
+                    ComplexRead6 complexRead6 = (ComplexRead6) operation;
+                    for (ComplexRead6Result complexRead6Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead6Result.getMidId(),
+                            complexRead6.getThreshold1(),
+                            complexRead6.getStartTime(),
+                            complexRead6.getEndTime()));
+                        accountIdBuffer.add(new Tuple4<>(complexRead6Result.getMidId(),
+                            complexRead6.getThreshold2(),
+                            complexRead6.getStartTime(),
+                            complexRead6.getEndTime()));
+                    }
+                    break;
+                }
+                case ComplexRead8.TYPE: {
+                    List<ComplexRead8Result> typedResults = (List<ComplexRead8Result>) result;
+                    ComplexRead8 complexRead8 = (ComplexRead8) operation;
+                    for (ComplexRead8Result complexRead8Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead8Result.getDstId(),
+                            complexRead8.getThreshold(),
+                            complexRead8.getStartTime(),
+                            complexRead8.getEndTime()));
+                    }
+                    break;
+                }
+                case ComplexRead11.TYPE: {
+                    List<ComplexRead11Result> typedResults = (List<ComplexRead11Result>) result;
+                    for (ComplexRead11Result complexRead11Result : typedResults) {
+                        if ("Company".equals(complexRead11Result.getType())) {
+                            companyIdBuffer.add(complexRead11Result.getId());
+                        } else if ("Person".equals(complexRead11Result.getType())) {
+                            personIdBuffer.add(complexRead11Result.getId());
+                        }
+                    }
+                    break;
+                }
+                case ComplexRead13.TYPE: {
+                    List<ComplexRead13Result> typedResults = (List<ComplexRead13Result>) result;
+                    ComplexRead13 complexRead13 = (ComplexRead13) operation;
+                    for (ComplexRead13Result complexRead13Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead13Result.getCompAccountId(),
+                            THRESHOLD,
+                            complexRead13.getStartTime(),
+                            complexRead13.getEndTime()));
+                    }
+                    break;
+                }
+                case SimpleRead4.TYPE: {
+                    List<SimpleRead4Result> typedResults = (List<SimpleRead4Result>) result;
+                    SimpleRead4 simpleRead4 = (SimpleRead4) operation;
+                    for (SimpleRead4Result simpleRead4Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(simpleRead4Result.getDstId(),
+                            simpleRead4.getThreshold(),
+                            simpleRead4.getStartTime(),
+                            simpleRead4.getEndTime()));
+                    }
+                    break;
+                }
+                case SimpleRead5.TYPE: {
+                    List<SimpleRead5Result> typedResults = (List<SimpleRead5Result>) result;
+                    SimpleRead5 simpleRead5 = (SimpleRead5) operation;
+                    for (SimpleRead5Result simpleRead5Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(simpleRead5Result.getSrcId(),
+                            simpleRead5.getThreshold(),
+                            simpleRead5.getStartTime(),
+                            simpleRead5.getEndTime()));
+                    }
+                    break;
+                }
+                case SimpleRead6.TYPE: {
+                    List<SimpleRead6Result> typedResults = (List<SimpleRead6Result>) result;
+                    SimpleRead6 simpleRead6 = (SimpleRead6) operation;
+                    for (SimpleRead6Result simpleRead6Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(simpleRead6Result.getDstId(),
+                            THRESHOLD,
+                            simpleRead6.getStartTime(),
+                            simpleRead6.getEndTime()));
                     }
                     break;
                 }
                 default:
                     break;
-                /* case LdbcQuery2.TYPE:
-                {
-                    List<LdbcQuery2Result> typedResults = (List<LdbcQuery2Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        LdbcQuery2Result typedResult = typedResults.get( i );
-                        personIdBuffer.add( typedResult.getPersonId() );
-                        messageIdBuffer.add( typedResult.getMessageId() );
-                    }
-                    break;
-                }
-                case LdbcQuery3a.TYPE:
-                {
-                    List<LdbcQuery3Result> typedResults = (List<LdbcQuery3Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        personIdBuffer.add( typedResults.get( i ).getPersonId() );
-                    }
-                    break;
-                }
-                case LdbcQuery3b.TYPE:
-                {
-                    List<LdbcQuery3Result> typedResults = (List<LdbcQuery3Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        personIdBuffer.add( typedResults.get( i ).getPersonId() );
-                    }
-                    break;
-                }
-                case LdbcQuery7.TYPE:
-                {
-                    List<LdbcQuery7Result> typedResults = (List<LdbcQuery7Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        LdbcQuery7Result typedResult = typedResults.get( i );
-                        personIdBuffer.add( typedResult.getPersonId() );
-                        messageIdBuffer.add( typedResult.getMessageId() );
-                    }
-                    break;
-                }
-                case LdbcQuery8.TYPE:
-                {
-                    List<LdbcQuery8Result> typedResults = (List<LdbcQuery8Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        LdbcQuery8Result typedResult = typedResults.get( i );
-                        personIdBuffer.add( typedResult.getPersonId() );
-                        messageIdBuffer.add( typedResult.getCommentId() );
-                    }
-                    break;
-                }
-                case LdbcQuery9.TYPE:
-                {
-                    List<LdbcQuery9Result> typedResults = (List<LdbcQuery9Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        LdbcQuery9Result typedResult = typedResults.get( i );
-                        personIdBuffer.add( typedResult.getPersonId() );
-                        messageIdBuffer.add( typedResult.getMessageId() );
-                    }
-                    break;
-                }
-                case LdbcQuery10.TYPE:
-                {
-                    List<LdbcQuery10Result> typedResults = (List<LdbcQuery10Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        personIdBuffer.add( typedResults.get( i ).getPersonId() );
-                    }
-                    break;
-                }
-                case LdbcQuery11.TYPE:
-                {
-                    List<LdbcQuery11Result> typedResults = (List<LdbcQuery11Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        personIdBuffer.add( typedResults.get( i ).getPersonId() );
-                    }
-                    break;
-                }
-                case LdbcQuery12.TYPE:
-                {
-                    List<LdbcQuery12Result> typedResults = (List<LdbcQuery12Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        personIdBuffer.add( typedResults.get( i ).getPersonId() );
-                    }
-                    break;
-                }
-                case LdbcQuery14a.TYPE:
-                {
-                    List<LdbcQuery14Result> typedResults = (List<LdbcQuery14Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        for ( Number personId : typedResults.get( i ).getPersonIdsInPath() )
-                        {
-                            personIdBuffer.add( personId.longValue() );
-                        }
-                    }
-                    break;
-                }
-                case LdbcQuery14b.TYPE:
-                {
-                    List<LdbcQuery14Result> typedResults = (List<LdbcQuery14Result>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        for ( Number personId : typedResults.get( i ).getPersonIdsInPath() )
-                        {
-                            personIdBuffer.add( personId.longValue() );
-                        }
-                    }
-                    break;
-                }
-                case LdbcSimpleQuery2PersonPosts.TYPE:
-                {
-                    List<LdbcSimpleQuery2PersonPostsResult> typedResults = (List<LdbcSimpleQuery2PersonPostsResult>)
-                    result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        LdbcSimpleQuery2PersonPostsResult typedResult = typedResults.get( i );
-                        personIdBuffer.add( typedResult.getOriginalPostAuthorId() );
-                        messageIdBuffer.add( typedResult.getMessageId() );
-                        messageIdBuffer.add( typedResult.getOriginalPostId() );
-                    }
-                    break;
-                }
-                case LdbcSimpleQuery3PersonFriends.TYPE:
-                {
-                    List<LdbcSimpleQuery3PersonFriendsResult> typedResults =
-                        (List<LdbcSimpleQuery3PersonFriendsResult>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        personIdBuffer.add( typedResults.get( i ).getPersonId() );
-                    }
-                    break;
-                }
-                case LdbcSimpleQuery5MessageCreator.TYPE:
-                {
-                    LdbcSimpleQuery5MessageCreatorResult typedResult = (LdbcSimpleQuery5MessageCreatorResult) result;
-                    personIdBuffer.add( typedResult.getPersonId() );
-                    break;
-                }
-                case LdbcSimpleQuery6MessageForum.TYPE:
-                {
-                    LdbcSimpleQuery6MessageForumResult typedResult = (LdbcSimpleQuery6MessageForumResult) result;
-                    personIdBuffer.add( typedResult.getModeratorId() );
-                    break;
-                }
-                case LdbcSimpleQuery7MessageReplies.TYPE:
-                {
-                    List<LdbcSimpleQuery7MessageRepliesResult> typedResults =
-                        (List<LdbcSimpleQuery7MessageRepliesResult>) result;
-                    for ( int i = 0; i < typedResults.size(); i++ )
-                    {
-                        LdbcSimpleQuery7MessageRepliesResult typedResult = typedResults.get( i );
-                        personIdBuffer.add( typedResult.getReplyAuthorId() );
-                        messageIdBuffer.add( typedResult.getCommentId() );
-                    }
-                    break;
-                }*/
             }
         }
     }
@@ -905,7 +960,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
     private class NoOpFactory implements LdbcSimpleQueryFactory {
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -930,7 +985,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -966,7 +1021,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -1008,7 +1063,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -1067,17 +1122,21 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Long id = accountIdBuffer.poll();
-            if (null == id) {
+            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            if (null == tuple4) {
                 return null;
             } else {
+                long id = tuple4._1();
+                long threshold = tuple4._2();
+                Date startTime = tuple4._3();
+                Date endTime = tuple4._4();
                 Operation operation = new SimpleRead1(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1123,18 +1182,22 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Long id = accountIdBuffer.poll();
-            if (null == id) {
+            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            if (null == tuple4) {
                 return null;
             } else {
-                Operation operation = new SimpleRead2(id, null, null); //TODO new SimpleRead2(id);
+                long id = tuple4._1();
+                long threshold = tuple4._2();
+                Date startTime = tuple4._3();
+                Date endTime = tuple4._4();
+                Operation operation = new SimpleRead2(id, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1179,18 +1242,22 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Long id = accountIdBuffer.poll();
-            if (null == id) {
+            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            if (null == tuple4) {
                 return null;
             } else {
-                Operation operation = new SimpleRead3(id, 0, null, null); //TODO new SimpleRead2(id);
+                long id = tuple4._1();
+                long threshold = tuple4._2();
+                Date startTime = tuple4._3();
+                Date endTime = tuple4._4();
+                Operation operation = new SimpleRead3(id, 0, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1235,18 +1302,22 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Long id = accountIdBuffer.poll();
-            if (null == id) {
+            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            if (null == tuple4) {
                 return null;
             } else {
-                Operation operation = new SimpleRead4(id, 0, null, null); //TODO new SimpleRead2(id);
+                long id = tuple4._1();
+                long threshold = tuple4._2();
+                Date startTime = tuple4._3();
+                Date endTime = tuple4._4();
+                Operation operation = new SimpleRead4(id, threshold, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1291,18 +1362,22 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Long id = accountIdBuffer.poll();
-            if (null == id) {
+            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            if (null == tuple4) {
                 return null;
             } else {
-                Operation operation = new SimpleRead5(id, 0, null, null); //TODO new SimpleRead2(id);
+                long id = tuple4._1();
+                long threshold = tuple4._2();
+                Date startTime = tuple4._3();
+                Date endTime = tuple4._4();
+                Operation operation = new SimpleRead5(id, threshold, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1351,18 +1426,22 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Long id = accountIdBuffer.poll();
-            if (null == id) {
+            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            if (null == tuple4) {
                 return null;
             } else {
-                Operation operation = new SimpleRead6(id, null, null);  //TODO new SimpleRead2(id);
+                long id = tuple4._1();
+                long threshold = tuple4._2();
+                Date startTime = tuple4._3();
+                Date endTime = tuple4._4();
+                Operation operation = new SimpleRead6(id, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1407,7 +1486,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -1418,7 +1497,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead7(id); //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead7(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1463,7 +1542,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Long> accountIdBuffer,
+            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -1474,7 +1553,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
             if (null == id) {
                 return null;
             } else {
-                Operation operation = new SimpleRead8(id);  //TODO new SimpleRead2(id);
+                Operation operation = new SimpleRead8(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,

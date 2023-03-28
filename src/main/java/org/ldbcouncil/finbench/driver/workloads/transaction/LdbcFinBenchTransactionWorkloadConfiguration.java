@@ -33,6 +33,9 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite1;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead3;
@@ -592,6 +595,9 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         classToFileNameMapping.put(Write13.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(Write14.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(Write15.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(ReadWrite1.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(ReadWrite2.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(ReadWrite3.class, INSERTS_DIRECTORY + "/Person.parquet");
         return classToFileNameMapping;
     }
 
@@ -600,8 +606,24 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
      */
     public static Map<Class<? extends Operation>, String> getUpdateStreamClassToDateColumn() {
         Map<Class<? extends Operation>, String> classToDateColumnNameMapping = new HashMap<>();
-        // TODO add every update
         classToDateColumnNameMapping.put(Write1.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write2.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write3.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write4.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write5.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write6.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write7.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write8.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write9.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write10.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write11.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write12.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write13.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write14.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write15.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(ReadWrite1.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(ReadWrite2.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(ReadWrite3.class, INSERTS_DATE_COLUMN);
         return classToDateColumnNameMapping;
     }
 
