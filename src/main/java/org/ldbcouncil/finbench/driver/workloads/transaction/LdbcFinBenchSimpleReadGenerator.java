@@ -72,7 +72,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write7;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
-public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator {
+public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator {
     private static final long THRESHOLD = 100;
     private final double initialProbability;
     private final LdbcSimpleQueryFactory[] simpleQueryFactories;
@@ -83,7 +83,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
     private final long[] interleavesAsMilli;
     private final BufferReplenishFun bufferReplenishFun;
 
-    public LdbcFinbenchSimpleReadGenerator(double initialProbability,
+    public LdbcFinBenchSimpleReadGenerator(double initialProbability,
                                            double probabilityDegradationFactor,
                                            long updateInterleaveAsMilli,
                                            Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
@@ -187,7 +187,7 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
         baseSimpleReadFactories[SimpleRead7.TYPE] =
             new LdbcSimpleQuery7Factory(scheduledStartTimePolicy);
         baseSimpleReadFactories[SimpleRead8.TYPE] =
-            new LdbcSimpleQuery7Factory(scheduledStartTimePolicy);
+            new LdbcSimpleQuery8Factory(scheduledStartTimePolicy);
 
         /*
         FACTORIES
@@ -1134,9 +1134,6 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                long threshold = tuple4._2();
-                Date startTime = tuple4._3();
-                Date endTime = tuple4._4();
                 Operation operation = new SimpleRead1(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1194,7 +1191,6 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                long threshold = tuple4._2();
                 Date startTime = tuple4._3();
                 Date endTime = tuple4._4();
                 Operation operation = new SimpleRead2(id, startTime, endTime);
@@ -1254,7 +1250,6 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                long threshold = tuple4._2();
                 Date startTime = tuple4._3();
                 Date endTime = tuple4._4();
                 Operation operation = new SimpleRead3(id, 0, startTime, endTime);
@@ -1438,7 +1433,6 @@ public class LdbcFinbenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                long threshold = tuple4._2();
                 Date startTime = tuple4._3();
                 Date endTime = tuple4._4();
                 Operation operation = new SimpleRead6(id, startTime, endTime);

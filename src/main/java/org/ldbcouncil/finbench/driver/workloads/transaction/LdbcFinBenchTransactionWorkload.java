@@ -431,34 +431,34 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
      * @param hasDbConnected Whether a database is connected
      * @return
      */
-    private LdbcFinbenchSimpleReadGenerator getSimpleReadGenerator(boolean hasDbConnected) {
+    private LdbcFinBenchSimpleReadGenerator getSimpleReadGenerator(boolean hasDbConnected) {
         RandomDataGeneratorFactory randomFactory = new RandomDataGeneratorFactory(42L);
         double initialProbability = 1.0;
 
         Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
         Queue<Long> personIdBuffer;
         Queue<Long> companyIdBuffer;
-        LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
-        LdbcFinbenchSimpleReadGenerator.BufferReplenishFun bufferReplenishFun;
+        LdbcFinBenchSimpleReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
+        LdbcFinBenchSimpleReadGenerator.BufferReplenishFun bufferReplenishFun;
         if (hasDbConnected) {
-            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularTuple4QueueBuffer(1024);
-            personIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
-            companyIdBuffer = LdbcFinbenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
+            accountIdBuffer = LdbcFinBenchSimpleReadGenerator.synchronizedCircularTuple4QueueBuffer(1024);
+            personIdBuffer = LdbcFinBenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
+            companyIdBuffer = LdbcFinBenchSimpleReadGenerator.synchronizedCircularQueueBuffer(1024);
             scheduledStartTimePolicy =
-                LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_ACTUAL_FINISH_TIME;
+                LdbcFinBenchSimpleReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_ACTUAL_FINISH_TIME;
             bufferReplenishFun =
-                new LdbcFinbenchSimpleReadGenerator.ResultBufferReplenishFun(accountIdBuffer, personIdBuffer,
+                new LdbcFinBenchSimpleReadGenerator.ResultBufferReplenishFun(accountIdBuffer, personIdBuffer,
                     companyIdBuffer);
         } else {
-            accountIdBuffer = LdbcFinbenchSimpleReadGenerator.constantTuple4Buffer(
+            accountIdBuffer = LdbcFinBenchSimpleReadGenerator.constantTuple4Buffer(
                 new Tuple4<>(1L, 1L, new Date(), new Date()));
-            personIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
-            companyIdBuffer = LdbcFinbenchSimpleReadGenerator.constantBuffer(1);
+            personIdBuffer = LdbcFinBenchSimpleReadGenerator.constantBuffer(1);
+            companyIdBuffer = LdbcFinBenchSimpleReadGenerator.constantBuffer(1);
             scheduledStartTimePolicy =
-                LdbcFinbenchSimpleReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_SCHEDULED_START_TIME;
-            bufferReplenishFun = new LdbcFinbenchSimpleReadGenerator.NoOpBufferReplenishFun();
+                LdbcFinBenchSimpleReadGenerator.ScheduledStartTimePolicy.PREVIOUS_OPERATION_SCHEDULED_START_TIME;
+            bufferReplenishFun = new LdbcFinBenchSimpleReadGenerator.NoOpBufferReplenishFun();
         }
-        return new LdbcFinbenchSimpleReadGenerator(
+        return new LdbcFinBenchSimpleReadGenerator(
             initialProbability,
             simpleReadDissipationFactor,
             updateInterleaveAsMilli,
