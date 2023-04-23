@@ -7,10 +7,10 @@ public class ComplexRead13Result {
     public static final String COMP_ACCOUNT_ID = "compAccountId";
     public static final String SUM_EDGE2_AMOUNT = "sumEdge2Amount";
     private final long compAccountId;
-    private final int sumEdge2Amount;
+    private final long sumEdge2Amount;
 
     public ComplexRead13Result(@JsonProperty(COMP_ACCOUNT_ID) long compAccountId,
-                               @JsonProperty(SUM_EDGE2_AMOUNT) int sumEdge2Amount) {
+                               @JsonProperty(SUM_EDGE2_AMOUNT) long sumEdge2Amount) {
         this.compAccountId = compAccountId;
         this.sumEdge2Amount = sumEdge2Amount;
     }
@@ -19,7 +19,7 @@ public class ComplexRead13Result {
         return compAccountId;
     }
 
-    public int getSumEdge2Amount() {
+    public long getSumEdge2Amount() {
         return sumEdge2Amount;
     }
 
