@@ -23,7 +23,5 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
-      - name: Setup upterm session
-        uses: lhotari/action-upterm@v1
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots verify
