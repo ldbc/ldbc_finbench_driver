@@ -16,38 +16,38 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 public class Write6 extends Operation<LdbcNoResult> {
     public static final int TYPE = 1006;
     public static final String COMPANY_ID = "companyId";
-    public static final String CURRENT_TIME = "currentTime";
+    public static final String TIME = "time";
     public static final String LOAN_ID = "loanId";
-    public static final String LOAN_AMOUNT = "loanAmount";
+    public static final String AMOUNT = "amount";
     private final long companyId;
-    private final Date currentTime;
+    private final Date time;
     private final long loanId;
-    private final long loanAmount;
+    private final long amount;
 
     public Write6(@JsonProperty(COMPANY_ID) long companyId,
-                  @JsonProperty(CURRENT_TIME) Date currentTime,
+                  @JsonProperty(TIME) Date time,
                   @JsonProperty(LOAN_ID) long loanId,
-                  @JsonProperty(LOAN_AMOUNT) long loanAmount) {
+                  @JsonProperty(AMOUNT) long amount) {
         this.companyId = companyId;
-        this.currentTime = currentTime;
+        this.time = time;
         this.loanId = loanId;
-        this.loanAmount = loanAmount;
+        this.amount = amount;
     }
 
     public long getCompanyId() {
         return companyId;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
     public long getLoanId() {
         return loanId;
     }
 
-    public long getLoanAmount() {
-        return loanAmount;
+    public long getAmount() {
+        return amount;
     }
 
     @Override
@@ -59,9 +59,9 @@ public class Write6 extends Operation<LdbcNoResult> {
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
             .put(COMPANY_ID, companyId)
-            .put(CURRENT_TIME, currentTime)
+            .put(TIME, time)
             .put(LOAN_ID, loanId)
-            .put(LOAN_AMOUNT, loanAmount)
+            .put(AMOUNT, amount)
             .build();
     }
 
@@ -80,14 +80,14 @@ public class Write6 extends Operation<LdbcNoResult> {
         }
         Write6 that = (Write6) o;
         return companyId == that.companyId
-            && Objects.equals(currentTime, that.currentTime)
+            && Objects.equals(time, that.time)
             && loanId == that.loanId
-            && loanAmount == that.loanAmount;
+            && amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(companyId, currentTime, loanId, loanAmount);
+        return Objects.hash(companyId, time, loanId, amount);
     }
 
     @Override
@@ -95,12 +95,12 @@ public class Write6 extends Operation<LdbcNoResult> {
         return "Write6{"
             + "companyId="
             + companyId
-            + ", currentTime="
-            + currentTime
+            + ", time="
+            + time
             + ", loanId="
             + loanId
-            + ", loanAmount="
-            + loanAmount
+            + ", amount="
+            + amount
             + '}';
     }
 }

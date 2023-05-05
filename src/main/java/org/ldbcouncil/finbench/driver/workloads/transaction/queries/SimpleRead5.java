@@ -2,9 +2,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload simple read query 5:
  * -- Account transfer-ins over threshold --
- * Given an account(dst), find all the transfer-ins(edge) from the src to a dst where the amount exceeds
-threshold in a specific time range between start_time and end_time. Return the count of transfer-ins
-and the amount sum.
+ * Given an account (dst), find all the transfer-ins (edge) from the src to a dst where the amount
+exceeds threshold in a specific time range between startTime and endTime. Return the count of
+transfer-ins and the amount sum.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

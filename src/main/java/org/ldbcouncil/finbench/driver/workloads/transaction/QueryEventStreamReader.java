@@ -17,7 +17,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
@@ -49,7 +48,6 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         decoders.put(ComplexRead10.TYPE, new ComplexRead10Decoder());
         decoders.put(ComplexRead11.TYPE, new ComplexRead11Decoder());
         decoders.put(ComplexRead12.TYPE, new ComplexRead12Decoder());
-        decoders.put(ComplexRead13.TYPE, new ComplexRead13Decoder());
         return decoders;
     }
 
@@ -424,12 +422,18 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
                 long id = rs.getLong(1);
-                int k = rs.getInt(2);
+                Date startTime = new Date(rs.getLong(2));
+                Date endTime = new Date(rs.getLong(3));
+                int truncationLimit = rs.getInt(4);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead11(
                     id,
-                    k
+                    startTime,
+                    endTime,
+                    truncationLimit,
+                    truncationOrder
                 );
                 query.setDependencyTimeStamp(dependencyTimeStamp);
                 query.setExpiryTimeStamp(expiryTimeStamp);
@@ -468,38 +472,6 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 return query;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead12: %s", e));
-            }
-        }
-    }
-
-    public static class ComplexRead13Decoder implements EventDecoder<Operation> {
-        /**
-         * @param rs ResultSet object containing the row to decode
-         * @return ComplexRead13 Object
-         * @throws WorkloadException when an error occurs reading the resultSet
-         */
-        @Override
-        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
-                long id = rs.getLong(1);
-                Date startTime = new Date(rs.getLong(2));
-                Date endTime = new Date(rs.getLong(3));
-                int truncationLimit = rs.getInt(4);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(5));
-                long dependencyTimeStamp = 0;
-                long expiryTimeStamp = Long.MAX_VALUE;
-                Operation query = new ComplexRead13(
-                    id,
-                    startTime,
-                    endTime,
-                    truncationLimit,
-                    truncationOrder
-                );
-                query.setDependencyTimeStamp(dependencyTimeStamp);
-                query.setExpiryTimeStamp(expiryTimeStamp);
-                return query;
-            } catch (SQLException e) {
-                throw new WorkloadException(format("Error while decoding ResultSet for ComplexRead13: %s", e));
             }
         }
     }

@@ -18,20 +18,20 @@ public class Write7 extends Operation<LdbcNoResult> {
     public static final String ACCOUNT_ID = "accountId";
     public static final String MEDIUM_ID = "mediumId";
     public static final String MEDIUM_BLOCKED = "mediumBlocked";
-    public static final String CURRENT_TIME = "currentTime";
+    public static final String TIME = "time";
     private final long accountId;
     private final long mediumId;
     private final boolean mediumBlocked;
-    private final Date currentTime;
+    private final Date time;
 
     public Write7(@JsonProperty(ACCOUNT_ID) long accountId,
                   @JsonProperty(MEDIUM_ID) long mediumId,
                   @JsonProperty(MEDIUM_BLOCKED) boolean mediumBlocked,
-                  @JsonProperty(CURRENT_TIME) Date currentTime) {
+                  @JsonProperty(TIME) Date time) {
         this.accountId = accountId;
         this.mediumId = mediumId;
         this.mediumBlocked = mediumBlocked;
-        this.currentTime = currentTime;
+        this.time = time;
     }
 
     public long getAccountId() {
@@ -46,8 +46,8 @@ public class Write7 extends Operation<LdbcNoResult> {
         return mediumBlocked;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class Write7 extends Operation<LdbcNoResult> {
             .put(ACCOUNT_ID, accountId)
             .put(MEDIUM_ID, mediumId)
             .put(MEDIUM_BLOCKED, mediumBlocked)
-            .put(CURRENT_TIME, currentTime)
+            .put(TIME, time)
             .build();
     }
 
@@ -82,12 +82,12 @@ public class Write7 extends Operation<LdbcNoResult> {
         return accountId == that.accountId
             && mediumId == that.mediumId
             && mediumBlocked == that.mediumBlocked
-            && Objects.equals(currentTime, that.currentTime);
+            && Objects.equals(time, that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountId, mediumId, mediumBlocked, currentTime);
+        return Objects.hash(accountId, mediumId, mediumBlocked, time);
     }
 
     @Override
@@ -99,8 +99,8 @@ public class Write7 extends Operation<LdbcNoResult> {
             + mediumId
             + ", mediumBlocked="
             + mediumBlocked
-            + ", currentTime="
-            + currentTime
+            + ", time="
+            + time
             + '}';
     }
 }

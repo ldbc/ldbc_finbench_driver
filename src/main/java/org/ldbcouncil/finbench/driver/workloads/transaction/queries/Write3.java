@@ -17,20 +17,20 @@ public class Write3 extends Operation<LdbcNoResult> {
     public static final int TYPE = 1003;
     public static final String SRC_ID = "srcId";
     public static final String DST_ID = "dstId";
-    public static final String TIMESTAMP = "timestamp";
+    public static final String TIME = "time";
     public static final String AMOUNT = "amount";
     private final long srcId;
     private final long dstId;
-    private final Date timestamp;
+    private final Date time;
     private final long amount;
 
     public Write3(@JsonProperty(SRC_ID) long srcId,
                   @JsonProperty(DST_ID) long dstId,
-                  @JsonProperty(TIMESTAMP) Date timestamp,
+                  @JsonProperty(TIME) Date time,
                   @JsonProperty(AMOUNT) long amount) {
         this.srcId = srcId;
         this.dstId = dstId;
-        this.timestamp = timestamp;
+        this.time = time;
         this.amount = amount;
     }
 
@@ -42,8 +42,8 @@ public class Write3 extends Operation<LdbcNoResult> {
         return dstId;
     }
 
-    public Date getTimestamp() {
-        return timestamp;
+    public Date getTime() {
+        return time;
     }
 
     public long getAmount() {
@@ -60,7 +60,7 @@ public class Write3 extends Operation<LdbcNoResult> {
         return ImmutableMap.<String, Object>builder()
             .put(SRC_ID, srcId)
             .put(DST_ID, dstId)
-            .put(TIMESTAMP, timestamp)
+            .put(TIME, time)
             .put(AMOUNT, amount)
             .build();
     }
@@ -81,13 +81,13 @@ public class Write3 extends Operation<LdbcNoResult> {
         Write3 that = (Write3) o;
         return srcId == that.srcId
             && dstId == that.dstId
-            && Objects.equals(timestamp, that.timestamp)
+            && Objects.equals(time, that.time)
             && amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, timestamp, amount);
+        return Objects.hash(srcId, dstId, time, amount);
     }
 
     @Override
@@ -97,8 +97,8 @@ public class Write3 extends Operation<LdbcNoResult> {
             + srcId
             + ", dstId="
             + dstId
-            + ", timestamp="
-            + timestamp
+            + ", time="
+            + time
             + ", amount="
             + amount
             + '}';

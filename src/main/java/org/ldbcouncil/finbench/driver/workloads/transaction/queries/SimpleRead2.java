@@ -3,8 +3,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload simple read query 2:
  * -- Transfer-ins and transfer-outs --
  * Given an account, find the sum and max of fund amount in transfer-ins and transfer-outs between
-them in a specific time range between start_time and end_time. Return the sum and max of
-amount.
+them in a specific time range between startTime and endTime. Return the sum and max of amount.
+For edge1 and edge2, return -1 for the max (maxEdge1Amount and maxEdge2Amount) if there is no
+transfer.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

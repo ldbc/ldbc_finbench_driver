@@ -2,8 +2,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload simple read query 6:
  * -- Accounts with the same transfer sources of exact account --
- * Given an Account(account), find all the blocked Accounts(dstAccounts) that connect to a common
-account(midAccount) with the given Account(account). Return all the accounts’ id.
+ * Given an Account (account), find all the blocked Accounts (dstAccounts) that connect to a common
+account (midAccount) with the given Account (account). Return all the accounts’ id.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -2,11 +2,11 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 9:
  * -- Money laundering with loan involved --
- * Given an account, a bound of transfer amount and a specified time window between start_time
-and end_time, find the despoit and repay edge between the account and a loan, the transfers-in and
-transfers-out. Then calculate the amount ratio of deposit over repay(sum of edge1 over sum of edge2),
-the amount ratio of transfers-in over transfers-out(sum of edge3 over sum of edge4), the amount ratio
-of deposit over transfers-out(sum of edge1 over sum of edge4 ). Return the ratios.
+ * Given an account, a bound of transfer amount and a specified time window between startTime
+and endTime, find the deposit and repay edge between the account and a loan, the transfers-in and
+transfers-out. Return ratioRepay (sum of edge1 over sum of edge2), ratioDeposit (sum of edge1 over
+sum of edge4), ratioTransfer (sum of edge3 over sum of edge4). Return -1 for ratioRepay if there is
+no edge2 found. Return -1 for ratioDeposit and ratioTransfer if there is no edge4 found.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -136,8 +136,8 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, threshold, lowerBound, upperBound, startTime,
-            endTime, truncationLimit, truncationOrder);
+        return Objects.hash(id, threshold, lowerBound, upperBound, startTime, endTime,
+            truncationLimit, truncationOrder);
     }
 
     @Override

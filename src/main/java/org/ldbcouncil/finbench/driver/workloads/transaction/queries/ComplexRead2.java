@@ -2,9 +2,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 2:
  * -- Fund gathered from the accounts applying loans --
- * Given a Person and a specified time window between start_time and end_time, find an Account
-owned by the Person which has fund transferred from other Accounts by at most 3 steps(edge2) which
-has fund deposited from a loan. The timestamps of in transfer trace(edge2) are in ascending order
+ * Given a Person and a specified time window between startTime and endTime, find an Account owned
+by the Person which has fund transferred from other Accounts by at most 3 steps (edge2) which has
+fund deposited from a loan. The timestamps of in transfer trace (edge2) must be in ascending order
 from the upstream to downstream. Return the sum of distinct loan amount, the sum of distinct
 loan balance and the count of distinct loans.
  */

@@ -11,7 +11,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
@@ -41,7 +40,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9
     @JsonSubTypes.Type(ComplexRead10.class),
     @JsonSubTypes.Type(ComplexRead11.class),
     @JsonSubTypes.Type(ComplexRead12.class),
-    @JsonSubTypes.Type(ComplexRead13.class),
 })
 public abstract class Operation<RESULT_TYPE> {
     private static final TemporalUtil temporalutil = new TemporalUtil();

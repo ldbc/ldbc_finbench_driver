@@ -47,7 +47,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
@@ -290,9 +289,6 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
                     .trim()));
             longReadInterleavesAsMilli.put(ComplexRead12.TYPE, Long.parseLong(
                 params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY)
-                    .trim()));
-            longReadInterleavesAsMilli.put(ComplexRead13.TYPE, Long.parseLong(
-                params.get(LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY)
                     .trim()));
 
         } catch (NumberFormatException e) {

@@ -24,26 +24,26 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
     public static final int TYPE = 10003;
     public static final String SRC_ID = "srcId";
     public static final String DST_ID = "dstId";
-    public static final String CURRENT_TIME = "currentTime";
+    public static final String TIME = "time";
     public static final String THRESHOLD = "threshold";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
     private final long srcId;
     private final long dstId;
-    private final Date currentTime;
+    private final Date time;
     private final long threshold;
     private final Date startTime;
     private final Date endTime;
 
     public ReadWrite3(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
-                      @JsonProperty(CURRENT_TIME) Date currentTime,
+                      @JsonProperty(TIME) Date time,
                       @JsonProperty(THRESHOLD) long threshold,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime) {
         this.srcId = srcId;
         this.dstId = dstId;
-        this.currentTime = currentTime;
+        this.time = time;
         this.threshold = threshold;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -57,8 +57,8 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
         return dstId;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
     public long getThreshold() {
@@ -83,7 +83,7 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
         return ImmutableMap.<String, Object>builder()
             .put(SRC_ID, srcId)
             .put(DST_ID, dstId)
-            .put(CURRENT_TIME, currentTime)
+            .put(TIME, time)
             .put(THRESHOLD, threshold)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
@@ -106,7 +106,7 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
         ReadWrite3 that = (ReadWrite3) o;
         return srcId == that.srcId
             && dstId == that.dstId
-            && Objects.equals(currentTime, that.currentTime)
+            && Objects.equals(time, that.time)
             && threshold == that.threshold
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime);
@@ -114,7 +114,7 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, currentTime, threshold, startTime, endTime);
+        return Objects.hash(srcId, dstId, time, threshold, startTime, endTime);
     }
 
     @Override
@@ -124,8 +124,8 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
             + srcId
             + ", dstId="
             + dstId
-            + ", currentTime="
-            + currentTime
+            + ", time="
+            + time
             + ", threshold="
             + threshold
             + ", startTime="

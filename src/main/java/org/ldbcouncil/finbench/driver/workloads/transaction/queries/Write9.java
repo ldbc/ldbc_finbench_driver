@@ -17,20 +17,20 @@ public class Write9 extends Operation<LdbcNoResult> {
     public static final int TYPE = 1009;
     public static final String ACCOUNT_ID = "accountId";
     public static final String LOAN_ID = "loanId";
-    public static final String CURRENT_TIME = "currentTime";
+    public static final String TIME = "time";
     public static final String AMOUNT = "amount";
     private final long accountId;
     private final long loanId;
-    private final Date currentTime;
+    private final Date time;
     private final long amount;
 
     public Write9(@JsonProperty(ACCOUNT_ID) long accountId,
                   @JsonProperty(LOAN_ID) long loanId,
-                  @JsonProperty(CURRENT_TIME) Date currentTime,
+                  @JsonProperty(TIME) Date time,
                   @JsonProperty(AMOUNT) long amount) {
         this.accountId = accountId;
         this.loanId = loanId;
-        this.currentTime = currentTime;
+        this.time = time;
         this.amount = amount;
     }
 
@@ -42,8 +42,8 @@ public class Write9 extends Operation<LdbcNoResult> {
         return loanId;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
     public long getAmount() {
@@ -60,7 +60,7 @@ public class Write9 extends Operation<LdbcNoResult> {
         return ImmutableMap.<String, Object>builder()
             .put(ACCOUNT_ID, accountId)
             .put(LOAN_ID, loanId)
-            .put(CURRENT_TIME, currentTime)
+            .put(TIME, time)
             .put(AMOUNT, amount)
             .build();
     }
@@ -81,13 +81,13 @@ public class Write9 extends Operation<LdbcNoResult> {
         Write9 that = (Write9) o;
         return accountId == that.accountId
             && loanId == that.loanId
-            && Objects.equals(currentTime, that.currentTime)
+            && Objects.equals(time, that.time)
             && amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountId, loanId, currentTime, amount);
+        return Objects.hash(accountId, loanId, time, amount);
     }
 
     @Override
@@ -97,8 +97,8 @@ public class Write9 extends Operation<LdbcNoResult> {
             + accountId
             + ", loanId="
             + loanId
-            + ", currentTime="
-            + currentTime
+            + ", time="
+            + time
             + ", amount="
             + amount
             + '}';

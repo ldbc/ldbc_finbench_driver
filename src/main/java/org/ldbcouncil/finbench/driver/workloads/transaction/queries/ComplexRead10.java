@@ -2,9 +2,9 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 10:
  * -- Similarity of investor relationship --
- * Given two Persons and a specified time window between start_time and end_time, find all the
-Companies the two Persons invest. Return the jaccard similarity between the two companies set.
-Note that there is no truncation in this case.
+ * Given two Persons and a specified time window between startTime and endTime, find all the Companies the two
+ * Persons invest in. Return the Jaccard similarity between the two companies set.
+Return 0 if there is no edges found connecting to any of these two persons.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,32 +20,32 @@ import org.ldbcouncil.finbench.driver.Operation;
 
 public class ComplexRead10 extends Operation<List<ComplexRead10Result>> {
     public static final int TYPE = 10;
-    public static final String ID1 = "id1";
-    public static final String ID2 = "id2";
+    public static final String PID1 = "pid1";
+    public static final String PID2 = "pid2";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
-    private final long id1;
-    private final long id2;
+    private final long pid1;
+    private final long pid2;
     private final Date startTime;
     private final Date endTime;
 
-    public ComplexRead10(@JsonProperty(ID1) long id1,
-                         @JsonProperty(ID2) long id2,
+    public ComplexRead10(@JsonProperty(PID1) long pid1,
+                         @JsonProperty(PID2) long pid2,
                          @JsonProperty(START_TIME) Date startTime,
                          @JsonProperty(END_TIME) Date endTime) {
-        this.id1 = id1;
-        this.id2 = id2;
+        this.pid1 = pid1;
+        this.pid2 = pid2;
         this.startTime = startTime;
         this.endTime = endTime;
     }
 
-    public long getId1() {
-        return id1;
+    public long getPid1() {
+        return pid1;
     }
 
-    public long getId2() {
-        return id2;
+    public long getPid2() {
+        return pid2;
     }
 
     public Date getStartTime() {
@@ -64,8 +64,8 @@ public class ComplexRead10 extends Operation<List<ComplexRead10Result>> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(ID1, id1)
-            .put(ID2, id2)
+            .put(PID1, pid1)
+            .put(PID2, pid2)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
             .build();
@@ -85,24 +85,24 @@ public class ComplexRead10 extends Operation<List<ComplexRead10Result>> {
             return false;
         }
         ComplexRead10 that = (ComplexRead10) o;
-        return id1 == that.id1
-            && id2 == that.id2
+        return pid1 == that.pid1
+            && pid2 == that.pid2
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id1, id2, startTime, endTime);
+        return Objects.hash(pid1, pid2, startTime, endTime);
     }
 
     @Override
     public String toString() {
         return "ComplexRead10{"
-            + "id1="
-            + id1
-            + ", id2="
-            + id2
+            + "pid1="
+            + pid1
+            + ", pid2="
+            + pid2
             + ", startTime="
             + startTime
             + ", endTime="

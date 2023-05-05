@@ -20,8 +20,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -68,8 +66,6 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         decoders.put(Write11.class, new EventDecoderWrite11());
         decoders.put(Write12.class, new EventDecoderWrite12());
         decoders.put(Write13.class, new EventDecoderWrite13());
-        decoders.put(Write14.class, new EventDecoderWrite14());
-        decoders.put(Write15.class, new EventDecoderWrite15());
         decoders.put(ReadWrite1.class, new EventDecoderReadWrite1());
         decoders.put(ReadWrite2.class, new EventDecoderReadWrite2());
         decoders.put(ReadWrite3.class, new EventDecoderReadWrite3());
@@ -382,10 +378,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long mediumId = rs.getLong(1);
+                long pid1 = rs.getLong(1);
+                long pid2 = rs.getLong(2);
+                Date currentTime = new Date(rs.getTimestamp(3).getTime());
 
                 Operation operation = new Write12(
-                    mediumId);
+                    pid1,
+                    pid2,
+                    currentTime);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write12: %s", e));
@@ -402,61 +402,16 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long pid1 = rs.getLong(1);
-                long pid2 = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long id = rs.getLong(1);
 
                 Operation operation = new Write13(
-                    pid1,
-                    pid2,
-                    currentTime);
+                    id);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write13: %s", e));
             }
         }
     }
-
-    public static class EventDecoderWrite14 implements EventStreamReader.EventDecoder<Operation> {
-        /**
-         * @param rs ResultSet object containing the row to decode
-         * @return Write14 Object
-         * @throws WorkloadException when an error occurs reading the resultSet
-         */
-        @Override
-        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
-                long id = rs.getLong(1);
-
-                Operation operation = new Write14(
-                    id);
-                return operation;
-            } catch (SQLException e) {
-                throw new WorkloadException(format("Error while decoding ResultSet for Write14: %s", e));
-            }
-        }
-    }
-
-    public static class EventDecoderWrite15 implements EventStreamReader.EventDecoder<Operation> {
-        /**
-         * @param rs ResultSet object containing the row to decode
-         * @return Write15 Object
-         * @throws WorkloadException when an error occurs reading the resultSet
-         */
-        @Override
-        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
-            try {
-                long id = rs.getLong(1);
-
-                Operation operation = new Write15(
-                    id);
-                return operation;
-            } catch (SQLException e) {
-                throw new WorkloadException(format("Error while decoding ResultSet for Write15: %s", e));
-            }
-        }
-    }
-
 
     public static class EventDecoderReadWrite1 implements EventStreamReader.EventDecoder<Operation> {
         /**
