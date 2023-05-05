@@ -355,19 +355,15 @@ public class QueryEventStreamReader implements Iterator<Operation> {
             try {
                 long id = rs.getLong(1);
                 long threshold = rs.getLong(2);
-                float lowerbound = rs.getLong(3);
-                float upperbound = rs.getLong(4);
-                Date startTime = new Date(rs.getLong(5));
-                Date endTime = new Date(rs.getLong(6));
-                int truncationLimit = rs.getInt(7);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(8));
+                Date startTime = new Date(rs.getLong(3));
+                Date endTime = new Date(rs.getLong(4));
+                int truncationLimit = rs.getInt(5);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead9(
                     id,
                     threshold,
-                    lowerbound,
-                    upperbound,
                     startTime,
                     endTime,
                     truncationLimit,
