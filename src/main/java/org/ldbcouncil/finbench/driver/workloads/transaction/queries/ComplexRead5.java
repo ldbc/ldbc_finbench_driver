@@ -2,11 +2,11 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 5:
  * -- Exact Account Transfer Trace --
- * Given a Person and a specified time window between start_time and end_time, find the transfer
-trace from the account(src) owned by the Person to another account(dst) by at most 3 steps. Note
-that the trace(edge2) are in ascending order in terms of timestamp. Return all traces.
+ * Given a Person and a specified time window between startTime and endTime, find the transfer trace
+from the account (src) owned by the Person to another account (dst) by at most 3 steps. Note that
+the trace (edge2) must be ascending order of their timestamps. Return all the transfer traces.
 Note: Multiple edges of from the same src to the same dst should be seen as identical path. And
-the result does not include the recurring account in cycles.
+the resulting paths shall not include recurring accounts (cycles in the trace are not allowed).
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

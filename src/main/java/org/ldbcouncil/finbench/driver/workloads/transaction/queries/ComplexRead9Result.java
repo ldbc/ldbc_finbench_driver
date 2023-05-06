@@ -5,30 +5,30 @@ import java.util.Objects;
 
 public class ComplexRead9Result {
     public static final String RATIO_REPAY = "ratioRepay";
-    public static final String RATIO_OUT = "ratioOut";
-    public static final String RATIO_IN = "ratioIn";
+    public static final String RATIO_DEPOSIT = "ratioDeposit";
+    public static final String RATIO_TRANSFER = "ratioTransfer";
     private final float ratioRepay;
-    private final float ratioOut;
-    private final float ratioIn;
+    private final float ratioDeposit;
+    private final float ratioTransfer;
 
     public ComplexRead9Result(@JsonProperty(RATIO_REPAY) float ratioRepay,
-                              @JsonProperty(RATIO_OUT) float ratioOut,
-                              @JsonProperty(RATIO_IN) float ratioIn) {
+                              @JsonProperty(RATIO_DEPOSIT) float ratioDeposit,
+                              @JsonProperty(RATIO_TRANSFER) float ratioTransfer) {
         this.ratioRepay = ratioRepay;
-        this.ratioOut = ratioOut;
-        this.ratioIn = ratioIn;
+        this.ratioDeposit = ratioDeposit;
+        this.ratioTransfer = ratioTransfer;
     }
 
     public float getRatioRepay() {
         return ratioRepay;
     }
 
-    public float getRatioOut() {
-        return ratioOut;
+    public float getRatioDeposit() {
+        return ratioDeposit;
     }
 
-    public float getRatioIn() {
-        return ratioIn;
+    public float getRatioTransfer() {
+        return ratioTransfer;
     }
 
     @Override
@@ -41,13 +41,13 @@ public class ComplexRead9Result {
         }
         ComplexRead9Result that = (ComplexRead9Result) o;
         return ratioRepay == that.ratioRepay
-            && ratioOut == that.ratioOut
-            && ratioIn == that.ratioIn;
+            && ratioDeposit == that.ratioDeposit
+            && ratioTransfer == that.ratioTransfer;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(ratioRepay, ratioOut, ratioIn);
+        return Objects.hash(ratioRepay, ratioDeposit, ratioTransfer);
     }
 
     @Override
@@ -55,10 +55,10 @@ public class ComplexRead9Result {
         return "ComplexRead9Result{"
             + "ratioRepay="
             + ratioRepay
-            + ", ratioOut="
-            + ratioOut
-            + ", ratioIn="
-            + ratioIn
+            + ", ratioDeposit="
+            + ratioDeposit
+            + ", ratioTransfer="
+            + ratioTransfer
             + '}';
     }
 }

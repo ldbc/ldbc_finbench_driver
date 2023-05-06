@@ -6,7 +6,7 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 • In the very beginning, read the blocked status of related accounts. The transaction aborts
 if one of them is blocked. Move to the next step if none is blocked.
 • Add a transfer edge inside the transaction.
-• Detect if a new transfer cycle formed(which means there is no edges existing between the
+• Detect if a new transfer cycle formed (which means there are no edges existing between the
 related accounts before). Transaction aborts if formed, and then mark the related accounts
 as blocked in another transaction. Otherwise the transaction commits.
  */
@@ -23,27 +23,27 @@ public class ReadWrite1 extends Operation<LdbcNoResult> {
     public static final int TYPE = 10001;
     public static final String SRC_ID = "srcId";
     public static final String DST_ID = "dstId";
-    public static final String CURRENT_TIME = "currentTime";
-    public static final String AMT = "amt";
+    public static final String TIME = "time";
+    public static final String AMOUNT = "amount";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
     private final long srcId;
     private final long dstId;
-    private final Date currentTime;
-    private final long amt;
+    private final Date time;
+    private final long amount;
     private final Date startTime;
     private final Date endTime;
 
     public ReadWrite1(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
-                      @JsonProperty(CURRENT_TIME) Date currentTime,
-                      @JsonProperty(AMT) long amt,
+                      @JsonProperty(TIME) Date time,
+                      @JsonProperty(AMOUNT) long amount,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime) {
         this.srcId = srcId;
         this.dstId = dstId;
-        this.currentTime = currentTime;
-        this.amt = amt;
+        this.time = time;
+        this.amount = amount;
         this.startTime = startTime;
         this.endTime = endTime;
     }
@@ -56,12 +56,12 @@ public class ReadWrite1 extends Operation<LdbcNoResult> {
         return dstId;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
-    public long getAmt() {
-        return amt;
+    public long getAmount() {
+        return amount;
     }
 
     public Date getStartTime() {
@@ -82,8 +82,8 @@ public class ReadWrite1 extends Operation<LdbcNoResult> {
         return ImmutableMap.<String, Object>builder()
             .put(SRC_ID, srcId)
             .put(DST_ID, dstId)
-            .put(CURRENT_TIME, currentTime)
-            .put(AMT, amt)
+            .put(TIME, time)
+            .put(AMOUNT, amount)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
             .build();
@@ -105,15 +105,15 @@ public class ReadWrite1 extends Operation<LdbcNoResult> {
         ReadWrite1 that = (ReadWrite1) o;
         return srcId == that.srcId
             && dstId == that.dstId
-            && Objects.equals(currentTime, that.currentTime)
-            && amt == that.amt
+            && Objects.equals(time, that.time)
+            && amount == that.amount
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, currentTime, amt, startTime, endTime);
+        return Objects.hash(srcId, dstId, time, amount, startTime, endTime);
     }
 
     @Override
@@ -123,10 +123,10 @@ public class ReadWrite1 extends Operation<LdbcNoResult> {
             + srcId
             + ", dstId="
             + dstId
-            + ", currentTime="
-            + currentTime
-            + ", amt="
-            + amt
+            + ", time="
+            + time
+            + ", amount="
+            + amount
             + ", startTime="
             + startTime
             + ", endTime="

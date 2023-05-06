@@ -2,9 +2,10 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 3:
  * -- Shortest transfer path --
- * Given two accounts and a specified time window between start_time and end_time, find the length
+ * Given two accounts and a specified time window between startTime and endTime, find the length
 of shortest path between these two accounts by the transfer relationships. Note that all the edges
-in the path should be in the time window and of type transfer. If there is no path found, return -1.
+in the path should be in the time window and of type transfer. Return 0 if src and dst are directly
+connected. Return -1 if there is no path found.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

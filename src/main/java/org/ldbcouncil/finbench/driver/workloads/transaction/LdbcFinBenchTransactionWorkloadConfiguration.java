@@ -24,7 +24,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
@@ -42,15 +41,11 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead4;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead5;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead6;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead7;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -122,8 +117,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead11.class.getSimpleName() + INTERLEAVE_SUFFIX;
     public static final String COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead12.class.getSimpleName() + INTERLEAVE_SUFFIX;
-    public static final String COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY =
-        LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead13.class.getSimpleName() + INTERLEAVE_SUFFIX;
     public static final List<String> COMPLEX_READ_OPERATION_INTERLEAVE_KEYS = Lists.newArrayList(
         COMPLEX_READ_OPERATION_1_INTERLEAVE_KEY,
         COMPLEX_READ_OPERATION_2_INTERLEAVE_KEY,
@@ -136,8 +129,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         COMPLEX_READ_OPERATION_9_INTERLEAVE_KEY,
         COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY,
         COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY,
-        COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY,
-        COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY);
+        COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY);
     public static final Map<Integer, String> OPERATION_TYPE_TO_INTERLEAVE_KEY_MAPPING = typeToInterleaveKeyMapping();
     /*
      * Operation frequency
@@ -167,8 +159,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead11.class.getSimpleName() + FREQUENCY_SUFFIX;
     public static final String COMPLEX_READ_OPERATION_12_FREQUENCY_KEY =
         LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead12.class.getSimpleName() + FREQUENCY_SUFFIX;
-    public static final String COMPLEX_READ_OPERATION_13_FREQUENCY_KEY =
-        LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + ComplexRead13.class.getSimpleName() + FREQUENCY_SUFFIX;
     public static final List<String> COMPLEX_READ_OPERATION_FREQUENCY_KEYS = Lists.newArrayList(
         COMPLEX_READ_OPERATION_1_FREQUENCY_KEY,
         COMPLEX_READ_OPERATION_2_FREQUENCY_KEY,
@@ -181,8 +171,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         COMPLEX_READ_OPERATION_9_FREQUENCY_KEY,
         COMPLEX_READ_OPERATION_10_FREQUENCY_KEY,
         COMPLEX_READ_OPERATION_11_FREQUENCY_KEY,
-        COMPLEX_READ_OPERATION_12_FREQUENCY_KEY,
-        COMPLEX_READ_OPERATION_13_FREQUENCY_KEY
+        COMPLEX_READ_OPERATION_12_FREQUENCY_KEY
     );
     // Default value in case there is no update stream
     public static final String DEFAULT_UPDATE_INTERLEAVE = "1";
@@ -202,7 +191,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String COMPLEX_READ_OPERATION_10_ENABLE_KEY = asEnableKey(ComplexRead10.class);
     public static final String COMPLEX_READ_OPERATION_11_ENABLE_KEY = asEnableKey(ComplexRead11.class);
     public static final String COMPLEX_READ_OPERATION_12_ENABLE_KEY = asEnableKey(ComplexRead12.class);
-    public static final String COMPLEX_READ_OPERATION_13_ENABLE_KEY = asEnableKey(ComplexRead13.class);
     public static final List<String> COMPLEX_READ_OPERATION_ENABLE_KEYS = Lists.newArrayList(
         COMPLEX_READ_OPERATION_1_ENABLE_KEY,
         COMPLEX_READ_OPERATION_2_ENABLE_KEY,
@@ -215,8 +203,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         COMPLEX_READ_OPERATION_9_ENABLE_KEY,
         COMPLEX_READ_OPERATION_10_ENABLE_KEY,
         COMPLEX_READ_OPERATION_11_ENABLE_KEY,
-        COMPLEX_READ_OPERATION_12_ENABLE_KEY,
-        COMPLEX_READ_OPERATION_13_ENABLE_KEY
+        COMPLEX_READ_OPERATION_12_ENABLE_KEY
     );
     public static final String SIMPLE_READ_OPERATION_1_ENABLE_KEY = asEnableKey(SimpleRead1.class);
     public static final String SIMPLE_READ_OPERATION_2_ENABLE_KEY = asEnableKey(SimpleRead2.class);
@@ -224,17 +211,13 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String SIMPLE_READ_OPERATION_4_ENABLE_KEY = asEnableKey(SimpleRead4.class);
     public static final String SIMPLE_READ_OPERATION_5_ENABLE_KEY = asEnableKey(SimpleRead5.class);
     public static final String SIMPLE_READ_OPERATION_6_ENABLE_KEY = asEnableKey(SimpleRead6.class);
-    public static final String SIMPLE_READ_OPERATION_7_ENABLE_KEY = asEnableKey(SimpleRead7.class);
-    public static final String SIMPLE_READ_OPERATION_8_ENABLE_KEY = asEnableKey(SimpleRead8.class);
     public static final List<String> SIMPLE_READ_OPERATION_ENABLE_KEYS = Lists.newArrayList(
         SIMPLE_READ_OPERATION_1_ENABLE_KEY,
         SIMPLE_READ_OPERATION_2_ENABLE_KEY,
         SIMPLE_READ_OPERATION_3_ENABLE_KEY,
         SIMPLE_READ_OPERATION_4_ENABLE_KEY,
         SIMPLE_READ_OPERATION_5_ENABLE_KEY,
-        SIMPLE_READ_OPERATION_6_ENABLE_KEY,
-        SIMPLE_READ_OPERATION_7_ENABLE_KEY,
-        SIMPLE_READ_OPERATION_8_ENABLE_KEY
+        SIMPLE_READ_OPERATION_6_ENABLE_KEY
     );
     public static final String WRITE_OPERATION_1_ENABLE_KEY = asEnableKey(Write1.class);
     public static final String WRITE_OPERATION_2_ENABLE_KEY = asEnableKey(Write2.class);
@@ -249,7 +232,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String WRITE_OPERATION_11_ENABLE_KEY = asEnableKey(Write11.class);
     public static final String WRITE_OPERATION_12_ENABLE_KEY = asEnableKey(Write12.class);
     public static final String WRITE_OPERATION_13_ENABLE_KEY = asEnableKey(Write13.class);
-    public static final String WRITE_OPERATION_14_ENABLE_KEY = asEnableKey(Write14.class);
     public static final List<String> WRITE_OPERATION_ENABLE_KEYS = Lists.newArrayList(
         WRITE_OPERATION_1_ENABLE_KEY,
         WRITE_OPERATION_2_ENABLE_KEY,
@@ -263,8 +245,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         WRITE_OPERATION_10_ENABLE_KEY,
         WRITE_OPERATION_11_ENABLE_KEY,
         WRITE_OPERATION_12_ENABLE_KEY,
-        WRITE_OPERATION_13_ENABLE_KEY,
-        WRITE_OPERATION_14_ENABLE_KEY
+        WRITE_OPERATION_13_ENABLE_KEY
     );
     /*
      * Read Operation Parameters
@@ -303,7 +284,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         mapping.put(ComplexRead10.TYPE, COMPLEX_READ_OPERATION_10_PARAMS_FILENAME);
         mapping.put(ComplexRead11.TYPE, COMPLEX_READ_OPERATION_11_PARAMS_FILENAME);
         mapping.put(ComplexRead12.TYPE, COMPLEX_READ_OPERATION_12_PARAMS_FILENAME);
-        mapping.put(ComplexRead13.TYPE, COMPLEX_READ_OPERATION_13_PARAMS_FILENAME);
         return mapping;
     }
 
@@ -321,7 +301,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         mapping.put(ComplexRead10.TYPE, COMPLEX_READ_OPERATION_10_INTERLEAVE_KEY);
         mapping.put(ComplexRead11.TYPE, COMPLEX_READ_OPERATION_11_INTERLEAVE_KEY);
         mapping.put(ComplexRead12.TYPE, COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY);
-        mapping.put(ComplexRead13.TYPE, COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY);
         return mapping;
     }
 
@@ -367,9 +346,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
 
         interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_12_FREQUENCY_KEY)) * updateDistance;
         params.put(COMPLEX_READ_OPERATION_12_INTERLEAVE_KEY, interleave.toString());
-
-        interleave = Integer.parseInt(params.get(COMPLEX_READ_OPERATION_13_FREQUENCY_KEY)) * updateDistance;
-        params.put(COMPLEX_READ_OPERATION_13_INTERLEAVE_KEY, interleave.toString());
 
         return params;
     }
@@ -423,8 +399,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
             COMPLEX_READ_OPERATION_9_ENABLE_KEY,
             COMPLEX_READ_OPERATION_10_ENABLE_KEY,
             COMPLEX_READ_OPERATION_11_ENABLE_KEY,
-            COMPLEX_READ_OPERATION_12_ENABLE_KEY,
-            COMPLEX_READ_OPERATION_13_ENABLE_KEY).stream().anyMatch(key -> isSet(params, key));
+            COMPLEX_READ_OPERATION_12_ENABLE_KEY).stream().anyMatch(key -> isSet(params, key));
     }
 
     public static boolean hasWrites(Map<String, String> params) {
@@ -452,7 +427,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         params.put(SIMPLE_READ_OPERATION_4_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_5_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_6_ENABLE_KEY, "false");
-        params.put(SIMPLE_READ_OPERATION_7_ENABLE_KEY, "false");
         return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
@@ -485,14 +459,12 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         params.put(COMPLEX_READ_OPERATION_10_ENABLE_KEY, "false");
         params.put(COMPLEX_READ_OPERATION_11_ENABLE_KEY, "false");
         params.put(COMPLEX_READ_OPERATION_12_ENABLE_KEY, "false");
-        params.put(COMPLEX_READ_OPERATION_13_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_1_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_2_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_3_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_4_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_5_ENABLE_KEY, "false");
         params.put(SIMPLE_READ_OPERATION_6_ENABLE_KEY, "false");
-        params.put(SIMPLE_READ_OPERATION_7_ENABLE_KEY, "false");
         return ConsoleAndFileDriverConfiguration.convertComplexKeysToSimpleKeys(params);
     }
 
@@ -510,15 +482,12 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         operationTypeToClassMapping.put(ComplexRead10.TYPE, ComplexRead10.class);
         operationTypeToClassMapping.put(ComplexRead11.TYPE, ComplexRead11.class);
         operationTypeToClassMapping.put(ComplexRead12.TYPE, ComplexRead12.class);
-        operationTypeToClassMapping.put(ComplexRead13.TYPE, ComplexRead13.class);
         operationTypeToClassMapping.put(SimpleRead1.TYPE, SimpleRead1.class);
         operationTypeToClassMapping.put(SimpleRead2.TYPE, SimpleRead2.class);
         operationTypeToClassMapping.put(SimpleRead3.TYPE, SimpleRead3.class);
         operationTypeToClassMapping.put(SimpleRead4.TYPE, SimpleRead4.class);
         operationTypeToClassMapping.put(SimpleRead5.TYPE, SimpleRead5.class);
         operationTypeToClassMapping.put(SimpleRead6.TYPE, SimpleRead6.class);
-        operationTypeToClassMapping.put(SimpleRead7.TYPE, SimpleRead7.class);
-        operationTypeToClassMapping.put(SimpleRead8.TYPE, SimpleRead8.class);
         operationTypeToClassMapping.put(Write1.TYPE, Write1.class);
         operationTypeToClassMapping.put(Write2.TYPE, Write2.class);
         operationTypeToClassMapping.put(Write3.TYPE, Write3.class);
@@ -532,7 +501,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         operationTypeToClassMapping.put(Write11.TYPE, Write11.class);
         operationTypeToClassMapping.put(Write12.TYPE, Write12.class);
         operationTypeToClassMapping.put(Write13.TYPE, Write13.class);
-        operationTypeToClassMapping.put(Write14.TYPE, Write14.class);
         return operationTypeToClassMapping;
     }
 
@@ -593,8 +561,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         classToFileNameMapping.put(Write11.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(Write12.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(Write13.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write14.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write15.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(ReadWrite1.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(ReadWrite2.class, INSERTS_DIRECTORY + "/Person.parquet");
         classToFileNameMapping.put(ReadWrite3.class, INSERTS_DIRECTORY + "/Person.parquet");
@@ -619,8 +585,6 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         classToDateColumnNameMapping.put(Write11.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write12.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write13.class, INSERTS_DATE_COLUMN);
-        classToDateColumnNameMapping.put(Write14.class, INSERTS_DATE_COLUMN);
-        classToDateColumnNameMapping.put(Write15.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite1.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite2.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite3.class, INSERTS_DATE_COLUMN);

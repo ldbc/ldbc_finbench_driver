@@ -5,15 +5,15 @@ import java.util.Objects;
 import org.ldbcouncil.finbench.driver.result.Path;
 
 public class ComplexRead5Result {
-    public static final String PATHS = "paths";
-    private final Path paths;
+    public static final String PATH = "path";
+    private final Path path;
 
-    public ComplexRead5Result(@JsonProperty(PATHS) Path paths) {
-        this.paths = paths;
+    public ComplexRead5Result(@JsonProperty(PATH) Path path) {
+        this.path = path;
     }
 
-    public Path getPaths() {
-        return paths;
+    public Path getPath() {
+        return path;
     }
 
     @Override
@@ -25,19 +25,19 @@ public class ComplexRead5Result {
             return false;
         }
         ComplexRead5Result that = (ComplexRead5Result) o;
-        return paths == that.paths;
+        return path == that.path;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(paths);
+        return Objects.hash(path);
     }
 
     @Override
     public String toString() {
         return "ComplexRead5Result{"
-            + "paths="
-            + paths
+            + "path="
+            + path
             + '}';
     }
 }

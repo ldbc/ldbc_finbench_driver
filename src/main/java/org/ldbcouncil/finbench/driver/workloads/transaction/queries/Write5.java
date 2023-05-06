@@ -16,38 +16,38 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 public class Write5 extends Operation<LdbcNoResult> {
     public static final int TYPE = 1005;
     public static final String PERSON_ID = "personId";
-    public static final String CURRENT_TIME = "currentTime";
+    public static final String TIME = "time";
     public static final String LOAN_ID = "loanId";
-    public static final String LOAN_AMOUNT = "loanAmount";
+    public static final String AMOUNT = "amount";
     private final long personId;
-    private final Date currentTime;
+    private final Date time;
     private final long loanId;
-    private final long loanAmount;
+    private final long amount;
 
     public Write5(@JsonProperty(PERSON_ID) long personId,
-                  @JsonProperty(CURRENT_TIME) Date currentTime,
+                  @JsonProperty(TIME) Date time,
                   @JsonProperty(LOAN_ID) long loanId,
-                  @JsonProperty(LOAN_AMOUNT) long loanAmount) {
+                  @JsonProperty(AMOUNT) long amount) {
         this.personId = personId;
-        this.currentTime = currentTime;
+        this.time = time;
         this.loanId = loanId;
-        this.loanAmount = loanAmount;
+        this.amount = amount;
     }
 
     public long getPersonId() {
         return personId;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
     public long getLoanId() {
         return loanId;
     }
 
-    public long getLoanAmount() {
-        return loanAmount;
+    public long getAmount() {
+        return amount;
     }
 
     @Override
@@ -59,9 +59,9 @@ public class Write5 extends Operation<LdbcNoResult> {
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
             .put(PERSON_ID, personId)
-            .put(CURRENT_TIME, currentTime)
+            .put(TIME, time)
             .put(LOAN_ID, loanId)
-            .put(LOAN_AMOUNT, loanAmount)
+            .put(AMOUNT, amount)
             .build();
     }
 
@@ -80,14 +80,14 @@ public class Write5 extends Operation<LdbcNoResult> {
         }
         Write5 that = (Write5) o;
         return personId == that.personId
-            && Objects.equals(currentTime, that.currentTime)
+            && Objects.equals(time, that.time)
             && loanId == that.loanId
-            && loanAmount == that.loanAmount;
+            && amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId, currentTime, loanId, loanAmount);
+        return Objects.hash(personId, time, loanId, amount);
     }
 
     @Override
@@ -95,12 +95,12 @@ public class Write5 extends Operation<LdbcNoResult> {
         return "Write5{"
             + "personId="
             + personId
-            + ", currentTime="
-            + currentTime
+            + ", time="
+            + time
             + ", loanId="
             + loanId
-            + ", loanAmount="
-            + loanAmount
+            + ", amount="
+            + amount
             + '}';
     }
 }

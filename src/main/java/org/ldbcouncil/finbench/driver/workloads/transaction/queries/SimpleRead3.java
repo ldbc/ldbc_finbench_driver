@@ -3,7 +3,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload simple read query 3:
  * -- Many-to-one blocked account monitoring --
  * Given an Account, find the ratio of transfer-ins from blocked Accounts in all itstransfer-ins in a specific
-time range between start_time and end_time. Return the ratio.
+time range between startTime and endTime. Return the ratio. Return -1 if there is no transfer-ins to
+the given account.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -1,10 +1,10 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 11:
- * -- Final share analysis in investor relationship --
- * Given a Company, find all the Companies and Persons the Company invests by at most k steps. Then
-calculate the final share ratio of the investors to the given company groupby the investor in descending order.
-* Final share ratio means the final shareholding ratio of each investor in the company.
+ * -- Guarantee Chain Detection --
+ * Given a Person and a specified time window between startTime and endTime, find all the persons
+in the guarantee chain until end and their loans applied. Return the sum of loan amount and the
+count of distinct loans.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,31 +12,57 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 
 public class ComplexRead11 extends Operation<List<ComplexRead11Result>> {
     public static final int TYPE = 11;
     public static final String ID = "id";
-    public static final String K = "k";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
+    public static final String TRUNCATION_LIMIT = "truncationLimit";
+    public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
-    private final int k;
+    private final Date startTime;
+    private final Date endTime;
+    private final int truncationLimit;
+    private final TruncationOrder truncationOrder;
 
     public ComplexRead11(@JsonProperty(ID) long id,
-                         @JsonProperty(K) int k) {
+                         @JsonProperty(START_TIME) Date startTime,
+                         @JsonProperty(END_TIME) Date endTime,
+                         @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
+                         @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
         this.id = id;
-        this.k = k;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.truncationLimit = truncationLimit;
+        this.truncationOrder = truncationOrder;
     }
 
     public long getId() {
         return id;
     }
 
-    public int getK() {
-        return k;
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public int getTruncationLimit() {
+        return truncationLimit;
+    }
+
+    public TruncationOrder getTruncationOrder() {
+        return truncationOrder;
     }
 
     @Override
@@ -48,7 +74,10 @@ public class ComplexRead11 extends Operation<List<ComplexRead11Result>> {
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
             .put(ID, id)
-            .put(K, k)
+            .put(START_TIME, startTime)
+            .put(END_TIME, endTime)
+            .put(TRUNCATION_LIMIT, truncationLimit)
+            .put(TRUNCATION_ORDER, truncationOrder)
             .build();
     }
 
@@ -67,12 +96,15 @@ public class ComplexRead11 extends Operation<List<ComplexRead11Result>> {
         }
         ComplexRead11 that = (ComplexRead11) o;
         return id == that.id
-            && k == that.k;
+            && Objects.equals(startTime, that.startTime)
+            && Objects.equals(endTime, that.endTime)
+            && truncationLimit == that.truncationLimit
+            && truncationOrder == that.truncationOrder;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, k);
+        return Objects.hash(id, startTime, endTime, truncationLimit, truncationOrder);
     }
 
     @Override
@@ -80,8 +112,14 @@ public class ComplexRead11 extends Operation<List<ComplexRead11Result>> {
         return "ComplexRead11{"
             + "id="
             + id
-            + ", k="
-            + k
+            + ", startTime="
+            + startTime
+            + ", endTime="
+            + endTime
+            + ", truncationLimit="
+            + truncationLimit
+            + ", truncationOrder="
+            + truncationOrder
             + '}';
     }
 }

@@ -6,17 +6,17 @@ import java.util.Objects;
 public class ComplexRead8Result {
     public static final String DST_ID = "dstId";
     public static final String RATIO = "ratio";
-    public static final String DISTANCE_FROM_LOAN = "distanceFromLoan";
+    public static final String MIN_DISTANCE_FROM_LOAN = "minDistanceFromLoan";
     private final long dstId;
     private final float ratio;
-    private final int distanceFromLoan;
+    private final int minDistanceFromLoan;
 
     public ComplexRead8Result(@JsonProperty(DST_ID) long dstId,
                               @JsonProperty(RATIO) float ratio,
-                              @JsonProperty(DISTANCE_FROM_LOAN) int distanceFromLoan) {
+                              @JsonProperty(MIN_DISTANCE_FROM_LOAN) int minDistanceFromLoan) {
         this.dstId = dstId;
         this.ratio = ratio;
-        this.distanceFromLoan = distanceFromLoan;
+        this.minDistanceFromLoan = minDistanceFromLoan;
     }
 
     public long getDstId() {
@@ -27,8 +27,8 @@ public class ComplexRead8Result {
         return ratio;
     }
 
-    public int getDistanceFromLoan() {
-        return distanceFromLoan;
+    public int getMinDistanceFromLoan() {
+        return minDistanceFromLoan;
     }
 
     @Override
@@ -42,12 +42,12 @@ public class ComplexRead8Result {
         ComplexRead8Result that = (ComplexRead8Result) o;
         return dstId == that.dstId
             && ratio == that.ratio
-            && distanceFromLoan == that.distanceFromLoan;
+            && minDistanceFromLoan == that.minDistanceFromLoan;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dstId, ratio, distanceFromLoan);
+        return Objects.hash(dstId, ratio, minDistanceFromLoan);
     }
 
     @Override
@@ -57,8 +57,8 @@ public class ComplexRead8Result {
             + dstId
             + ", ratio="
             + ratio
-            + ", distanceFromLoan="
-            + distanceFromLoan
+            + ", minDistanceFromLoan="
+            + minDistanceFromLoan
             + '}';
     }
 }

@@ -2,10 +2,10 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 1:
  * -- Blocked medium related accounts --
- * Given an Account and a specified time window between start_time and end_time, find all the Account that is signed
- *  in by a blocked Medium and has fund transfered via edge1 by at most 3 steps.
-Note that all timestamps in the transfer trace are in ascending order. Return the id of the account,
-the distance from the account to given one, the id and type of the related medium
+ * Given an Account and a specified time window between startTime and endTime, find all the Account
+that is signed in by a blocked Medium and has fund transferred via edge1 by at most 3 steps. Note
+that all timestamps in the transfer trace must be in ascending order. Return the id of the account,
+the distance from the account to given one, the id and type of the related medium.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

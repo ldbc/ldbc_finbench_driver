@@ -18,26 +18,26 @@ public class Write1 extends Operation<LdbcNoResult> {
     public static final String PERSON_ID = "personId";
     public static final String PERSON_NAME = "personName";
     public static final String ACCOUNT_ID = "accountId";
-    public static final String CURRENT_TIME = "currentTime";
+    public static final String TIME = "time";
     public static final String ACCOUNT_BLOCKED = "accountBlocked";
     public static final String ACCOUNT_TYPE = "accountType";
     private final long personId;
     private final String personName;
     private final long accountId;
-    private final Date currentTime;
+    private final Date time;
     private final boolean accountBlocked;
     private final String accountType;
 
     public Write1(@JsonProperty(PERSON_ID) long personId,
                   @JsonProperty(PERSON_NAME) String personName,
                   @JsonProperty(ACCOUNT_ID) long accountId,
-                  @JsonProperty(CURRENT_TIME) Date currentTime,
+                  @JsonProperty(TIME) Date time,
                   @JsonProperty(ACCOUNT_BLOCKED) boolean accountBlocked,
                   @JsonProperty(ACCOUNT_TYPE) String accountType) {
         this.personId = personId;
         this.personName = personName;
         this.accountId = accountId;
-        this.currentTime = currentTime;
+        this.time = time;
         this.accountBlocked = accountBlocked;
         this.accountType = accountType;
     }
@@ -54,8 +54,8 @@ public class Write1 extends Operation<LdbcNoResult> {
         return accountId;
     }
 
-    public Date getCurrentTime() {
-        return currentTime;
+    public Date getTime() {
+        return time;
     }
 
     public boolean getAccountBlocked() {
@@ -77,7 +77,7 @@ public class Write1 extends Operation<LdbcNoResult> {
             .put(PERSON_ID, personId)
             .put(PERSON_NAME, personName)
             .put(ACCOUNT_ID, accountId)
-            .put(CURRENT_TIME, currentTime)
+            .put(TIME, time)
             .put(ACCOUNT_BLOCKED, accountBlocked)
             .put(ACCOUNT_TYPE, accountType)
             .build();
@@ -100,14 +100,14 @@ public class Write1 extends Operation<LdbcNoResult> {
         return personId == that.personId
             && Objects.equals(personName, that.personName)
             && accountId == that.accountId
-            && Objects.equals(currentTime, that.currentTime)
+            && Objects.equals(time, that.time)
             && accountBlocked == that.accountBlocked
             && Objects.equals(accountType, that.accountType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId, personName, accountId, currentTime, accountBlocked, accountType);
+        return Objects.hash(personId, personName, accountId, time, accountBlocked, accountType);
     }
 
     @Override
@@ -119,8 +119,8 @@ public class Write1 extends Operation<LdbcNoResult> {
             + personName
             + ", accountId="
             + accountId
-            + ", currentTime="
-            + currentTime
+            + ", time="
+            + time
             + ", accountBlocked="
             + accountBlocked
             + ", accountType="

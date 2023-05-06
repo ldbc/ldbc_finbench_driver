@@ -4,31 +4,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 public class ComplexRead11Result {
-    public static final String ID = "id";
-    public static final String TYPE = "type";
-    public static final String RATIO = "ratio";
-    private final long id;
-    private final String type;
-    private final float ratio;
+    public static final String SUM_LOAN_AMOUNT = "sumLoanAmount";
+    public static final String NUM_LOANS = "numLoans";
+    private final long sumLoanAmount;
+    private final int numLoans;
 
-    public ComplexRead11Result(@JsonProperty(ID) long id,
-                               @JsonProperty(TYPE) String type,
-                               @JsonProperty(RATIO) float ratio) {
-        this.id = id;
-        this.type = type;
-        this.ratio = ratio;
+    public ComplexRead11Result(@JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
+                               @JsonProperty(NUM_LOANS) int numLoans) {
+        this.sumLoanAmount = sumLoanAmount;
+        this.numLoans = numLoans;
     }
 
-    public long getId() {
-        return id;
+    public long getSumLoanAmount() {
+        return sumLoanAmount;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public float getRatio() {
-        return ratio;
+    public int getNumLoans() {
+        return numLoans;
     }
 
     @Override
@@ -40,25 +32,22 @@ public class ComplexRead11Result {
             return false;
         }
         ComplexRead11Result that = (ComplexRead11Result) o;
-        return id == that.id
-            && Objects.equals(type, that.type)
-            && ratio == that.ratio;
+        return sumLoanAmount == that.sumLoanAmount
+            && numLoans == that.numLoans;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, type, ratio);
+        return Objects.hash(sumLoanAmount, numLoans);
     }
 
     @Override
     public String toString() {
         return "ComplexRead11Result{"
-            + "id="
-            + id
-            + ", type="
-            + type
-            + ", ratio="
-            + ratio
+            + "sumLoanAmount="
+            + sumLoanAmount
+            + ", numLoans="
+            + numLoans
             + '}';
     }
 }

@@ -1,12 +1,13 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 12:
- * -- Block a medium of high risk --
- * Set an existed medium’s isBlocked to True.
+ * -- Add guarantee between persons --
+ * Add a guarantee edge from an existed person node to another existed person node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
@@ -14,15 +15,31 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 
 public class Write12 extends Operation<LdbcNoResult> {
     public static final int TYPE = 1012;
-    public static final String MEDIUM_ID = "mediumId";
-    private final long mediumId;
+    public static final String PID1 = "pid1";
+    public static final String PID2 = "pid2";
+    public static final String TIME = "time";
+    private final long pid1;
+    private final long pid2;
+    private final Date time;
 
-    public Write12(@JsonProperty(MEDIUM_ID) long mediumId) {
-        this.mediumId = mediumId;
+    public Write12(@JsonProperty(PID1) long pid1,
+                   @JsonProperty(PID2) long pid2,
+                   @JsonProperty(TIME) Date time) {
+        this.pid1 = pid1;
+        this.pid2 = pid2;
+        this.time = time;
     }
 
-    public long getMediumId() {
-        return mediumId;
+    public long getPid1() {
+        return pid1;
+    }
+
+    public long getPid2() {
+        return pid2;
+    }
+
+    public Date getTime() {
+        return time;
     }
 
     @Override
@@ -33,7 +50,9 @@ public class Write12 extends Operation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(MEDIUM_ID, mediumId)
+            .put(PID1, pid1)
+            .put(PID2, pid2)
+            .put(TIME, time)
             .build();
     }
 
@@ -51,19 +70,25 @@ public class Write12 extends Operation<LdbcNoResult> {
             return false;
         }
         Write12 that = (Write12) o;
-        return mediumId == that.mediumId;
+        return pid1 == that.pid1
+            && pid2 == that.pid2
+            && Objects.equals(time, that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(mediumId);
+        return Objects.hash(pid1, pid2, time);
     }
 
     @Override
     public String toString() {
         return "Write12{"
-            + "mediumId="
-            + mediumId
+            + "pid1="
+            + pid1
+            + ", pid2="
+            + pid2
+            + ", time="
+            + time
             + '}';
     }
 }

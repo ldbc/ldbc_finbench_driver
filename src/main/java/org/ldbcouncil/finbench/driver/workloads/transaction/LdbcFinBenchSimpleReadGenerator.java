@@ -25,10 +25,8 @@ import org.ldbcouncil.finbench.driver.util.Tuple4;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead13Result;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2Result;
@@ -54,15 +52,11 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead5;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead5Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead6;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead6Result;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead7;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -102,7 +96,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         this.bufferReplenishFun = bufferReplenishFun;
 
         int maxReadOperationType =
-            Ordering.<Integer>natural().max(ComplexRead13.TYPE, SimpleRead8.TYPE) + 1;
+            Ordering.<Integer>natural().max(ComplexRead12.TYPE, SimpleRead6.TYPE) + 1;
         this.interleavesAsMilli = new long[maxReadOperationType];
         for (Integer longReadOperationType : longReadInterleaves.keySet()) {
             this.interleavesAsMilli[longReadOperationType] =
@@ -120,12 +114,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Math.round(Math.ceil(compressionRatio * updateInterleaveAsMilli));
         this.interleavesAsMilli[SimpleRead6.TYPE] =
             Math.round(Math.ceil(compressionRatio * updateInterleaveAsMilli));
-        this.interleavesAsMilli[SimpleRead7.TYPE] =
-            Math.round(Math.ceil(compressionRatio * updateInterleaveAsMilli));
-        this.interleavesAsMilli[SimpleRead8.TYPE] =
-            Math.round(Math.ceil(compressionRatio * updateInterleaveAsMilli));
 
-        int maxOperationType = Ordering.<Integer>natural().max(ComplexRead13.TYPE, SimpleRead8.TYPE,
+        int maxOperationType = Ordering.<Integer>natural().max(ComplexRead12.TYPE, SimpleRead6.TYPE,
             ReadWrite3.TYPE) + 1;
         this.simpleQueryFactories = new LdbcSimpleQueryFactory[maxOperationType];
         this.probabilityDegradationFactors = new double[maxOperationType];
@@ -156,10 +146,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             enabledSimpleReadOperationTypes.contains(SimpleRead5.class);
         enabledSimpleReads[SimpleRead6.TYPE] =
             enabledSimpleReadOperationTypes.contains(SimpleRead6.class);
-        enabledSimpleReads[SimpleRead7.TYPE] =
-            enabledSimpleReadOperationTypes.contains(SimpleRead7.class);
-        enabledSimpleReads[SimpleRead8.TYPE] =
-            enabledSimpleReadOperationTypes.contains(SimpleRead8.class);
 
         /*
         MAPPING
@@ -184,10 +170,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             new LdbcSimpleQuery5Factory(scheduledStartTimePolicy);
         baseSimpleReadFactories[SimpleRead6.TYPE] =
             new LdbcSimpleQuery6Factory(scheduledStartTimePolicy);
-        baseSimpleReadFactories[SimpleRead7.TYPE] =
-            new LdbcSimpleQuery7Factory(scheduledStartTimePolicy);
-        baseSimpleReadFactories[SimpleRead8.TYPE] =
-            new LdbcSimpleQuery8Factory(scheduledStartTimePolicy);
 
         /*
         FACTORIES
@@ -222,15 +204,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             simpleQueryFactories[SimpleRead6.TYPE] =
                 new ErrorFactory(SimpleRead6.class);
         }
-        if (!enabledSimpleReads[SimpleRead7.TYPE]) {
-            simpleQueryFactories[SimpleRead7.TYPE] =
-                new ErrorFactory(SimpleRead7.class);
-        }
-        if (!enabledSimpleReads[SimpleRead8.TYPE]) {
-            simpleQueryFactories[SimpleRead8.TYPE] =
-                new ErrorFactory(SimpleRead8.class);
-        }
-
         /*
         (FIRST_PERSON,FIRST_PERSON_INDEX) = ...
         (FIRST_MESSAGE,FIRST_MESSAGE_INDEX) = ...
@@ -302,7 +275,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         simpleQueryFactories[ComplexRead10.TYPE] = randomFirstQuery;
         simpleQueryFactories[ComplexRead11.TYPE] = randomFirstQuery;
         simpleQueryFactories[ComplexRead12.TYPE] = randomFirstQuery;
-        simpleQueryFactories[ComplexRead13.TYPE] = randomFirstQuery;
 
         simpleQueryFactories[Write1.TYPE] = new NoOpFactory();
         simpleQueryFactories[Write2.TYPE] = new NoOpFactory();
@@ -317,8 +289,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         simpleQueryFactories[Write11.TYPE] = new NoOpFactory();
         simpleQueryFactories[Write12.TYPE] = new NoOpFactory();
         simpleQueryFactories[Write13.TYPE] = new NoOpFactory();
-        simpleQueryFactories[Write14.TYPE] = new NoOpFactory();
-        simpleQueryFactories[Write15.TYPE] = new NoOpFactory();
 
         simpleQueryFactories[ReadWrite1.TYPE] = new NoOpFactory();
         simpleQueryFactories[ReadWrite2.TYPE] = new NoOpFactory();
@@ -330,8 +300,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         simpleQueryFactories[SimpleRead4.TYPE] = null;
         simpleQueryFactories[SimpleRead5.TYPE] = null;
         simpleQueryFactories[SimpleRead6.TYPE] = null;
-        simpleQueryFactories[SimpleRead7.TYPE] = null;
-        simpleQueryFactories[SimpleRead8.TYPE] = null;
 
         /*
         FACTORIES
@@ -376,26 +344,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 int index = indexOfNextEnabled(enabledSimpleReads, i);
                 if (index > lastAccountQueryIndex) {
                     simpleQueryFactories[i] = firstPersonQuery;
-                } else {
-                    simpleQueryFactories[i] = baseSimpleReadFactories[index];
-                }
-            }
-        }
-        for (int i = SimpleRead7.TYPE; i <= SimpleRead7.TYPE; i++) {
-            if (enabledSimpleReads[i] && null == simpleQueryFactories[i]) {
-                int index = indexOfNextEnabled(enabledSimpleReads, i);
-                if (index > lastPersonQueryIndex) {
-                    simpleQueryFactories[i] = firstCompanyQuery;
-                } else {
-                    simpleQueryFactories[i] = baseSimpleReadFactories[index];
-                }
-            }
-        }
-        for (int i = SimpleRead8.TYPE; i <= SimpleRead8.TYPE; i++) {
-            if (enabledSimpleReads[i] && null == simpleQueryFactories[i]) {
-                int index = indexOfNextEnabled(enabledSimpleReads, i);
-                if (index > lastCompanyQueryIndex) {
-                    simpleQueryFactories[i] = firstAccountQuery;
                 } else {
                     simpleQueryFactories[i] = baseSimpleReadFactories[index];
                 }
@@ -600,7 +548,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
     }
 
     private int indexOfNextEnabled(boolean[] enabledSimpleReads, int simpleReadType) {
-        for (int i = simpleReadType + 1; i <= SimpleRead8.TYPE; i++) {
+        for (int i = simpleReadType + 1; i <= SimpleRead6.TYPE; i++) {
             if (enabledSimpleReads[i]) {
                 return i;
             }
@@ -664,7 +612,11 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         double minProbability,
         double maxProbability,
         ScheduledStartTimePolicy scheduledStartTimePolicy) {
-        if (enabledSimpleReadOperationTypes.contains(SimpleRead7.class)) {
+        return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
+            Integer.MAX_VALUE,
+            new NoOpFactory()
+        );
+        /*if (enabledSimpleReadOperationTypes.contains(SimpleRead7.class)) {
             return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead7.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
@@ -675,7 +627,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 Integer.MAX_VALUE,
                 new NoOpFactory()
             );
-        }
+        }*/
     }
 
     private Tuple2<Integer, LdbcSimpleQueryFactory> firstCompanyQueryOrNoOp(
@@ -684,7 +636,11 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         double minProbability,
         double maxProbability,
         ScheduledStartTimePolicy scheduledStartTimePolicy) {
-        if (enabledSimpleReadOperationTypes.contains(SimpleRead8.class)) {
+        return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
+            Integer.MAX_VALUE,
+            new NoOpFactory()
+        );
+        /*if (enabledSimpleReadOperationTypes.contains(SimpleRead8.class)) {
             return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
                 SimpleRead8.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
@@ -695,7 +651,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 Integer.MAX_VALUE,
                 new NoOpFactory()
             );
-        }
+        }*/
     }
 
     private int lastAccountQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
@@ -717,19 +673,21 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
     }
 
     private int lastPersonQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
-        if (enabledSimpleReadOperationTypes.contains(SimpleRead7.class)) {
+        return Integer.MAX_VALUE;
+        /*if (enabledSimpleReadOperationTypes.contains(SimpleRead7.class)) {
             return SimpleRead7.TYPE;
         } else {
             return Integer.MAX_VALUE;
-        }
+        }*/
     }
 
     private int lastCompanyQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
-        if (enabledSimpleReadOperationTypes.contains(SimpleRead8.class)) {
+        return Integer.MAX_VALUE;
+        /*if (enabledSimpleReadOperationTypes.contains(SimpleRead8.class)) {
             return SimpleRead8.TYPE;
         } else {
             return Integer.MAX_VALUE;
-        }
+        }*/
     }
 
     private LdbcSimpleQueryFactory selectRandomFirstSimpleQuery(
@@ -896,25 +854,14 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                     }
                     break;
                 }
-                case ComplexRead11.TYPE: {
-                    List<ComplexRead11Result> typedResults = (List<ComplexRead11Result>) result;
-                    for (ComplexRead11Result complexRead11Result : typedResults) {
-                        if ("Company".equals(complexRead11Result.getType())) {
-                            companyIdBuffer.add(complexRead11Result.getId());
-                        } else if ("Person".equals(complexRead11Result.getType())) {
-                            personIdBuffer.add(complexRead11Result.getId());
-                        }
-                    }
-                    break;
-                }
-                case ComplexRead13.TYPE: {
-                    List<ComplexRead13Result> typedResults = (List<ComplexRead13Result>) result;
-                    ComplexRead13 complexRead13 = (ComplexRead13) operation;
-                    for (ComplexRead13Result complexRead13Result : typedResults) {
-                        accountIdBuffer.add(new Tuple4<>(complexRead13Result.getCompAccountId(),
+                case ComplexRead12.TYPE: {
+                    List<ComplexRead12Result> typedResults = (List<ComplexRead12Result>) result;
+                    ComplexRead12 complexRead12 = (ComplexRead12) operation;
+                    for (ComplexRead12Result complexRead12Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead12Result.getCompAccountId(),
                             THRESHOLD,
-                            complexRead13.getStartTime(),
-                            complexRead13.getEndTime()));
+                            complexRead12.getStartTime(),
+                            complexRead12.getEndTime()));
                     }
                     break;
                 }
@@ -1436,118 +1383,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 Date startTime = tuple4._3();
                 Date endTime = tuple4._4();
                 Operation operation = new SimpleRead6(id, startTime, endTime);
-                operation.setScheduledStartTimeAsMilli(
-                    scheduledStartTimeFactory.nextScheduledStartTime(
-                        previousOperation,
-                        previousOperationActualStartTimeAsMilli,
-                        previousOperationRunDurationAsNano
-                    )
-                );
-                return operation;
-            }
-        }
-
-        @Override
-        public String describe() {
-            return getClass().getSimpleName();
-        }
-    }
-
-    private class LdbcSimpleQuery7Factory implements LdbcSimpleQueryFactory {
-        private final ScheduledStartTimeFactory scheduledStartTimeFactory;
-
-        private LdbcSimpleQuery7Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
-            switch (scheduledStartTimePolicy) {
-                case ESTIMATED: {
-                    this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
-                    break;
-                }
-                case PREVIOUS_OPERATION_ACTUAL_FINISH_TIME: {
-                    this.scheduledStartTimeFactory = new PreviousOperationActualFinishTimeFactory();
-                    break;
-                }
-                case PREVIOUS_OPERATION_SCHEDULED_START_TIME: {
-                    this.scheduledStartTimeFactory = new PreviousOperationScheduledStartTimeFactory();
-                    break;
-                }
-                default: {
-                    throw new RuntimeException(format("Unexpected value, should be one of %s but was %s",
-                        Arrays.toString(ScheduledStartTimePolicy.values()),
-                        scheduledStartTimePolicy.name()));
-                }
-            }
-        }
-
-        @Override
-        public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
-            Queue<Long> personIdBuffer,
-            Queue<Long> companyIdBuffer,
-            Operation previousOperation,
-            long previousOperationActualStartTimeAsMilli,
-            long previousOperationRunDurationAsNano,
-            double state) {
-            Long id = personIdBuffer.poll();
-            if (null == id) {
-                return null;
-            } else {
-                Operation operation = new SimpleRead7(id);
-                operation.setScheduledStartTimeAsMilli(
-                    scheduledStartTimeFactory.nextScheduledStartTime(
-                        previousOperation,
-                        previousOperationActualStartTimeAsMilli,
-                        previousOperationRunDurationAsNano
-                    )
-                );
-                return operation;
-            }
-        }
-
-        @Override
-        public String describe() {
-            return getClass().getSimpleName();
-        }
-    }
-
-    private class LdbcSimpleQuery8Factory implements LdbcSimpleQueryFactory {
-        private final ScheduledStartTimeFactory scheduledStartTimeFactory;
-
-        private LdbcSimpleQuery8Factory(ScheduledStartTimePolicy scheduledStartTimePolicy) {
-            switch (scheduledStartTimePolicy) {
-                case ESTIMATED: {
-                    this.scheduledStartTimeFactory = new EstimatedScheduledStartTimeFactory();
-                    break;
-                }
-                case PREVIOUS_OPERATION_ACTUAL_FINISH_TIME: {
-                    this.scheduledStartTimeFactory = new PreviousOperationActualFinishTimeFactory();
-                    break;
-                }
-                case PREVIOUS_OPERATION_SCHEDULED_START_TIME: {
-                    this.scheduledStartTimeFactory = new PreviousOperationScheduledStartTimeFactory();
-                    break;
-                }
-                default: {
-                    throw new RuntimeException(format("Unexpected value, should be one of %s but was %s",
-                        Arrays.toString(ScheduledStartTimePolicy.values()),
-                        scheduledStartTimePolicy.name()));
-                }
-            }
-        }
-
-        @Override
-        public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
-            Queue<Long> personIdBuffer,
-            Queue<Long> companyIdBuffer,
-            Operation previousOperation,
-            long previousOperationActualStartTimeAsMilli,
-            long previousOperationRunDurationAsNano,
-            double state) {
-            Long id = companyIdBuffer.poll();
-            if (null == id) {
-                return null;
-            } else {
-                Operation operation = new SimpleRead8(id);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
