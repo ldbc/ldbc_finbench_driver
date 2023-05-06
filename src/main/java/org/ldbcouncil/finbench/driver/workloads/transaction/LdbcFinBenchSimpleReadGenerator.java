@@ -856,12 +856,12 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 }
                 case ComplexRead12.TYPE: {
                     List<ComplexRead12Result> typedResults = (List<ComplexRead12Result>) result;
-                    ComplexRead12 complexRead13 = (ComplexRead12) operation;
-                    for (ComplexRead12Result complexRead13Result : typedResults) {
-                        accountIdBuffer.add(new Tuple4<>(complexRead13Result.getCompAccountId(),
+                    ComplexRead12 complexRead12 = (ComplexRead12) operation;
+                    for (ComplexRead12Result complexRead12Result : typedResults) {
+                        accountIdBuffer.add(new Tuple4<>(complexRead12Result.getCompAccountId(),
                             THRESHOLD,
-                            complexRead13.getStartTime(),
-                            complexRead13.getEndTime()));
+                            complexRead12.getStartTime(),
+                            complexRead12.getEndTime()));
                     }
                     break;
                 }
