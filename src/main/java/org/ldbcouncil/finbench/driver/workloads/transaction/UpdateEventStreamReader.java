@@ -456,18 +456,20 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dstId = rs.getLong(2);
                 Date currentTime = new Date(rs.getTimestamp(3).getTime());
                 long amt = rs.getLong(4);
-                long threshold = rs.getLong(5);
+                long amountThreshold = rs.getLong(5);
                 Date startTime = new Date(rs.getTimestamp(6).getTime());
                 Date endTime = new Date(rs.getTimestamp(7).getTime());
+                float ratioThreshold = rs.getFloat(8);
 
                 Operation operation = new ReadWrite2(
                     srcId,
                     dstId,
                     currentTime,
                     amt,
-                    threshold,
+                    amountThreshold,
                     startTime,
-                    endTime);
+                    endTime,
+                    ratioThreshold);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite2: %s", e));
