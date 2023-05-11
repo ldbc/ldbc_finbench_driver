@@ -25,7 +25,7 @@ public class ComplexRead5Result {
             return false;
         }
         ComplexRead5Result that = (ComplexRead5Result) o;
-        return path == that.path;
+        return Objects.equals(path, that.path);
     }
 
     @Override
