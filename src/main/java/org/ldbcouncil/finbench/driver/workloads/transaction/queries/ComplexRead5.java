@@ -47,6 +47,19 @@ public class ComplexRead5 extends Operation<List<ComplexRead5Result>> {
         this.truncationOrder = truncationOrder;
     }
 
+    public ComplexRead5(ComplexRead5 operation) {
+        this.id = operation.id;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
+    }
+
+    @Override
+    public ComplexRead5 newInstance() {
+        return new ComplexRead5(this);
+    }
+
     public long getId() {
         return id;
     }

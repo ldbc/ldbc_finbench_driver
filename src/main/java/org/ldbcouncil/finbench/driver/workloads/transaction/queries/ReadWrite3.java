@@ -3,13 +3,16 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload read write query 3:
  * -- Guarantee under guarantee chain detection strategy --
  * The workflow of this read write query contains at least one transaction. It works as:
-• In the very beginning, read the blocked status of related persons. The transaction aborts
-if one of them is blocked. Move to the next step if none is blocked.
-• Add a guarantee edge between the two persons inside the transaction.
-• Detect if a guarantee chain pattern formed, only for the src person. Calculate if the amount
-sum of the related loans in the chain exceeds a given threshold. Transaction aborts if
-the sum exceeds the threshold, and then mark the related persons as blocked in another
-transaction. Otherwise the transaction commits.
+• In the very beginning, read the blocked status of related persons with given ids of two src
+and dst persons. The transaction aborts if one of them is blocked. Move to the next step if
+none is blocked.
+• Add a guarantee edge between the src and dst persons inside a transaction. Given a specified
+time window between startTime and endTime, find all the persons in the guarantee chain of
+until end and their loans applied. Detect if a guarantee chain pattern formed, only for the
+src person. Calculate if the amount sum of the related loans in the chain exceeds a given
+threshold. Transaction aborts if the sum exceeds the threshold. Otherwise the transaction
+commits.
+• If the last transaction aborts, mark the src and dst persons as blocked in another transaction.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -47,6 +50,20 @@ public class ReadWrite3 extends Operation<LdbcNoResult> {
         this.threshold = threshold;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public ReadWrite3(ReadWrite3 operation) {
+        this.srcId = operation.srcId;
+        this.dstId = operation.dstId;
+        this.time = operation.time;
+        this.threshold = operation.threshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public ReadWrite3 newInstance() {
+        return new ReadWrite3(this);
     }
 
     public long getSrcId() {

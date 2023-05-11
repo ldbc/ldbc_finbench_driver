@@ -34,6 +34,18 @@ public class Write9 extends Operation<LdbcNoResult> {
         this.amount = amount;
     }
 
+    public Write9(Write9 operation) {
+        this.accountId = operation.accountId;
+        this.loanId = operation.loanId;
+        this.time = operation.time;
+        this.amount = operation.amount;
+    }
+
+    @Override
+    public Write9 newInstance() {
+        return new Write9(this);
+    }
+
     public long getAccountId() {
         return accountId;
     }

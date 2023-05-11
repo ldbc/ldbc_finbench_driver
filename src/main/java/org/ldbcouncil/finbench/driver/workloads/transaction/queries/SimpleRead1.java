@@ -25,6 +25,15 @@ public class SimpleRead1 extends Operation<List<SimpleRead1Result>> {
         this.id = id;
     }
 
+    public SimpleRead1(SimpleRead1 operation) {
+        this.id = operation.id;
+    }
+
+    @Override
+    public SimpleRead1 newInstance() {
+        return new SimpleRead1(this);
+    }
+
     public long getId() {
         return id;
     }

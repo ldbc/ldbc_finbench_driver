@@ -301,13 +301,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         simpleQueryFactories[SimpleRead5.TYPE] = null;
         simpleQueryFactories[SimpleRead6.TYPE] = null;
 
-        /*
-        FACTORIES
-            <if> (LAST_PERSON_INDEX != MAX_INTEGER) <then>
-                LAST_PERSON_INDEX (S1/S2/S3) -> FIRST_MESSAGE
-            <if> (LAST_MESSAGE_INDEX != MAX_INTEGER) <then>
-                LAST_MESSAGE_INDEX (S4/S5/S6/S7) -> FIRST_PERSON
-         */
         if (Integer.MAX_VALUE != lastAccountQueryIndex) {
             simpleQueryFactories[lastAccountQueryIndex] = firstPersonQuery;
         }
@@ -317,27 +310,6 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         if (Integer.MAX_VALUE != lastCompanyQueryIndex) {
             simpleQueryFactories[lastCompanyQueryIndex] = firstAccountQuery;
         }
-
-        /*
-        FACTORIES
-            S1_INDEX -> <if> (ENABLED[S1_INDEX] && UNASSIGNED == FACTORIES[S1_INDEX]) <then>
-                            index = indexOfNextEnabledAndUnassigned(MAPPING,S1_INDEX)
-                            <if> (index > LAST_PERSON_INDEX) <then> FIRST_MESSAGE <else> MAPPING[index]
-            S2_INDEX -> <if> (ENABLED[S2_INDEX] && UNASSIGNED == FACTORIES[S2_INDEX]) <then>
-                            index = indexOfNextEnabledAndUnassigned(MAPPING,S2_INDEX)
-                            <if> (index > LAST_PERSON_INDEX) <then> FIRST_MESSAGE <else> MAPPING[index]
-            S3_INDEX -> // must have already been assigned, or is disabled
-            S4_INDEX -> <if> (ENABLED[S4_INDEX] && UNASSIGNED == FACTORIES[S4_INDEX]) <then>
-                            index = indexOfNextEnabledAndUnassigned(MAPPING,S4_INDEX)
-                            <if> (index > LAST_MESSAGE_INDEX) <then> FIRST_PERSON <else> MAPPING[index]
-            S5_INDEX -> <if> (ENABLED[S5_INDEX] && UNASSIGNED == FACTORIES[S5_INDEX]) <then>
-                            index = indexOfNextEnabledAndUnassigned(MAPPING,S5_INDEX)
-                            <if> (index > LAST_MESSAGE_INDEX) <then> FIRST_PERSON <else> MAPPING[index]
-            S6_INDEX -> <if> (ENABLED[S6_INDEX] && UNASSIGNED == FACTORIES[S6_INDEX]) <then>
-                            index = indexOfNextEnabledAndUnassigned(MAPPING,S6_INDEX)
-                            <if> (index > LAST_MESSAGE_INDEX) <then> FIRST_PERSON <else> MAPPING[index]
-            S7_INDEX -> // must have already been assigned, or is disabled
-         */
 
         for (int i = SimpleRead1.TYPE; i <= SimpleRead6.TYPE; i++) {
             if (enabledSimpleReads[i] && null == simpleQueryFactories[i]) {
@@ -582,21 +554,21 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             );
         } else if (enabledSimpleReadOperationTypes.contains(SimpleRead4.class)) {
             return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
-                SimpleRead3.TYPE,
+                SimpleRead4.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery4Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
         } else if (enabledSimpleReadOperationTypes.contains(SimpleRead5.class)) {
             return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
-                SimpleRead3.TYPE,
+                SimpleRead5.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery5Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
         } else if (enabledSimpleReadOperationTypes.contains(SimpleRead6.class)) {
             return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
-                SimpleRead3.TYPE,
+                SimpleRead6.TYPE,
                 new CoinTossingFactory(randomFactory.newRandom(),
-                    new LdbcSimpleQuery3Factory(scheduledStartTimePolicy), minProbability, maxProbability)
+                    new LdbcSimpleQuery6Factory(scheduledStartTimePolicy), minProbability, maxProbability)
             );
         } else {
             return Tuple.<Integer, LdbcSimpleQueryFactory>tuple2(
@@ -655,17 +627,17 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
     }
 
     private int lastAccountQueryIndex(Set<Class<? extends Operation>> enabledSimpleReadOperationTypes) {
-        if (enabledSimpleReadOperationTypes.contains(SimpleRead1.class)) {
+        if (enabledSimpleReadOperationTypes.contains(SimpleRead6.class)) {
             return SimpleRead6.TYPE;
-        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead2.class)) {
-            return SimpleRead5.TYPE;
-        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead3.class)) {
-            return SimpleRead4.TYPE;
-        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead4.class)) {
-            return SimpleRead3.TYPE;
         } else if (enabledSimpleReadOperationTypes.contains(SimpleRead5.class)) {
+            return SimpleRead5.TYPE;
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead4.class)) {
+            return SimpleRead4.TYPE;
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead3.class)) {
+            return SimpleRead3.TYPE;
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead2.class)) {
             return SimpleRead2.TYPE;
-        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead6.class)) {
+        } else if (enabledSimpleReadOperationTypes.contains(SimpleRead1.class)) {
             return SimpleRead1.TYPE;
         } else {
             return Integer.MAX_VALUE;

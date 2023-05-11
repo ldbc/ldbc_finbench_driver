@@ -21,6 +21,15 @@ public class Write10 extends Operation<LdbcNoResult> {
         this.accountId = accountId;
     }
 
+    public Write10(Write10 operation) {
+        this.accountId = operation.accountId;
+    }
+
+    @Override
+    public Write10 newInstance() {
+        return new Write10(this);
+    }
+
     public long getAccountId() {
         return accountId;
     }
