@@ -1,10 +1,14 @@
 package org.ldbcouncil.finbench.driver.result;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 // The Type of path, [ID1, ID2, ID3, ID4...]
+@JsonSerialize(using = PathSerializer.class)
+@JsonDeserialize(using = PathDeserializer.class)
 public class Path {
     private List<Long> path;
 
@@ -22,6 +26,10 @@ public class Path {
 
     public void addId(Long id) {
         this.path.add(id);
+    }
+
+    public List<Long> getPath() {
+        return path;
     }
 
     @Override

@@ -10,10 +10,10 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class Write12 extends Operation<LdbcNoResult> {
+public class Write12 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1012;
     public static final String PID1 = "pid1";
     public static final String PID2 = "pid2";
