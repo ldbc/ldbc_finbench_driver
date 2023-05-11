@@ -258,7 +258,7 @@ public class DummyDb extends Db {
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(sr1.toString());
             List<SimpleRead1Result> simpleRead1Results = new ArrayList<>();
-            simpleRead1Results.add(new SimpleRead1Result(new Date(), true, "a"));
+            simpleRead1Results.add(new SimpleRead1Result(new Date(1), true, "a"));
             resultReporter.report(1, simpleRead1Results, sr1);
         }
     }
