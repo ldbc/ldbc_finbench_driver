@@ -13,9 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class SimpleRead1 extends Operation<List<SimpleRead1Result>> {
+public class SimpleRead1 extends LdbcOperation<List<SimpleRead1Result>> {
     public static final int TYPE = 101;
     public static final String ID = "id";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();

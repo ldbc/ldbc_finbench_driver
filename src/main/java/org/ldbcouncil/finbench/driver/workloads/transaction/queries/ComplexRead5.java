@@ -18,10 +18,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class ComplexRead5 extends Operation<List<ComplexRead5Result>> {
+public class ComplexRead5 extends LdbcOperation<List<ComplexRead5Result>> {
     public static final int TYPE = 5;
     public static final String ID = "id";
     public static final String START_TIME = "startTime";

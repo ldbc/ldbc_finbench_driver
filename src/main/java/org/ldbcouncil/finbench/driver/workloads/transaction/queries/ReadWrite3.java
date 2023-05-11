@@ -17,10 +17,10 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class ReadWrite3 extends Operation<LdbcNoResult> {
+public class ReadWrite3 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 10003;
     public static final String SRC_ID = "srcId";
     public static final String DST_ID = "dstId";

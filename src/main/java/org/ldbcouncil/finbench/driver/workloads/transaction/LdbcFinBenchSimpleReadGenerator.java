@@ -67,7 +67,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
 public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator {
-    private static final long THRESHOLD = 100;
+    public static final long THRESHOLD = 100;
     private final double initialProbability;
     private final LdbcSimpleQueryFactory[] simpleQueryFactories;
     private final double[] probabilityDegradationFactors;

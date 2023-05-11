@@ -19,10 +19,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class ComplexRead4 extends Operation<List<ComplexRead4Result>> {
+public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
     public static final int TYPE = 4;
     public static final String ID1 = "id1";
     public static final String ID2 = "id2";

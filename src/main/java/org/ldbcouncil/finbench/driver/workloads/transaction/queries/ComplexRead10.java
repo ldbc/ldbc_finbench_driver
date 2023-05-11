@@ -2,8 +2,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 10:
  * -- Similarity of investor relationship --
- * Given two Persons and a specified time window between startTime and endTime, find all the Companies the two
- * Persons invest in. Return the Jaccard similarity between the two companies set.
+ * Given two Persons and a specified time window between startTime and endTime, find all the Com
+panies the two Persons invest in. Return the Jaccard similarity between the two companies set.
 Return 0 if there is no edges found connecting to any of these two persons.
  */
 
@@ -16,9 +16,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class ComplexRead10 extends Operation<List<ComplexRead10Result>> {
+public class ComplexRead10 extends LdbcOperation<List<ComplexRead10Result>> {
     public static final int TYPE = 10;
     public static final String PID1 = "pid1";
     public static final String PID2 = "pid2";

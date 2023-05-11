@@ -115,7 +115,7 @@ public class CreateValidationParamsMode implements DriverMode<Object> {
                 db,
                 w.dbValidationParametersFilter(validationSetSize),
                 timeMappedOperations,
-                controlService.configuration().validationParametersSize()
+                validationSetSize
             );
             List<ValidationParam> validationParams = ImmutableList.copyOf(validationParamsGenerator);
             ValidationParamsToJson validationParamsAsJson = new ValidationParamsToJson(

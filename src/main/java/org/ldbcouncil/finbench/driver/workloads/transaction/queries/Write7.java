@@ -10,10 +10,10 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class Write7 extends Operation<LdbcNoResult> {
+public class Write7 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1007;
     public static final String ACCOUNT_ID = "accountId";
     public static final String MEDIUM_ID = "mediumId";

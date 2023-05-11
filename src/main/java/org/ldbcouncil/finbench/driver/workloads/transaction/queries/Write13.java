@@ -10,10 +10,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class Write13 extends Operation<LdbcNoResult> {
+public class Write13 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1013;
     public static final String ID = "id";
     private final long id;

@@ -17,9 +17,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class SimpleRead2 extends Operation<List<SimpleRead2Result>> {
+public class SimpleRead2 extends LdbcOperation<List<SimpleRead2Result>> {
     public static final int TYPE = 102;
     public static final String ID = "id";
     public static final String START_TIME = "startTime";

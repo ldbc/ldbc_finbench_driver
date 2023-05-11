@@ -1,24 +1,8 @@
 package org.ldbcouncil.finbench.driver;
 
-import static com.fasterxml.jackson.annotation.JsonTypeInfo.Id.DEDUCTION;
-
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import java.io.IOException;
 import java.util.Map;
 import org.ldbcouncil.finbench.driver.temporal.TemporalUtil;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
 
 /**
  * Describes Operation performed by the driver, e.g. queries.
@@ -26,21 +10,6 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9
  * result of the opertion. The operation must be able to deserialize the
  * result object.
  */
-@JsonTypeInfo(use = DEDUCTION)
-@JsonSubTypes({
-    @JsonSubTypes.Type(ComplexRead1.class),
-    @JsonSubTypes.Type(ComplexRead2.class),
-    @JsonSubTypes.Type(ComplexRead3.class),
-    @JsonSubTypes.Type(ComplexRead4.class),
-    @JsonSubTypes.Type(ComplexRead5.class),
-    @JsonSubTypes.Type(ComplexRead6.class),
-    @JsonSubTypes.Type(ComplexRead7.class),
-    @JsonSubTypes.Type(ComplexRead8.class),
-    @JsonSubTypes.Type(ComplexRead9.class),
-    @JsonSubTypes.Type(ComplexRead10.class),
-    @JsonSubTypes.Type(ComplexRead11.class),
-    @JsonSubTypes.Type(ComplexRead12.class),
-})
 public abstract class Operation<RESULT_TYPE> {
     private static final TemporalUtil temporalutil = new TemporalUtil();
     private long scheduledStartTimeAsMilli = -1;
