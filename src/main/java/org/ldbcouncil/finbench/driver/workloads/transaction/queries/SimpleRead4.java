@@ -40,6 +40,18 @@ public class SimpleRead4 extends Operation<List<SimpleRead4Result>> {
         this.endTime = endTime;
     }
 
+    public SimpleRead4(SimpleRead4 operation) {
+        this.id = operation.id;
+        this.threshold = operation.threshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public SimpleRead4 newInstance() {
+        return new SimpleRead4(this);
+    }
+
     public long getId() {
         return id;
     }

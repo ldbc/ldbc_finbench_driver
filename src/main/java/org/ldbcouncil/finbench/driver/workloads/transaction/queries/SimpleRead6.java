@@ -35,6 +35,17 @@ public class SimpleRead6 extends Operation<List<SimpleRead6Result>> {
         this.endTime = endTime;
     }
 
+    public SimpleRead6(SimpleRead6 operation) {
+        this.id = operation.id;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public SimpleRead6 newInstance() {
+        return new SimpleRead6(this);
+    }
+
     public long getId() {
         return id;
     }

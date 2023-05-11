@@ -1,14 +1,17 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload read write query 2:
- * -- Transfer under fast-in and fast-out strategy --
+ * -- Transfer under in/out ratio strategy --
  * The workflow of this read write query contains at least one transaction. It works as:
-• In the very beginning, read the blocked status of related accounts. The transaction aborts
-if one of them is blocked. Move to the next step if none is blocked.
-• Add a transfer edge inside the transaction.
-• Detect if a fast-in and fast-out pattern formed, both for the src and dst account. Transaction
-aborts if formed, and then mark the related accounts as blocked in another transaction.
-Otherwise the transaction commits.
+• In the very beginning, read the blocked status of related accounts with given ids of two src
+and dst accounts. The transaction aborts if one of them is blocked. Move to the next step
+if none is blocked.
+• Add a transfer edge from src to dst inside a transaction. Given a specified time window
+between startTime and endTime, find all the transfer-in and transfer-out whose amount exceeds amountThreshold.
+* Transaction aborts if the ratio of transfers-in/transfers-out amount
+exceeds a given ratioThreshold, both for the src and dst account. Otherwise the transaction
+commits.
+• If the last transaction aborts, mark the src and dst accounts as blocked in another transaction.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -25,14 +28,14 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
     public static final String DST_ID = "dstId";
     public static final String TIME = "time";
     public static final String AMOUNT = "amount";
-    public static final String THRESHOLD = "threshold";
+    public static final String AMOUNT_THRESHOLD = "amountThreshold";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
     private final long srcId;
     private final long dstId;
     private final Date time;
     private final long amount;
-    private final long threshold;
+    private final long amountThreshold;
     private final Date startTime;
     private final Date endTime;
 
@@ -40,16 +43,31 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
                       @JsonProperty(DST_ID) long dstId,
                       @JsonProperty(TIME) Date time,
                       @JsonProperty(AMOUNT) long amount,
-                      @JsonProperty(THRESHOLD) long threshold,
+                      @JsonProperty(AMOUNT_THRESHOLD) long amountThreshold,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime) {
         this.srcId = srcId;
         this.dstId = dstId;
         this.time = time;
         this.amount = amount;
-        this.threshold = threshold;
+        this.amountThreshold = amountThreshold;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public ReadWrite2(ReadWrite2 operation) {
+        this.srcId = operation.srcId;
+        this.dstId = operation.dstId;
+        this.time = operation.time;
+        this.amount = operation.amount;
+        this.amountThreshold = operation.amountThreshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public ReadWrite2 newInstance() {
+        return new ReadWrite2(this);
     }
 
     public long getSrcId() {
@@ -68,8 +86,8 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
         return amount;
     }
 
-    public long getThreshold() {
-        return threshold;
+    public long getAmountThreshold() {
+        return amountThreshold;
     }
 
     public Date getStartTime() {
@@ -92,7 +110,7 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
             .put(DST_ID, dstId)
             .put(TIME, time)
             .put(AMOUNT, amount)
-            .put(THRESHOLD, threshold)
+            .put(AMOUNT_THRESHOLD, amountThreshold)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
             .build();
@@ -116,14 +134,14 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
             && dstId == that.dstId
             && Objects.equals(time, that.time)
             && amount == that.amount
-            && threshold == that.threshold
+            && amountThreshold == that.amountThreshold
             && Objects.equals(startTime, that.startTime)
             && Objects.equals(endTime, that.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, time, amount, threshold, startTime, endTime);
+        return Objects.hash(srcId, dstId, time, amount, amountThreshold, startTime, endTime);
     }
 
     @Override
@@ -137,8 +155,8 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
             + time
             + ", amount="
             + amount
-            + ", threshold="
-            + threshold
+            + ", amountThreshold="
+            + amountThreshold
             + ", startTime="
             + startTime
             + ", endTime="

@@ -20,6 +20,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
@@ -147,6 +148,11 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead2 cr2, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr2.toString());
+            List<ComplexRead2Result> complexRead2Results = new ArrayList<>();
+            complexRead2Results.add(new ComplexRead2Result(0, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(1, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(2, 0, 0));
+            resultReporter.report(complexRead2Results.size(), complexRead2Results, cr2);
         }
     }
 

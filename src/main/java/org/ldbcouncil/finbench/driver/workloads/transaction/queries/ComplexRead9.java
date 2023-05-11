@@ -51,6 +51,20 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
         this.truncationOrder = truncationOrder;
     }
 
+    public ComplexRead9(ComplexRead9 operation) {
+        this.id = operation.id;
+        this.threshold = operation.threshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
+    }
+
+    @Override
+    public ComplexRead9 newInstance() {
+        return new ComplexRead9(this);
+    }
+
     public long getId() {
         return id;
     }
@@ -116,8 +130,7 @@ public class ComplexRead9 extends Operation<List<ComplexRead9Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, threshold, startTime, endTime,
-            truncationLimit, truncationOrder);
+        return Objects.hash(id, threshold, startTime, endTime, truncationLimit, truncationOrder);
     }
 
     @Override

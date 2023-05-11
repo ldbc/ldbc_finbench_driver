@@ -83,8 +83,8 @@ public class ComplexRead4Result {
 
     @Override
     public int hashCode() {
-        return Objects.hash(otherId, numEdge2, sumEdge2Amount, maxEdge2Amount,
-            numEdge3, sumEdge3Amount, maxEdge3Amount);
+        return Objects.hash(otherId, numEdge2, sumEdge2Amount, maxEdge2Amount, numEdge3,
+            sumEdge3Amount, maxEdge3Amount);
     }
 
     @Override

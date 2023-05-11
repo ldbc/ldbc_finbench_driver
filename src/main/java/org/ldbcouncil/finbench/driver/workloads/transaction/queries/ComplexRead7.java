@@ -50,6 +50,20 @@ public class ComplexRead7 extends Operation<List<ComplexRead7Result>> {
         this.truncationOrder = truncationOrder;
     }
 
+    public ComplexRead7(ComplexRead7 operation) {
+        this.id = operation.id;
+        this.threshold = operation.threshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
+    }
+
+    @Override
+    public ComplexRead7 newInstance() {
+        return new ComplexRead7(this);
+    }
+
     public long getId() {
         return id;
     }
