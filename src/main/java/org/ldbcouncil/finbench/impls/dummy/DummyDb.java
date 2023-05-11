@@ -121,24 +121,24 @@ public class DummyDb extends Db {
             //The output of ComplexReads is the input of SimpleReads,
             // so ComplexRead1 outputs some results for verify that SimpleReads are correct.
             List<ComplexRead1Result> complexRead1Results = new ArrayList<>();
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0, "101"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0, "102"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "103"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "104"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "105"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "106"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "107"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "108"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "109"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1010"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1011"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1012"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1013"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1014"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1015"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1016"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1017"));
-            complexRead1Results.add(new ComplexRead1Result(0, 0, 0,  "1018"));
+            complexRead1Results.add(new ComplexRead1Result(1, 0, 0, "101"));
+            complexRead1Results.add(new ComplexRead1Result(2, 0, 0, "102"));
+            complexRead1Results.add(new ComplexRead1Result(3, 0, 0,  "103"));
+            complexRead1Results.add(new ComplexRead1Result(4, 0, 0,  "104"));
+            complexRead1Results.add(new ComplexRead1Result(5, 0, 0,  "105"));
+            complexRead1Results.add(new ComplexRead1Result(6, 0, 0,  "106"));
+            complexRead1Results.add(new ComplexRead1Result(7, 0, 0,  "107"));
+            complexRead1Results.add(new ComplexRead1Result(8, 0, 0,  "108"));
+            complexRead1Results.add(new ComplexRead1Result(9, 0, 0,  "109"));
+            complexRead1Results.add(new ComplexRead1Result(10, 0, 0,  "1010"));
+            complexRead1Results.add(new ComplexRead1Result(11, 0, 0,  "1011"));
+            complexRead1Results.add(new ComplexRead1Result(12, 0, 0,  "1012"));
+            complexRead1Results.add(new ComplexRead1Result(13, 0, 0,  "1013"));
+            complexRead1Results.add(new ComplexRead1Result(14, 0, 0,  "1014"));
+            complexRead1Results.add(new ComplexRead1Result(15, 0, 0,  "1015"));
+            complexRead1Results.add(new ComplexRead1Result(16, 0, 0,  "1016"));
+            complexRead1Results.add(new ComplexRead1Result(17, 0, 0,  "1017"));
+            complexRead1Results.add(new ComplexRead1Result(18, 0, 0,  "1018"));
             resultReporter.report(complexRead1Results.size(), complexRead1Results, cr1);
         }
     }
@@ -152,6 +152,22 @@ public class DummyDb extends Db {
             complexRead2Results.add(new ComplexRead2Result(0, 0, 0));
             complexRead2Results.add(new ComplexRead2Result(1, 0, 0));
             complexRead2Results.add(new ComplexRead2Result(2, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(3, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(4, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(5, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(6, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(7, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(8, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(9, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(10, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(11, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(12, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(13, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(14, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(15, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(16, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(17, 0, 0));
+            complexRead2Results.add(new ComplexRead2Result(18, 0, 0));
             resultReporter.report(complexRead2Results.size(), complexRead2Results, cr2);
         }
     }
