@@ -1,14 +1,17 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload read write query 2:
- * -- Transfer under fast-in and fast-out strategy --
+ * -- Transfer under in/out ratio strategy --
  * The workflow of this read write query contains at least one transaction. It works as:
-• In the very beginning, read the blocked status of related accounts. The transaction aborts
-if one of them is blocked. Move to the next step if none is blocked.
-• Add a transfer edge inside the transaction.
-• Detect if a fast-in and fast-out pattern formed, both for the src and dst account. Transaction
-aborts if formed, and then mark the related accounts as blocked in another transaction.
-Otherwise the transaction commits.
+• In the very beginning, read the blocked status of related accounts with given ids of two src
+and dst accounts. The transaction aborts if one of them is blocked. Move to the next step
+if none is blocked.
+• Add a transfer edge from src to dst inside a transaction. Given a specified time window
+between startTime and endTime, find all the transfer-in and transfer-out whose amount exceeds amountThreshold.
+* Transaction aborts if the ratio of transfers-in/transfers-out amount
+exceeds a given ratioThreshold, both for the src and dst account. Otherwise the transaction
+commits.
+• If the last transaction aborts, mark the src and dst accounts as blocked in another transaction.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;

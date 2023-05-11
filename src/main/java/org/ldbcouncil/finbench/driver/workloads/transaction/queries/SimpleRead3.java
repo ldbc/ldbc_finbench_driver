@@ -40,6 +40,18 @@ public class SimpleRead3 extends LdbcOperation<List<SimpleRead3Result>> {
         this.endTime = endTime;
     }
 
+    public SimpleRead3(SimpleRead3 operation) {
+        this.id = operation.id;
+        this.threshold = operation.threshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public SimpleRead3 newInstance() {
+        return new SimpleRead3(this);
+    }
+
     public long getId() {
         return id;
     }

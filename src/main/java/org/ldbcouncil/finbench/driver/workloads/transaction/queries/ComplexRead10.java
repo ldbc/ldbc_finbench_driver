@@ -40,6 +40,18 @@ public class ComplexRead10 extends LdbcOperation<List<ComplexRead10Result>> {
         this.endTime = endTime;
     }
 
+    public ComplexRead10(ComplexRead10 operation) {
+        this.pid1 = operation.pid1;
+        this.pid2 = operation.pid2;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public ComplexRead10 newInstance() {
+        return new ComplexRead10(this);
+    }
+
     public long getPid1() {
         return pid1;
     }

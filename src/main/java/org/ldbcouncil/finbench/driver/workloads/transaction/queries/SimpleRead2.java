@@ -37,6 +37,17 @@ public class SimpleRead2 extends LdbcOperation<List<SimpleRead2Result>> {
         this.endTime = endTime;
     }
 
+    public SimpleRead2(SimpleRead2 operation) {
+        this.id = operation.id;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public SimpleRead2 newInstance() {
+        return new SimpleRead2(this);
+    }
+
     public long getId() {
         return id;
     }

@@ -34,6 +34,18 @@ public class Write7 extends LdbcOperation<LdbcNoResult> {
         this.time = time;
     }
 
+    public Write7(Write7 operation) {
+        this.accountId = operation.accountId;
+        this.mediumId = operation.mediumId;
+        this.mediumBlocked = operation.mediumBlocked;
+        this.time = operation.time;
+    }
+
+    @Override
+    public Write7 newInstance() {
+        return new Write7(this);
+    }
+
     public long getAccountId() {
         return accountId;
     }

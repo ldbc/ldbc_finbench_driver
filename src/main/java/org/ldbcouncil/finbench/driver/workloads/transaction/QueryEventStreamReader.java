@@ -63,10 +63,10 @@ public class QueryEventStreamReader implements Iterator<Operation> {
     @Override
     public Operation next() {
         Operation query = operationStream.next();
-        // Operation operation = query.newInstance();
-        // operation.setDependencyTimeStamp(query.dependencyTimeStamp());
-        // operation.setExpiryTimeStamp(query.expiryTimeStamp());
-        return query;
+        Operation operation = query.newInstance();
+        operation.setDependencyTimeStamp(query.dependencyTimeStamp());
+        operation.setExpiryTimeStamp(query.expiryTimeStamp());
+        return operation;
     }
 
     @Override

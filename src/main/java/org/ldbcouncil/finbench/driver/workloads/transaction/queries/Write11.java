@@ -21,6 +21,15 @@ public class Write11 extends LdbcOperation<LdbcNoResult> {
         this.personId = personId;
     }
 
+    public Write11(Write11 operation) {
+        this.personId = operation.personId;
+    }
+
+    @Override
+    public Write11 newInstance() {
+        return new Write11(this);
+    }
+
     public long getPersonId() {
         return personId;
     }

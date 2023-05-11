@@ -22,6 +22,15 @@ public class Write13 extends LdbcOperation<LdbcNoResult> {
         this.id = id;
     }
 
+    public Write13(Write13 operation) {
+        this.id = operation.id;
+    }
+
+    @Override
+    public Write13 newInstance() {
+        return new Write13(this);
+    }
+
     public long getId() {
         return id;
     }

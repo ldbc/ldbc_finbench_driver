@@ -34,6 +34,18 @@ public class Write5 extends LdbcOperation<LdbcNoResult> {
         this.amount = amount;
     }
 
+    public Write5(Write5 operation) {
+        this.personId = operation.personId;
+        this.time = operation.time;
+        this.loanId = operation.loanId;
+        this.amount = operation.amount;
+    }
+
+    @Override
+    public Write5 newInstance() {
+        return new Write5(this);
+    }
+
     public long getPersonId() {
         return personId;
     }

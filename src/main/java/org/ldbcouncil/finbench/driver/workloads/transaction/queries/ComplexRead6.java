@@ -5,8 +5,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Given an account of type card and a specified time window between startTime and endTime, find all
 the connected accounts (mid) via withdrawal (edge2) satisfying, (1) More than 3 transfer-ins (edge1)
 from other accounts (src) whose amount exceeds threshold1. (2) The amount of withdrawal (edge2)
-exceeds threshold2. Return the sum of transfer amount from src to mid, the amount from mid to
-dstCard grouped by mid.
+from mid to dstCard whose exceeds threshold2. Return the sum of transfer amount from src to mid,
+the amount from mid to dstCard grouped by mid.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,6 +53,21 @@ public class ComplexRead6 extends LdbcOperation<List<ComplexRead6Result>> {
         this.endTime = endTime;
         this.truncationLimit = truncationLimit;
         this.truncationOrder = truncationOrder;
+    }
+
+    public ComplexRead6(ComplexRead6 operation) {
+        this.id = operation.id;
+        this.threshold1 = operation.threshold1;
+        this.threshold2 = operation.threshold2;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
+    }
+
+    @Override
+    public ComplexRead6 newInstance() {
+        return new ComplexRead6(this);
     }
 
     public long getId() {

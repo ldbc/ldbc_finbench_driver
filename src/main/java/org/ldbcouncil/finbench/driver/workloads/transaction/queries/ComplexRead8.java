@@ -8,7 +8,8 @@ edge1, edge2, edge3 and edge4 are in a specific time range between startTime and
 of each transfers or withdrawals between the account and the upstream account should exceed a
 specified threshold of the upstream transfer. Return all the accounts’ id in the downstream of loan
 with the final ratio and distanceFromLoan.
-Note: Upstream means the last edge in the trace.
+Note: Upstream of an edge refers to the aggregated total amounts of all transfer-in edges of its
+source Account.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,6 +52,20 @@ public class ComplexRead8 extends LdbcOperation<List<ComplexRead8Result>> {
         this.endTime = endTime;
         this.truncationLimit = truncationLimit;
         this.truncationOrder = truncationOrder;
+    }
+
+    public ComplexRead8(ComplexRead8 operation) {
+        this.id = operation.id;
+        this.threshold = operation.threshold;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
+    }
+
+    @Override
+    public ComplexRead8 newInstance() {
+        return new ComplexRead8(this);
     }
 
     public long getId() {

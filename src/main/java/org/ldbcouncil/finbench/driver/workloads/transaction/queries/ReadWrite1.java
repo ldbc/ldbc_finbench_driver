@@ -3,12 +3,14 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * Transaction workload read write query 1:
  * -- Transfer under transfer cycle detection strategy --
  * The workflow of this read write query contains at least one transaction. It works as:
-• In the very beginning, read the blocked status of related accounts. The transaction aborts
-if one of them is blocked. Move to the next step if none is blocked.
-• Add a transfer edge inside the transaction.
-• Detect if a new transfer cycle formed (which means there are no edges existing between the
-related accounts before). Transaction aborts if formed, and then mark the related accounts
-as blocked in another transaction. Otherwise the transaction commits.
+• In the very beginning, read the blocked status of related accounts with given ids of two src
+and dst accounts. The transaction aborts if one of them is blocked. Move to the next step
+if none is blocked.
+• Add a transfer edge from src to dst inside a transaction. Given a specified time window
+between startTime and endTime, find the other accounts which received money from dst and
+transferred money to src in a specific time. Transaction aborts if a new transfer cycle is
+formed, otherwise the transaction commits.
+• If the last transaction aborts, mark the src and dst accounts as blocked in another transaction.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -46,6 +48,20 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
         this.amount = amount;
         this.startTime = startTime;
         this.endTime = endTime;
+    }
+
+    public ReadWrite1(ReadWrite1 operation) {
+        this.srcId = operation.srcId;
+        this.dstId = operation.dstId;
+        this.time = operation.time;
+        this.amount = operation.amount;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+    }
+
+    @Override
+    public ReadWrite1 newInstance() {
+        return new ReadWrite1(this);
     }
 
     public long getSrcId() {

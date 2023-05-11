@@ -34,6 +34,18 @@ public class Write6 extends LdbcOperation<LdbcNoResult> {
         this.amount = amount;
     }
 
+    public Write6(Write6 operation) {
+        this.companyId = operation.companyId;
+        this.time = operation.time;
+        this.loanId = operation.loanId;
+        this.amount = operation.amount;
+    }
+
+    @Override
+    public Write6 newInstance() {
+        return new Write6(this);
+    }
+
     public long getCompanyId() {
         return companyId;
     }

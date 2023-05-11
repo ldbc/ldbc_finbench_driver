@@ -35,6 +35,18 @@ public class Write8 extends LdbcOperation<LdbcNoResult> {
         this.amount = amount;
     }
 
+    public Write8(Write8 operation) {
+        this.accountId = operation.accountId;
+        this.loanId = operation.loanId;
+        this.time = operation.time;
+        this.amount = operation.amount;
+    }
+
+    @Override
+    public Write8 newInstance() {
+        return new Write8(this);
+    }
+
     public long getAccountId() {
         return accountId;
     }

@@ -30,6 +30,17 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
         this.time = time;
     }
 
+    public Write12(Write12 operation) {
+        this.pid1 = operation.pid1;
+        this.pid2 = operation.pid2;
+        this.time = operation.time;
+    }
+
+    @Override
+    public Write12 newInstance() {
+        return new Write12(this);
+    }
+
     public long getPid1() {
         return pid1;
     }

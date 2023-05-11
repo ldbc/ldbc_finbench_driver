@@ -4,7 +4,7 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
  * -- Shortest transfer path --
  * Given two accounts and a specified time window between startTime and endTime, find the length
 of shortest path between these two accounts by the transfer relationships. Note that all the edges
-in the path should be in the time window and of type transfer. Return 0 if src and dst are directly
+in the path should be in the time window and of type transfer. Return 1 if src and dst are directly
 connected. Return -1 if there is no path found.
  */
 
@@ -48,6 +48,20 @@ public class ComplexRead3 extends LdbcOperation<List<ComplexRead3Result>> {
         this.endTime = endTime;
         this.truncationLimit = truncationLimit;
         this.truncationOrder = truncationOrder;
+    }
+
+    public ComplexRead3(ComplexRead3 operation) {
+        this.id1 = operation.id1;
+        this.id2 = operation.id2;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
+    }
+
+    @Override
+    public ComplexRead3 newInstance() {
+        return new ComplexRead3(this);
     }
 
     public long getId1() {

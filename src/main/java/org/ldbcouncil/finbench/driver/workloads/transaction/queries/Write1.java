@@ -42,6 +42,20 @@ public class Write1 extends LdbcOperation<LdbcNoResult> {
         this.accountType = accountType;
     }
 
+    public Write1(Write1 operation) {
+        this.personId = operation.personId;
+        this.personName = operation.personName;
+        this.accountId = operation.accountId;
+        this.time = operation.time;
+        this.accountBlocked = operation.accountBlocked;
+        this.accountType = operation.accountType;
+    }
+
+    @Override
+    public Write1 newInstance() {
+        return new Write1(this);
+    }
+
     public long getPersonId() {
         return personId;
     }

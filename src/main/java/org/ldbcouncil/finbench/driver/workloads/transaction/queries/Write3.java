@@ -34,6 +34,18 @@ public class Write3 extends LdbcOperation<LdbcNoResult> {
         this.amount = amount;
     }
 
+    public Write3(Write3 operation) {
+        this.srcId = operation.srcId;
+        this.dstId = operation.dstId;
+        this.time = operation.time;
+        this.amount = operation.amount;
+    }
+
+    @Override
+    public Write3 newInstance() {
+        return new Write3(this);
+    }
+
     public long getSrcId() {
         return srcId;
     }
