@@ -31,6 +31,7 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
     public static final String AMOUNT_THRESHOLD = "amountThreshold";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
+    public static final String RATIO_THRESHOLD = "ratioThreshold";
     private final long srcId;
     private final long dstId;
     private final Date time;
@@ -38,6 +39,7 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
     private final long amountThreshold;
     private final Date startTime;
     private final Date endTime;
+    private final float ratioThreshold;
 
     public ReadWrite2(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
@@ -45,7 +47,8 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
                       @JsonProperty(AMOUNT) long amount,
                       @JsonProperty(AMOUNT_THRESHOLD) long amountThreshold,
                       @JsonProperty(START_TIME) Date startTime,
-                      @JsonProperty(END_TIME) Date endTime) {
+                      @JsonProperty(END_TIME) Date endTime,
+                      @JsonProperty(RATIO_THRESHOLD) float ratioThreshold) {
         this.srcId = srcId;
         this.dstId = dstId;
         this.time = time;
@@ -53,6 +56,7 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
         this.amountThreshold = amountThreshold;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.ratioThreshold = ratioThreshold;
     }
 
     public ReadWrite2(ReadWrite2 operation) {
@@ -63,6 +67,7 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
         this.amountThreshold = operation.amountThreshold;
         this.startTime = operation.startTime;
         this.endTime = operation.endTime;
+        this.ratioThreshold = operation.ratioThreshold;
     }
 
     @Override
@@ -98,6 +103,10 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
         return endTime;
     }
 
+    public float getRatioThreshold() {
+        return ratioThreshold;
+    }
+
     @Override
     public int type() {
         return TYPE;
@@ -113,6 +122,7 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
             .put(AMOUNT_THRESHOLD, amountThreshold)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
+            .put(RATIO_THRESHOLD, ratioThreshold)
             .build();
     }
 
@@ -136,12 +146,13 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
             && amount == that.amount
             && amountThreshold == that.amountThreshold
             && Objects.equals(startTime, that.startTime)
-            && Objects.equals(endTime, that.endTime);
+            && Objects.equals(endTime, that.endTime)
+            && ratioThreshold == that.ratioThreshold;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, time, amount, amountThreshold, startTime, endTime);
+        return Objects.hash(srcId, dstId, time, amount, amountThreshold, startTime, endTime, ratioThreshold);
     }
 
     @Override
@@ -161,6 +172,8 @@ public class ReadWrite2 extends Operation<LdbcNoResult> {
             + startTime
             + ", endTime="
             + endTime
+            + ", ratioThreshold="
+            + ratioThreshold
             + '}';
     }
 }
