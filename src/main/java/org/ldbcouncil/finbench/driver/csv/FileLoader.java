@@ -37,7 +37,7 @@ public class FileLoader {
             if (path.contains(".parquet")) {
                 rs = stmt.executeQuery("SELECT * FROM read_parquet('" + path + "');");
             } else {
-                rs = stmt.executeQuery("SELECT * FROM read_csv('" + path + "', delim='|', AUTO_DETECT=TRUE);");
+                rs = stmt.executeQuery("SELECT * FROM read_csv_auto('" + path + "', delim='|', header=TRUE);");
             }
             while (rs.next()) {
                 Operation obj = decoder.decodeEvent(rs);
@@ -112,7 +112,14 @@ public class FileLoader {
         try {
             Connection connection = db.getConnection();
             stmt = connection.createStatement();
-            stmt.execute("CREATE VIEW " + viewName + " AS SELECT * FROM read_parquet('" + path + "');");
+
+            if (path.contains(".parquet")) {
+                stmt.execute("CREATE VIEW " + viewName + " AS SELECT * FROM read_parquet('" + path + "');");
+            } else {
+                stmt.execute("CREATE VIEW " + viewName + " AS SELECT * FROM read_csv_auto("
+                    + "'" + path + "', delim='|', header=TRUE);");
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new WorkloadException(format("Error creating view on temporary database: %s", path), e);
