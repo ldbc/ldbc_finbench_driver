@@ -1,8 +1,12 @@
 package org.ldbcouncil.finbench.driver.validation;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.util.Objects;
 import org.ldbcouncil.finbench.driver.Operation;
 
+@JsonSerialize(using = ValidationParamSerializer.class)
+@JsonDeserialize(using = ValidationParamDeserializer.class)
 public class ValidationParam {
     private final Operation operation;
     private final Object operationResult;

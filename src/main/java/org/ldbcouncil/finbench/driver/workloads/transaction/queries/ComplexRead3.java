@@ -17,10 +17,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class ComplexRead3 extends Operation<List<ComplexRead3Result>> {
+public class ComplexRead3 extends LdbcOperation<List<ComplexRead3Result>> {
     public static final int TYPE = 3;
     public static final String ID1 = "id1";
     public static final String ID2 = "id2";

@@ -9,10 +9,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class Write10 extends Operation<LdbcNoResult> {
+public class Write10 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1010;
     public static final String ACCOUNT_ID = "accountId";
     private final long accountId;

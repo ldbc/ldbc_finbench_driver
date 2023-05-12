@@ -600,4 +600,44 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         bufferedIterator.init();
         return bufferedIterator;
     }
+
+    /**
+     * Creates the validation parameter filter, which determines the amount of validation parameters
+     *
+     * @param requiredValidationParameterCount The total validation parameters to create
+     */
+    @Override
+    public DbValidationParametersFilter dbValidationParametersFilter(Integer requiredValidationParameterCount) {
+        Integer operationTypeCount = enabledLongReadOperationTypes.size() + enabledUpdateOperationTypes.size();
+
+        // Calculate amount of validation operations to create
+        long minimumResultCountPerOperationType = Math.max(
+            1,
+            Math.round(Math.floor(
+                requiredValidationParameterCount.doubleValue() / operationTypeCount.doubleValue()))
+        );
+
+        final Map<Class, Long> remainingRequiredResultsPerType = new HashMap<>();
+        for (Class updateOperationType : enabledUpdateOperationTypes) {
+            remainingRequiredResultsPerType.put(updateOperationType, minimumResultCountPerOperationType);
+        }
+        for (Class longReadOperationType : enabledLongReadOperationTypes) {
+            remainingRequiredResultsPerType.put(longReadOperationType, minimumResultCountPerOperationType);
+        }
+
+        for (Class simpleReadOperationType : enabledSimpleReadOperationTypes) {
+            remainingRequiredResultsPerType.put(simpleReadOperationType, minimumResultCountPerOperationType);
+        }
+
+        return new LdbcFinBenchTransactionDbValidationParametersFilter(
+            remainingRequiredResultsPerType,
+            // Writes are required to determine short reads operations to inject
+            enabledSimpleReadOperationTypes
+        );
+    }
+
+    @Override
+    public long maxExpectedInterleaveAsMilli() {
+        return TimeUnit.HOURS.toMillis(1);
+    }
 }

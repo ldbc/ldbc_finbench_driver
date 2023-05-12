@@ -2,8 +2,8 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload complex read query 7:
  * -- Fast-in and Fast-out --
- * Given an Account and a specified time window between startTime and endTime, find all the transferin (edge1)
- * and transfer-out (edge2) whose amount exceeds threshold. Return the count of src and
+ * Given an Account and a specified time window between startTime and endTime, find all the transfer
+in (edge1) and transfer-out (edge2) whose amount exceeds threshold. Return the count of src and
 dst accounts and the ratio of transfer-in amount over transfer-out amount. The fast-in and fash-out
 means a tight window between startTime and endTime. Return the ratio as -1 if there is no edge2.
  */
@@ -17,10 +17,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
+import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class ComplexRead7 extends Operation<List<ComplexRead7Result>> {
+public class ComplexRead7 extends LdbcOperation<List<ComplexRead7Result>> {
     public static final int TYPE = 7;
     public static final String ID = "id";
     public static final String THRESHOLD = "threshold";

@@ -32,14 +32,14 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
     private final Iterator<Operation> operations;
     private final ResultReporter resultReporter;
     private final List<Operation> injectedOperations;
-    private final int requiredValidationParameterSize;
     private int entriesWrittenSoFar;
     private boolean needMoreValidationParameters;
+    private int validationSetSize;
 
     public ValidationParamsGenerator(Db db,
                                      DbValidationParametersFilter dbValidationParametersFilter,
                                      Iterator<Operation> operations,
-                                     int requiredValidationParameterSize) {
+                                     int validationSetSize) {
         this.db = db;
         this.dbValidationParametersFilter = dbValidationParametersFilter;
         this.operations = operations;
@@ -47,7 +47,7 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
         this.entriesWrittenSoFar = 0;
         this.needMoreValidationParameters = true;
         this.injectedOperations = new ArrayList<>();
-        this.requiredValidationParameterSize = requiredValidationParameterSize;
+        this.validationSetSize = validationSetSize;
     }
 
     public int entriesWrittenSoFar() {
@@ -56,9 +56,9 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
 
     @Override
     protected ValidationParam doNext() throws GeneratorException {
-        while ((injectedOperations.size() > 0 || operations.hasNext()) && needMoreValidationParameters && (
-            requiredValidationParameterSize > entriesWrittenSoFar)) {
-            Operation operation;
+        Operation operation;
+        while (entriesWrittenSoFar < validationSetSize
+            && (!injectedOperations.isEmpty() || operations.hasNext()) && needMoreValidationParameters) {
             if (injectedOperations.isEmpty()) {
                 operation = operations.next();
             } else {
@@ -69,35 +69,7 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
                 continue;
             }
 
-            OperationHandlerRunnableContext operationHandlerRunner;
-            try {
-                operationHandlerRunner = db.getOperationHandlerRunnableContext(operation);
-            } catch (DbException e) {
-                throw new GeneratorException(
-                    format(
-                        "Error retrieving operation handler for operation\n"
-                            + "Db: %s\n"
-                            + "Operation: %s",
-                        db.getClass().getName(), operation),
-                    e);
-            }
-            try {
-                OperationHandler operationHandler = operationHandlerRunner.operationHandler();
-                DbConnectionState dbConnectionState = operationHandlerRunner.dbConnectionState();
-                operationHandler.executeOperation(operation, dbConnectionState, resultReporter);
-            } catch (DbException e) {
-                throw new GeneratorException(
-                    format(""
-                            + "Error executing operation to retrieve validation result\n"
-                            + "Db: %s\n"
-                            + "Operation: %s",
-                        db.getClass().getName(), operation),
-                    e);
-            } finally {
-                operationHandlerRunner.cleanup();
-            }
-
-            Object result = resultReporter.result();
+            Object result = getOperationResult(operation);
             DbValidationParametersFilterResult dbValidationParametersFilterResult =
                 dbValidationParametersFilter.useOperationAndResultForValidation(operation, result);
             injectedOperations.addAll(dbValidationParametersFilterResult.injectedOperations());
@@ -126,5 +98,43 @@ public class ValidationParamsGenerator extends Generator<ValidationParam> {
         }
         // ran out of operations OR validation set size has been reached
         return null;
+    }
+
+    /**
+     * Get operation result from the connected database.
+     *
+     * @param operation Operation to get the result from
+     * @return Result object
+     */
+    private Object getOperationResult(Operation operation) {
+        OperationHandlerRunnableContext operationHandlerRunner;
+        try {
+            operationHandlerRunner = db.getOperationHandlerRunnableContext(operation);
+        } catch (DbException e) {
+            throw new GeneratorException(
+                format(
+                    "Error retrieving operation handler for operation\n"
+                        + "Db: %s\n"
+                        + "Operation: %s",
+                    db.getClass().getName(), operation),
+                e);
+        }
+        try {
+            OperationHandler operationHandler = operationHandlerRunner.operationHandler();
+            DbConnectionState dbConnectionState = operationHandlerRunner.dbConnectionState();
+            operationHandler.executeOperation(operation, dbConnectionState, resultReporter);
+        } catch (DbException e) {
+            throw new GeneratorException(
+                format(""
+                        + "Error executing operation to retrieve validation result\n"
+                        + "Db: %s\n"
+                        + "Operation: %s",
+                    db.getClass().getName(), operation),
+                e);
+        } finally {
+            operationHandlerRunner.cleanup();
+        }
+
+        return resultReporter.result();
     }
 }
