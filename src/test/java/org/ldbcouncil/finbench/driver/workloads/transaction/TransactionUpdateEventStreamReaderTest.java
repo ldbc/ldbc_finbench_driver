@@ -11,7 +11,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.util.Iterator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,7 +93,7 @@ public class TransactionUpdateEventStreamReaderTest {
         assertThat(operation.getPersonName(), is("A"));
         assertThat(operation.getAccountId(), is(1001L));
         assertThat(operation.getTime().getTime(),
-            equalTo(Timestamp.valueOf("2012-07-29 08:52:02.735").getTime()));
+            equalTo(1343523122735L));
         assertThat(operation.getAccountBlocked(), is(true));
         assertThat(operation.getAccountType(), is("AA"));
 
@@ -103,7 +102,7 @@ public class TransactionUpdateEventStreamReaderTest {
         assertThat(operation.getPersonName(), is("B"));
         assertThat(operation.getAccountId(), is(1002L));
         assertThat(operation.getTime().getTime(),
-            equalTo(Timestamp.valueOf("2012-07-29 08:52:02.735").getTime()));
+            equalTo(1343523122735L));
         assertThat(operation.getAccountBlocked(), is(true));
         assertThat(operation.getAccountType(), is("BB"));
 
@@ -112,7 +111,7 @@ public class TransactionUpdateEventStreamReaderTest {
         assertThat(operation.getPersonName(), is("C"));
         assertThat(operation.getAccountId(), is(1003L));
         assertThat(operation.getTime().getTime(),
-            equalTo(Timestamp.valueOf("2012-07-29 08:52:02.735").getTime()));
+            equalTo(1343523122735L));
         assertThat(operation.getAccountBlocked(), is(false));
         assertThat(operation.getAccountType(), is("CC"));
 
@@ -121,7 +120,7 @@ public class TransactionUpdateEventStreamReaderTest {
         assertThat(operation.getPersonName(), is("D"));
         assertThat(operation.getAccountId(), is(1004L));
         assertThat(operation.getTime().getTime(),
-            equalTo(Timestamp.valueOf("2012-07-29 08:52:02.735").getTime()));
+            equalTo(1343523122735L));
         assertThat(operation.getAccountBlocked(), is(false));
         assertThat(operation.getAccountType(), is("DD"));
 
