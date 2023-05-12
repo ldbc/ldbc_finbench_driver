@@ -62,6 +62,9 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String PARAMETERS_DIRECTORY = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "parameters_dir";
     // directory containing forum and person update event streams
     public static final String UPDATES_DIRECTORY = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "updates_dir";
+    // the parameter and updates files suffix
+    public static final String FILES_SUFFIX = LDBC_FINBENCH_TRANSACTION_PARAM_NAME_PREFIX + "files_suffix";
+
 
     // Simple reads random walk dissipation rate, in the interval [1.0-0.0]
     // Higher values translate to shorter walks and therefore fewer simple reads
@@ -85,6 +88,8 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final int BUFFERED_QUEUE_SIZE = 4;
     public static final String INSERTS_DIRECTORY = "inserts";
     public static final String INSERTS_DATE_COLUMN = "creationDate";
+    public static final String FILE_SEPARATOR = ".";
+    public static final String DEFAULT_FILE_SUFFIX = "csv";
 
     public static final String LDBC_FINBENCH_TRANSACTION_PACKAGE_PREFIX =
         removeSuffix(ComplexRead1.class.getName(), ComplexRead1.class.getSimpleName());
@@ -250,19 +255,18 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     /*
      * Read Operation Parameters
      */
-    public static final String COMPLEX_READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param.parquet";
-    public static final String COMPLEX_READ_OPERATION_13_PARAMS_FILENAME = "complex_13_param.parquet";
+    public static final String COMPLEX_READ_OPERATION_1_PARAMS_FILENAME = "complex_1_param";
+    public static final String COMPLEX_READ_OPERATION_2_PARAMS_FILENAME = "complex_2_param";
+    public static final String COMPLEX_READ_OPERATION_3_PARAMS_FILENAME = "complex_3_param";
+    public static final String COMPLEX_READ_OPERATION_4_PARAMS_FILENAME = "complex_4_param";
+    public static final String COMPLEX_READ_OPERATION_5_PARAMS_FILENAME = "complex_5_param";
+    public static final String COMPLEX_READ_OPERATION_6_PARAMS_FILENAME = "complex_6_param";
+    public static final String COMPLEX_READ_OPERATION_7_PARAMS_FILENAME = "complex_7_param";
+    public static final String COMPLEX_READ_OPERATION_8_PARAMS_FILENAME = "complex_8_param";
+    public static final String COMPLEX_READ_OPERATION_9_PARAMS_FILENAME = "complex_9_param";
+    public static final String COMPLEX_READ_OPERATION_10_PARAMS_FILENAME = "complex_10_param";
+    public static final String COMPLEX_READ_OPERATION_11_PARAMS_FILENAME = "complex_11_param";
+    public static final String COMPLEX_READ_OPERATION_12_PARAMS_FILENAME = "complex_12_param";
     public static final Map<Integer, String> COMPLEX_READ_OPERATION_PARAMS_FILENAMES =
         typeToOperationParameterFilename();
     /*

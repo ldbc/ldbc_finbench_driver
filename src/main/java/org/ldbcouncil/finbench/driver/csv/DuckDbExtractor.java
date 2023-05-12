@@ -8,11 +8,11 @@ import java.sql.SQLException;
 /**
  * Handles the connection with DuckDb.
  */
-public class DuckDbParquetExtractor implements Closeable {
+public class DuckDbExtractor implements Closeable {
 
     private final Connection connection;
 
-    public DuckDbParquetExtractor() throws SQLException {
+    public DuckDbExtractor() throws SQLException {
         connection = DriverManager.getConnection("jdbc:duckdb:");
     }
 

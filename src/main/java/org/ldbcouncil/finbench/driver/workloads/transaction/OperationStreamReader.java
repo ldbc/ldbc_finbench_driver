@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
-import org.ldbcouncil.finbench.driver.csv.ParquetLoader;
+import org.ldbcouncil.finbench.driver.csv.FileLoader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 
 /**
@@ -18,9 +18,9 @@ import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 
 public class OperationStreamReader {
 
-    private final ParquetLoader loader;
+    private final FileLoader loader;
 
-    public OperationStreamReader(ParquetLoader loader) {
+    public OperationStreamReader(FileLoader loader) {
         this.loader = loader;
     }
 
