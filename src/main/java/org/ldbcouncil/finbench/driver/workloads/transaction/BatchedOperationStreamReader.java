@@ -5,16 +5,16 @@ import java.sql.SQLException;
 import java.util.Iterator;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
-import org.ldbcouncil.finbench.driver.csv.ParquetLoader;
+import org.ldbcouncil.finbench.driver.csv.FileLoader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.util.Tuple2;
 
 public class BatchedOperationStreamReader {
 
-    private final ParquetLoader loader;
+    private final FileLoader loader;
 
     public BatchedOperationStreamReader(
-        ParquetLoader loader
+        FileLoader loader
     ) {
         this.loader = loader;
     }

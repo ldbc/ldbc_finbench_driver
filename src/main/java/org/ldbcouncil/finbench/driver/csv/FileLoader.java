@@ -15,13 +15,13 @@ import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.util.Tuple2;
 
 /**
- * Class to read Parquet files for operation streams.
+ * Class to read Parquet/CSV files for operation streams.
  */
-public class ParquetLoader {
+public class FileLoader {
 
-    private final DuckDbParquetExtractor db;
+    private final DuckDbExtractor db;
 
-    public ParquetLoader(DuckDbParquetExtractor db) throws SQLException {
+    public FileLoader(DuckDbExtractor db) throws SQLException {
         this.db = db;
     }
 
@@ -33,7 +33,12 @@ public class ParquetLoader {
         try {
             Connection connection = db.getConnection();
             stmt = connection.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT * FROM read_parquet('" + path + "');");
+            ResultSet rs;
+            if (path.contains(".parquet")) {
+                rs = stmt.executeQuery("SELECT * FROM read_parquet('" + path + "');");
+            } else {
+                rs = stmt.executeQuery("SELECT * FROM read_csv('" + path + "', delim='|', AUTO_DETECT=TRUE);");
+            }
             while (rs.next()) {
                 Operation obj = decoder.decodeEvent(rs);
                 results.add(obj);

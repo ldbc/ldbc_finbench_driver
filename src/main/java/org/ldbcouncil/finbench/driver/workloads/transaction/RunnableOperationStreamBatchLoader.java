@@ -11,14 +11,14 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
-import org.ldbcouncil.finbench.driver.csv.ParquetLoader;
+import org.ldbcouncil.finbench.driver.csv.FileLoader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.generator.GeneratorFactory;
 import org.ldbcouncil.finbench.driver.util.Tuple2;
 
 public class RunnableOperationStreamBatchLoader extends Thread {
 
-    private final ParquetLoader loader;
+    private final FileLoader loader;
     private final long batchSize;
     private final GeneratorFactory gf;
     private final File updatesDir;
@@ -26,7 +26,7 @@ public class RunnableOperationStreamBatchLoader extends Thread {
     private final BlockingQueue<Iterator<Operation>> blockingQueue;
 
     public RunnableOperationStreamBatchLoader(
-        ParquetLoader loader,
+        FileLoader loader,
         GeneratorFactory gf,
         File updatesDir,
         BlockingQueue<Iterator<Operation>> blockingQueue,

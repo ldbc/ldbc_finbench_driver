@@ -32,8 +32,8 @@ import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.WorkloadStreams;
 import org.ldbcouncil.finbench.driver.control.ConsoleAndFileDriverConfiguration;
 import org.ldbcouncil.finbench.driver.control.OperationMode;
-import org.ldbcouncil.finbench.driver.csv.DuckDbParquetExtractor;
-import org.ldbcouncil.finbench.driver.csv.ParquetLoader;
+import org.ldbcouncil.finbench.driver.csv.DuckDbExtractor;
+import org.ldbcouncil.finbench.driver.csv.FileLoader;
 import org.ldbcouncil.finbench.driver.generator.BufferedIterator;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.generator.GeneratorFactory;
@@ -60,6 +60,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     private Map<Integer, Long> longReadInterleavesAsMilli;
     private File parametersDir;
     private File updatesDir;
+    private String fileSuffix;
     private long updateInterleaveAsMilli;
     private double compressionRatio;
     private double simpleReadDissipationFactor;
@@ -124,6 +125,11 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         }
 
         if (operationMode != OperationMode.VALIDATE_DATABASE) {
+            if (params.containsKey(LdbcFinBenchTransactionWorkloadConfiguration.FILES_SUFFIX)) {
+                fileSuffix = params.get(LdbcFinBenchTransactionWorkloadConfiguration.FILES_SUFFIX).trim();
+            } else {
+                fileSuffix = LdbcFinBenchTransactionWorkloadConfiguration.DEFAULT_FILE_SUFFIX;
+            }
             parametersDir =
                 new File(params.get(LdbcFinBenchTransactionWorkloadConfiguration.PARAMETERS_DIRECTORY).trim());
             if (!parametersDir.exists()) {
@@ -132,7 +138,8 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             }
             for (String readOperationParamsFilename :
                 LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_PARAMS_FILENAMES.values()) {
-                File readOperationParamsFile = new File(parametersDir, readOperationParamsFilename);
+                File readOperationParamsFile = new File(parametersDir, readOperationParamsFilename
+                        + LdbcFinBenchTransactionWorkloadConfiguration.FILE_SEPARATOR + fileSuffix);
                 if (!readOperationParamsFile.exists()) {
                     throw new WorkloadException(
                         format("Read operation parameters file does not exist: %s",
@@ -391,7 +398,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     private List<Iterator<?>> getOperationStreams(
         GeneratorFactory gf,
         long workloadStartTimeAsMilli,
-        ParquetLoader loader
+        FileLoader loader
     ) throws WorkloadException {
         List<Iterator<?>> asynchronousNonDependencyStreamsList = new ArrayList<>();
         /*
@@ -405,7 +412,8 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             Iterator<Operation> eventOperationStream = readOperationStream.readOperationStream(
                 decoders.get(type),
                 new File(parametersDir,
-                    LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_PARAMS_FILENAMES.get(type))
+                    LdbcFinBenchTransactionWorkloadConfiguration.COMPLEX_READ_OPERATION_PARAMS_FILENAMES.get(type)
+                        + LdbcFinBenchTransactionWorkloadConfiguration.FILE_SEPARATOR + fileSuffix)
             );
             long readOperationInterleaveAsMilli = longReadInterleavesAsMilli.get(type);
             Iterator<Long> operationStartTimes =
@@ -484,18 +492,18 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         dependencyAsynchronousOperationTypes.addAll(enabledUpdateOperationTypes);
         // dependentAsynchronousOperationTypes.addAll(enabledLongReadOperationTypes);
 
-        ParquetLoader loader;
+        FileLoader loader;
         try {
-            DuckDbParquetExtractor db = new DuckDbParquetExtractor();
-            loader = new ParquetLoader(db);
+            DuckDbExtractor db = new DuckDbExtractor();
+            loader = new FileLoader(db);
         } catch (SQLException e) {
             throw new WorkloadException(format("Error creating loader for operation streams %s", e));
         }
 
-        ParquetLoader updateLoader;
+        FileLoader updateLoader;
         try {
-            DuckDbParquetExtractor db = new DuckDbParquetExtractor();
-            updateLoader = new ParquetLoader(db);
+            DuckDbExtractor db = new DuckDbExtractor();
+            updateLoader = new FileLoader(db);
         } catch (SQLException e) {
             throw new WorkloadException(format("Error creating updateLoader for operation streams %s", e));
         }
@@ -564,7 +572,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
     private Iterator<Operation> setBatchedUpdateStreams(
         GeneratorFactory gf,
         long workloadStartTimeAsMilli,
-        ParquetLoader loader
+        FileLoader loader
     ) throws WorkloadException {
         long batchSizeInMillis = Math.round(TimeUnit.HOURS.toMillis(1) * batchSize);
 
