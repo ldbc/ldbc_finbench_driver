@@ -96,12 +96,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long personId = rs.getLong(1);
-                String personName = rs.getString(2);
-                long accountId = rs.getLong(3);
-                Date currentTime = new Date(rs.getTimestamp(4).getTime());
-                boolean accountBlocked = rs.getBoolean(5);
-                String accountType = rs.getString(6);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long personId = rs.getLong(3);
+                String personName = rs.getString(4);
+                long accountId = rs.getLong(5);
+                Date currentTime = new Date(rs.getLong(6));
+                boolean accountBlocked = rs.getBoolean(7);
+                String accountType = rs.getString(8);
 
                 Operation operation = new Write1(
                     personId,
@@ -110,6 +112,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     currentTime,
                     accountBlocked,
                     accountType);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write1: %s", e));
@@ -126,12 +131,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long companyId = rs.getLong(1);
-                String companyName = rs.getString(2);
-                long accountId = rs.getLong(3);
-                Date currentTime = new Date(rs.getTimestamp(4).getTime());
-                boolean accountBlocked = rs.getBoolean(5);
-                String accountType = rs.getString(6);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long companyId = rs.getLong(3);
+                String companyName = rs.getString(4);
+                long accountId = rs.getLong(5);
+                Date currentTime = new Date(rs.getLong(6));
+                boolean accountBlocked = rs.getBoolean(7);
+                String accountType = rs.getString(8);
 
                 Operation operation = new Write2(
                     companyId,
@@ -140,6 +147,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     currentTime,
                     accountBlocked,
                     accountType);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write2: %s", e));
@@ -156,16 +166,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long srcId = rs.getLong(1);
-                long dstId = rs.getLong(2);
-                Date timestamp = new Date(rs.getTimestamp(3).getTime());
-                long amount = rs.getLong(4);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long srcId = rs.getLong(3);
+                long dstId = rs.getLong(4);
+                Date timestamp = new Date(rs.getLong(5));
+                long amount = rs.getLong(6);
 
                 Operation operation = new Write3(
                     srcId,
                     dstId,
                     timestamp,
                     amount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write3: %s", e));
@@ -182,16 +197,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long srcId = rs.getLong(1);
-                long dstId = rs.getLong(2);
-                Date timestamp = new Date(rs.getTimestamp(3).getTime());
-                long amount = rs.getLong(4);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long srcId = rs.getLong(3);
+                long dstId = rs.getLong(4);
+                Date timestamp = new Date(rs.getLong(5));
+                long amount = rs.getLong(6);
 
                 Operation operation = new Write4(
                     srcId,
                     dstId,
                     timestamp,
                     amount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write4: %s", e));
@@ -208,16 +228,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long personId = rs.getLong(1);
-                Date currentTime = new Date(rs.getTimestamp(2).getTime());
-                long loanId = rs.getLong(3);
-                long loanAmount = rs.getLong(4);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long personId = rs.getLong(3);
+                Date currentTime = new Date(rs.getLong(4));
+                long loanId = rs.getLong(5);
+                long loanAmount = rs.getLong(6);
 
                 Operation operation = new Write5(
                     personId,
                     currentTime,
                     loanId,
                     loanAmount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write5: %s", e));
@@ -234,16 +259,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long companyId = rs.getLong(1);
-                Date currentTime = new Date(rs.getTimestamp(2).getTime());
-                long loanId = rs.getLong(3);
-                long loanAmount = rs.getLong(4);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long companyId = rs.getLong(3);
+                Date currentTime = new Date(rs.getLong(4));
+                long loanId = rs.getLong(5);
+                long loanAmount = rs.getLong(6);
 
                 Operation operation = new Write6(
                     companyId,
                     currentTime,
                     loanId,
                     loanAmount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write6: %s", e));
@@ -260,16 +290,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long accountId = rs.getLong(1);
-                long mediumId = rs.getLong(2);
-                boolean mediumBlocked = rs.getBoolean(3);
-                Date currentTime = new Date(rs.getTimestamp(4).getTime());
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
+                long mediumId = rs.getLong(4);
+                boolean mediumBlocked = rs.getBoolean(5);
+                Date currentTime = new Date(rs.getLong(6));
 
                 Operation operation = new Write7(
                     accountId,
                     mediumId,
                     mediumBlocked,
                     currentTime);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write7: %s", e));
@@ -286,16 +321,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long accountId = rs.getLong(1);
-                long loanId = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
-                long amount = rs.getLong(4);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
+                long loanId = rs.getLong(4);
+                Date currentTime = new Date(rs.getLong(5));
+                long amount = rs.getLong(6);
 
                 Operation operation = new Write8(
                     accountId,
                     loanId,
                     currentTime,
                     amount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write8: %s", e));
@@ -312,16 +352,21 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long accountId = rs.getLong(1);
-                long loanId = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
-                long amount = rs.getLong(4);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
+                long loanId = rs.getLong(4);
+                Date currentTime = new Date(rs.getLong(5));
+                long amount = rs.getLong(6);
 
                 Operation operation = new Write9(
                     accountId,
                     loanId,
                     currentTime,
                     amount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write9: %s", e));
@@ -338,10 +383,15 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long accountId = rs.getLong(1);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
 
                 Operation operation = new Write10(
                     accountId);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write10: %s", e));
@@ -358,10 +408,15 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long personId = rs.getLong(1);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long personId = rs.getLong(3);
 
                 Operation operation = new Write11(
                     personId);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write11: %s", e));
@@ -378,14 +433,19 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long pid1 = rs.getLong(1);
-                long pid2 = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long pid1 = rs.getLong(3);
+                long pid2 = rs.getLong(4);
+                Date currentTime = new Date(rs.getLong(5));
 
                 Operation operation = new Write12(
                     pid1,
                     pid2,
                     currentTime);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write12: %s", e));
@@ -402,10 +462,15 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long id = rs.getLong(1);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long id = rs.getLong(3);
 
                 Operation operation = new Write13(
                     id);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write13: %s", e));
@@ -422,12 +487,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long srcId = rs.getLong(1);
-                long dstId = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
-                long amt = rs.getLong(4);
-                Date startTime = new Date(rs.getTimestamp(5).getTime());
-                Date endTime = new Date(rs.getTimestamp(6).getTime());
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long srcId = rs.getLong(3);
+                long dstId = rs.getLong(4);
+                Date currentTime = new Date(rs.getLong(5));
+                long amt = rs.getLong(6);
+                Date startTime = new Date(rs.getLong(7));
+                Date endTime = new Date(rs.getLong(8));
 
                 Operation operation = new ReadWrite1(
                     srcId,
@@ -436,6 +503,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     amt,
                     startTime,
                     endTime);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite1: %s", e));
@@ -452,14 +522,16 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long srcId = rs.getLong(1);
-                long dstId = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
-                long amt = rs.getLong(4);
-                long amountThreshold = rs.getLong(5);
-                Date startTime = new Date(rs.getTimestamp(6).getTime());
-                Date endTime = new Date(rs.getTimestamp(7).getTime());
-                float ratioThreshold = rs.getFloat(8);
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long srcId = rs.getLong(3);
+                long dstId = rs.getLong(4);
+                Date currentTime = new Date(rs.getLong(5));
+                long amt = rs.getLong(6);
+                long amountThreshold = rs.getLong(7);
+                Date startTime = new Date(rs.getLong(8));
+                Date endTime = new Date(rs.getLong(9));
+                float ratioThreshold = rs.getFloat(10);
 
                 Operation operation = new ReadWrite2(
                     srcId,
@@ -470,6 +542,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     startTime,
                     endTime,
                     ratioThreshold);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite2: %s", e));
@@ -486,12 +561,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         @Override
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
-                long srcId = rs.getLong(1);
-                long dstId = rs.getLong(2);
-                Date currentTime = new Date(rs.getTimestamp(3).getTime());
-                long threshold = rs.getLong(4);
-                Date startTime = new Date(rs.getTimestamp(5).getTime());
-                Date endTime = new Date(rs.getTimestamp(6).getTime());
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long srcId = rs.getLong(3);
+                long dstId = rs.getLong(4);
+                Date currentTime = new Date(rs.getLong(5));
+                long threshold = rs.getLong(6);
+                Date startTime = new Date(rs.getLong(7));
+                Date endTime = new Date(rs.getLong(8));
 
                 Operation operation = new ReadWrite3(
                     srcId,
@@ -500,6 +577,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     threshold,
                     startTime,
                     endTime);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for ReadWrite3: %s", e));

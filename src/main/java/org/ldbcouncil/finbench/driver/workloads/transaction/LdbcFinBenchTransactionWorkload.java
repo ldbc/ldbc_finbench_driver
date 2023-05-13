@@ -589,6 +589,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             loader,
             gf,
             updatesDir,
+            fileSuffix,
             blockingQueue,
             dependencyUpdateOperationTypes,
             batchSizeInMillis

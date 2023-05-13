@@ -22,6 +22,7 @@ public class RunnableOperationStreamBatchLoader extends Thread {
     private final long batchSize;
     private final GeneratorFactory gf;
     private final File updatesDir;
+    private final String fileSuffix;
     private final Set<Class<? extends Operation>> enabledUpdateOperationTypes;
     private final BlockingQueue<Iterator<Operation>> blockingQueue;
 
@@ -29,6 +30,7 @@ public class RunnableOperationStreamBatchLoader extends Thread {
         FileLoader loader,
         GeneratorFactory gf,
         File updatesDir,
+        String fileSuffix,
         BlockingQueue<Iterator<Operation>> blockingQueue,
         Set<Class<? extends Operation>> enabledUpdateOperationTypes,
         long batchSize
@@ -36,6 +38,7 @@ public class RunnableOperationStreamBatchLoader extends Thread {
         this.loader = loader;
         this.gf = gf;
         this.updatesDir = updatesDir;
+        this.fileSuffix = fileSuffix;
         this.blockingQueue = blockingQueue;
         this.enabledUpdateOperationTypes = enabledUpdateOperationTypes;
         this.batchSize = batchSize;
@@ -60,7 +63,8 @@ public class RunnableOperationStreamBatchLoader extends Thread {
                 String viewName = enabledClass.getSimpleName();
                 // Initialize the batch reader to set the view in DuckDB on the parquet file
                 Tuple2<Long, Long> boundaries = updateOperationStream.init(
-                    new File(updatesDir, filename),
+                    new File(updatesDir, filename
+                        + LdbcFinBenchTransactionWorkloadConfiguration.FILE_SEPARATOR + fileSuffix),
                     viewName,
                     batchColumn
                 );

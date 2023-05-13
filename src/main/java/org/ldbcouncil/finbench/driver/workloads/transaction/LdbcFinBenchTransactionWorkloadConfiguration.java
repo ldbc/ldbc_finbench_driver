@@ -237,6 +237,9 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String WRITE_OPERATION_11_ENABLE_KEY = asEnableKey(Write11.class);
     public static final String WRITE_OPERATION_12_ENABLE_KEY = asEnableKey(Write12.class);
     public static final String WRITE_OPERATION_13_ENABLE_KEY = asEnableKey(Write13.class);
+    public static final String READ_WRITE_OPERATION_1_ENABLE_KEY = asEnableKey(ReadWrite1.class);
+    public static final String READ_WRITE_OPERATION_2_ENABLE_KEY = asEnableKey(ReadWrite2.class);
+    public static final String READ_WRITE_OPERATION_3_ENABLE_KEY = asEnableKey(ReadWrite3.class);
     public static final List<String> WRITE_OPERATION_ENABLE_KEYS = Lists.newArrayList(
         WRITE_OPERATION_1_ENABLE_KEY,
         WRITE_OPERATION_2_ENABLE_KEY,
@@ -250,7 +253,10 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         WRITE_OPERATION_10_ENABLE_KEY,
         WRITE_OPERATION_11_ENABLE_KEY,
         WRITE_OPERATION_12_ENABLE_KEY,
-        WRITE_OPERATION_13_ENABLE_KEY
+        WRITE_OPERATION_13_ENABLE_KEY,
+        READ_WRITE_OPERATION_1_ENABLE_KEY,
+        READ_WRITE_OPERATION_2_ENABLE_KEY,
+        READ_WRITE_OPERATION_3_ENABLE_KEY
     );
     /*
      * Read Operation Parameters
@@ -505,6 +511,9 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         operationTypeToClassMapping.put(Write11.TYPE, Write11.class);
         operationTypeToClassMapping.put(Write12.TYPE, Write12.class);
         operationTypeToClassMapping.put(Write13.TYPE, Write13.class);
+        operationTypeToClassMapping.put(ReadWrite1.TYPE, ReadWrite1.class);
+        operationTypeToClassMapping.put(ReadWrite2.TYPE, ReadWrite2.class);
+        operationTypeToClassMapping.put(ReadWrite3.TYPE, ReadWrite3.class);
         return operationTypeToClassMapping;
     }
 
@@ -552,22 +561,22 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping() {
         Map<Class<? extends Operation>, String> classToFileNameMapping = new HashMap<>();
         // Inserts TODO INSERTS_DIRECTORY
-        classToFileNameMapping.put(Write1.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write2.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write3.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write4.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write5.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write6.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write7.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write8.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write9.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write10.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write11.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write12.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(Write13.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(ReadWrite1.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(ReadWrite2.class, INSERTS_DIRECTORY + "/Person.parquet");
-        classToFileNameMapping.put(ReadWrite3.class, INSERTS_DIRECTORY + "/Person.parquet");
+        classToFileNameMapping.put(Write1.class, "/write_1_param");
+        classToFileNameMapping.put(Write2.class, "/write_2_param");
+        classToFileNameMapping.put(Write3.class, "/write_3_param");
+        classToFileNameMapping.put(Write4.class, "/write_4_param");
+        classToFileNameMapping.put(Write5.class, "/write_5_param");
+        classToFileNameMapping.put(Write6.class, "/write_6_param");
+        classToFileNameMapping.put(Write7.class, "/write_7_param");
+        classToFileNameMapping.put(Write8.class, "/write_8_param");
+        classToFileNameMapping.put(Write9.class, "/write_9_param");
+        classToFileNameMapping.put(Write10.class, "/write_10_param");
+        classToFileNameMapping.put(Write11.class, "/write_11_param");
+        classToFileNameMapping.put(Write12.class, "/write_12_param");
+        classToFileNameMapping.put(Write13.class, "/write_13_param");
+        classToFileNameMapping.put(ReadWrite1.class, "/read_write_1_param");
+        classToFileNameMapping.put(ReadWrite2.class, "/read_write_2_param");
+        classToFileNameMapping.put(ReadWrite3.class, "/read_write_3_param");
         return classToFileNameMapping;
     }
 
