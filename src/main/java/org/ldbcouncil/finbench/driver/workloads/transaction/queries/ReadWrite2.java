@@ -7,11 +7,11 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 and dst accounts. The transaction aborts if one of them is blocked. Move to the next step
 if none is blocked.
 • Add a transfer edge from src to dst inside a transaction. Given a specified time window
-between startTime and endTime, find all the transfer-in and transfer-out whose amount exceeds amountThreshold.
-* Transaction aborts if the ratio of transfers-in/transfers-out amount
+between startTime and endTime, find all the transfer-in and transfer-out whose amount ex
+ceeds amountThreshold. Transaction aborts if the ratio of transfers-in/transfers-out amount
 exceeds a given ratioThreshold, both for the src and dst account. Otherwise the transaction
 commits.
-• If the last transaction aborts, mark the src and dst accounts as blocked in another transaction.
+• If the last transaction aborts, mark the src and dst accounts as blocked in another transaction.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -35,8 +35,8 @@ public class ReadWrite2 extends LdbcOperation<LdbcNoResult> {
     private final long srcId;
     private final long dstId;
     private final Date time;
-    private final long amount;
-    private final long amountThreshold;
+    private final double amount;
+    private final double amountThreshold;
     private final Date startTime;
     private final Date endTime;
     private final float ratioThreshold;
@@ -44,8 +44,8 @@ public class ReadWrite2 extends LdbcOperation<LdbcNoResult> {
     public ReadWrite2(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
                       @JsonProperty(TIME) Date time,
-                      @JsonProperty(AMOUNT) long amount,
-                      @JsonProperty(AMOUNT_THRESHOLD) long amountThreshold,
+                      @JsonProperty(AMOUNT) double amount,
+                      @JsonProperty(AMOUNT_THRESHOLD) double amountThreshold,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime,
                       @JsonProperty(RATIO_THRESHOLD) float ratioThreshold) {
@@ -87,11 +87,11 @@ public class ReadWrite2 extends LdbcOperation<LdbcNoResult> {
         return time;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public long getAmountThreshold() {
+    public double getAmountThreshold() {
         return amountThreshold;
     }
 

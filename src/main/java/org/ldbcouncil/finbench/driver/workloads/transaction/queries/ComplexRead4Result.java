@@ -13,19 +13,19 @@ public class ComplexRead4Result {
     public static final String MAX_EDGE3_AMOUNT = "maxEdge3Amount";
     private final long otherId;
     private final long numEdge2;
-    private final long sumEdge2Amount;
-    private final long maxEdge2Amount;
+    private final double sumEdge2Amount;
+    private final double maxEdge2Amount;
     private final long numEdge3;
-    private final long sumEdge3Amount;
-    private final long maxEdge3Amount;
+    private final double sumEdge3Amount;
+    private final double maxEdge3Amount;
 
     public ComplexRead4Result(@JsonProperty(OTHER_ID) long otherId,
                               @JsonProperty(NUM_EDGE2) long numEdge2,
-                              @JsonProperty(SUM_EDGE2_AMOUNT) long sumEdge2Amount,
-                              @JsonProperty(MAX_EDGE2_AMOUNT) long maxEdge2Amount,
+                              @JsonProperty(SUM_EDGE2_AMOUNT) double sumEdge2Amount,
+                              @JsonProperty(MAX_EDGE2_AMOUNT) double maxEdge2Amount,
                               @JsonProperty(NUM_EDGE3) long numEdge3,
-                              @JsonProperty(SUM_EDGE3_AMOUNT) long sumEdge3Amount,
-                              @JsonProperty(MAX_EDGE3_AMOUNT) long maxEdge3Amount) {
+                              @JsonProperty(SUM_EDGE3_AMOUNT) double sumEdge3Amount,
+                              @JsonProperty(MAX_EDGE3_AMOUNT) double maxEdge3Amount) {
         this.otherId = otherId;
         this.numEdge2 = numEdge2;
         this.sumEdge2Amount = sumEdge2Amount;
@@ -43,11 +43,11 @@ public class ComplexRead4Result {
         return numEdge2;
     }
 
-    public long getSumEdge2Amount() {
+    public double getSumEdge2Amount() {
         return sumEdge2Amount;
     }
 
-    public long getMaxEdge2Amount() {
+    public double getMaxEdge2Amount() {
         return maxEdge2Amount;
     }
 
@@ -55,11 +55,11 @@ public class ComplexRead4Result {
         return numEdge3;
     }
 
-    public long getSumEdge3Amount() {
+    public double getSumEdge3Amount() {
         return sumEdge3Amount;
     }
 
-    public long getMaxEdge3Amount() {
+    public double getMaxEdge3Amount() {
         return maxEdge3Amount;
     }
 
@@ -83,8 +83,8 @@ public class ComplexRead4Result {
 
     @Override
     public int hashCode() {
-        return Objects.hash(otherId, numEdge2, sumEdge2Amount, maxEdge2Amount, numEdge3,
-            sumEdge3Amount, maxEdge3Amount);
+        return Objects.hash(otherId, numEdge2, sumEdge2Amount, maxEdge2Amount,
+            numEdge3, sumEdge3Amount, maxEdge3Amount);
     }
 
     @Override

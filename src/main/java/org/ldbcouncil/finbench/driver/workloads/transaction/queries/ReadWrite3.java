@@ -34,14 +34,14 @@ public class ReadWrite3 extends LdbcOperation<LdbcNoResult> {
     private final long srcId;
     private final long dstId;
     private final Date time;
-    private final long threshold;
+    private final double threshold;
     private final Date startTime;
     private final Date endTime;
 
     public ReadWrite3(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
                       @JsonProperty(TIME) Date time,
-                      @JsonProperty(THRESHOLD) long threshold,
+                      @JsonProperty(THRESHOLD) double threshold,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime) {
         this.srcId = srcId;
@@ -78,7 +78,7 @@ public class ReadWrite3 extends LdbcOperation<LdbcNoResult> {
         return time;
     }
 
-    public long getThreshold() {
+    public double getThreshold() {
         return threshold;
     }
 

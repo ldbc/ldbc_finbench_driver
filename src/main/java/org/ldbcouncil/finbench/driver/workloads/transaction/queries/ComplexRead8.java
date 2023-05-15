@@ -34,14 +34,14 @@ public class ComplexRead8 extends LdbcOperation<List<ComplexRead8Result>> {
     public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
-    private final long threshold;
+    private final float threshold;
     private final Date startTime;
     private final Date endTime;
     private final int truncationLimit;
     private final TruncationOrder truncationOrder;
 
     public ComplexRead8(@JsonProperty(ID) long id,
-                        @JsonProperty(THRESHOLD) long threshold,
+                        @JsonProperty(THRESHOLD) float threshold,
                         @JsonProperty(START_TIME) Date startTime,
                         @JsonProperty(END_TIME) Date endTime,
                         @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
@@ -72,7 +72,7 @@ public class ComplexRead8 extends LdbcOperation<List<ComplexRead8Result>> {
         return id;
     }
 
-    public long getThreshold() {
+    public float getThreshold() {
         return threshold;
     }
 

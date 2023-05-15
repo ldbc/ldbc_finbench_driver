@@ -8,12 +8,12 @@ public class ComplexRead2Result {
     public static final String SUM_LOAN_AMOUNT = "sumLoanAmount";
     public static final String SUM_LOAN_BALANCE = "sumLoanBalance";
     private final long otherId;
-    private final long sumLoanAmount;
-    private final long sumLoanBalance;
+    private final double sumLoanAmount;
+    private final double sumLoanBalance;
 
     public ComplexRead2Result(@JsonProperty(OTHER_ID) long otherId,
-                              @JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
-                              @JsonProperty(SUM_LOAN_BALANCE) long sumLoanBalance) {
+                              @JsonProperty(SUM_LOAN_AMOUNT) double sumLoanAmount,
+                              @JsonProperty(SUM_LOAN_BALANCE) double sumLoanBalance) {
         this.otherId = otherId;
         this.sumLoanAmount = sumLoanAmount;
         this.sumLoanBalance = sumLoanBalance;
@@ -23,11 +23,11 @@ public class ComplexRead2Result {
         return otherId;
     }
 
-    public long getSumLoanAmount() {
+    public double getSumLoanAmount() {
         return sumLoanAmount;
     }
 
-    public long getSumLoanBalance() {
+    public double getSumLoanBalance() {
         return sumLoanBalance;
     }
 

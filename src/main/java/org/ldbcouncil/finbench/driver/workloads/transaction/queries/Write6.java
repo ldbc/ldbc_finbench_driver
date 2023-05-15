@@ -22,12 +22,12 @@ public class Write6 extends LdbcOperation<LdbcNoResult> {
     private final long companyId;
     private final Date time;
     private final long loanId;
-    private final long amount;
+    private final double amount;
 
     public Write6(@JsonProperty(COMPANY_ID) long companyId,
                   @JsonProperty(TIME) Date time,
                   @JsonProperty(LOAN_ID) long loanId,
-                  @JsonProperty(AMOUNT) long amount) {
+                  @JsonProperty(AMOUNT) double amount) {
         this.companyId = companyId;
         this.time = time;
         this.loanId = loanId;
@@ -58,7 +58,7 @@ public class Write6 extends LdbcOperation<LdbcNoResult> {
         return loanId;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 

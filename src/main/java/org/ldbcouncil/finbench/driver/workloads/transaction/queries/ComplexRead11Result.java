@@ -6,16 +6,16 @@ import java.util.Objects;
 public class ComplexRead11Result {
     public static final String SUM_LOAN_AMOUNT = "sumLoanAmount";
     public static final String NUM_LOANS = "numLoans";
-    private final long sumLoanAmount;
+    private final double sumLoanAmount;
     private final int numLoans;
 
-    public ComplexRead11Result(@JsonProperty(SUM_LOAN_AMOUNT) long sumLoanAmount,
+    public ComplexRead11Result(@JsonProperty(SUM_LOAN_AMOUNT) double sumLoanAmount,
                                @JsonProperty(NUM_LOANS) int numLoans) {
         this.sumLoanAmount = sumLoanAmount;
         this.numLoans = numLoans;
     }
 
-    public long getSumLoanAmount() {
+    public double getSumLoanAmount() {
         return sumLoanAmount;
     }
 

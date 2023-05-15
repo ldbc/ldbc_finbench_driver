@@ -23,12 +23,12 @@ public class Write4 extends LdbcOperation<LdbcNoResult> {
     private final long srcId;
     private final long dstId;
     private final Date time;
-    private final long amount;
+    private final double amount;
 
     public Write4(@JsonProperty(SRC_ID) long srcId,
                   @JsonProperty(DST_ID) long dstId,
                   @JsonProperty(TIME) Date time,
-                  @JsonProperty(AMOUNT) long amount) {
+                  @JsonProperty(AMOUNT) double amount) {
         this.srcId = srcId;
         this.dstId = dstId;
         this.time = time;
@@ -59,7 +59,7 @@ public class Write4 extends LdbcOperation<LdbcNoResult> {
         return time;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 
