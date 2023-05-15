@@ -10,18 +10,18 @@ public class SimpleRead2Result {
     public static final String SUM_EDGE2_AMOUNT = "sumEdge2Amount";
     public static final String MAX_EDGE2_AMOUNT = "maxEdge2Amount";
     public static final String NUM_EDGE2 = "numEdge2";
-    private final long sumEdge1Amount;
-    private final long maxEdge1Amount;
+    private final double sumEdge1Amount;
+    private final double maxEdge1Amount;
     private final long numEdge1;
-    private final long sumEdge2Amount;
-    private final long maxEdge2Amount;
+    private final double sumEdge2Amount;
+    private final double maxEdge2Amount;
     private final long numEdge2;
 
-    public SimpleRead2Result(@JsonProperty(SUM_EDGE1_AMOUNT) long sumEdge1Amount,
-                             @JsonProperty(MAX_EDGE1_AMOUNT) long maxEdge1Amount,
+    public SimpleRead2Result(@JsonProperty(SUM_EDGE1_AMOUNT) double sumEdge1Amount,
+                             @JsonProperty(MAX_EDGE1_AMOUNT) double maxEdge1Amount,
                              @JsonProperty(NUM_EDGE1) long numEdge1,
-                             @JsonProperty(SUM_EDGE2_AMOUNT) long sumEdge2Amount,
-                             @JsonProperty(MAX_EDGE2_AMOUNT) long maxEdge2Amount,
+                             @JsonProperty(SUM_EDGE2_AMOUNT) double sumEdge2Amount,
+                             @JsonProperty(MAX_EDGE2_AMOUNT) double maxEdge2Amount,
                              @JsonProperty(NUM_EDGE2) long numEdge2) {
         this.sumEdge1Amount = sumEdge1Amount;
         this.maxEdge1Amount = maxEdge1Amount;
@@ -31,11 +31,11 @@ public class SimpleRead2Result {
         this.numEdge2 = numEdge2;
     }
 
-    public long getSumEdge1Amount() {
+    public double getSumEdge1Amount() {
         return sumEdge1Amount;
     }
 
-    public long getMaxEdge1Amount() {
+    public double getMaxEdge1Amount() {
         return maxEdge1Amount;
     }
 
@@ -43,11 +43,11 @@ public class SimpleRead2Result {
         return numEdge1;
     }
 
-    public long getSumEdge2Amount() {
+    public double getSumEdge2Amount() {
         return sumEdge2Amount;
     }
 
-    public long getMaxEdge2Amount() {
+    public double getMaxEdge2Amount() {
         return maxEdge2Amount;
     }
 

@@ -32,14 +32,14 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
     private final long srcId;
     private final long dstId;
     private final Date time;
-    private final long amount;
+    private final double amount;
     private final Date startTime;
     private final Date endTime;
 
     public ReadWrite1(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
                       @JsonProperty(TIME) Date time,
-                      @JsonProperty(AMOUNT) long amount,
+                      @JsonProperty(AMOUNT) double amount,
                       @JsonProperty(START_TIME) Date startTime,
                       @JsonProperty(END_TIME) Date endTime) {
         this.srcId = srcId;
@@ -76,7 +76,7 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
         return time;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 

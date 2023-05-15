@@ -9,11 +9,11 @@ public class SimpleRead4Result {
     public static final String SUM_AMOUNT = "sumAmount";
     private final long dstId;
     private final int numEdges;
-    private final long sumAmount;
+    private final double sumAmount;
 
     public SimpleRead4Result(@JsonProperty(DST_ID) long dstId,
                              @JsonProperty(NUM_EDGES) int numEdges,
-                             @JsonProperty(SUM_AMOUNT) long sumAmount) {
+                             @JsonProperty(SUM_AMOUNT) double sumAmount) {
         this.dstId = dstId;
         this.numEdges = numEdges;
         this.sumAmount = sumAmount;
@@ -27,7 +27,7 @@ public class SimpleRead4Result {
         return numEdges;
     }
 
-    public long getSumAmount() {
+    public double getSumAmount() {
         return sumAmount;
     }
 

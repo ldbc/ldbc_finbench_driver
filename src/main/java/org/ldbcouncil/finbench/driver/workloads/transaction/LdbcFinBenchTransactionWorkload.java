@@ -439,7 +439,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         RandomDataGeneratorFactory randomFactory = new RandomDataGeneratorFactory(42L);
         double initialProbability = 1.0;
 
-        Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
+        Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer;
         Queue<Long> personIdBuffer;
         Queue<Long> companyIdBuffer;
         LdbcFinBenchSimpleReadGenerator.ScheduledStartTimePolicy scheduledStartTimePolicy;
@@ -455,7 +455,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
                     companyIdBuffer);
         } else {
             accountIdBuffer = LdbcFinBenchSimpleReadGenerator.constantTuple4Buffer(
-                new Tuple4<>(1L, 1L, new Date(), new Date()));
+                new Tuple4<>(1L, 1D, new Date(), new Date()));
             personIdBuffer = LdbcFinBenchSimpleReadGenerator.constantBuffer(1);
             companyIdBuffer = LdbcFinBenchSimpleReadGenerator.constantBuffer(1);
             scheduledStartTimePolicy =

@@ -67,11 +67,11 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
 public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator {
-    public static final long THRESHOLD = 100;
+    public static final double THRESHOLD = 100;
     private final double initialProbability;
     private final LdbcSimpleQueryFactory[] simpleQueryFactories;
     private final double[] probabilityDegradationFactors;
-    private final Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
+    private final Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer;
     private final Queue<Long> personIdBuffer;
     private final Queue<Long> companyIdBuffer;
     private final long[] interleavesAsMilli;
@@ -82,7 +82,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                                            long updateInterleaveAsMilli,
                                            Set<Class<? extends Operation>> enabledSimpleReadOperationTypes,
                                            double compressionRatio,
-                                           Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+                                           Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
                                            Queue<Long> personIdBuffer,
                                            Queue<Long> companyIdBuffer,
                                            RandomDataGeneratorFactory randomFactory,
@@ -327,8 +327,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         return Queues.synchronizedQueue(EvictingQueue.<Long>create(bufferSize));
     }
 
-    static Queue<Tuple4<Long, Long, Date, Date>> synchronizedCircularTuple4QueueBuffer(int bufferSize) {
-        return Queues.synchronizedQueue(EvictingQueue.<Tuple4<Long, Long, Date, Date>>create(bufferSize));
+    static Queue<Tuple4<Long, Double, Date, Date>> synchronizedCircularTuple4QueueBuffer(int bufferSize) {
+        return Queues.synchronizedQueue(EvictingQueue.<Tuple4<Long, Double, Date, Date>>create(bufferSize));
     }
 
     static Queue<Long> constantBuffer(final long value) {
@@ -425,15 +425,15 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         };
     }
 
-    static Queue<Tuple4<Long, Long, Date, Date>> constantTuple4Buffer(final Tuple4<Long, Long, Date, Date> value) {
-        return new Queue<Tuple4<Long, Long, Date, Date>>() {
+    static Queue<Tuple4<Long, Double, Date, Date>> constantTuple4Buffer(final Tuple4<Long, Double, Date, Date> value) {
+        return new Queue<Tuple4<Long, Double, Date, Date>>() {
             @Override
-            public boolean add(Tuple4<Long, Long, Date, Date> longValue) {
+            public boolean add(Tuple4<Long, Double, Date, Date> longValue) {
                 return true;
             }
 
             @Override
-            public boolean offer(Tuple4<Long, Long, Date, Date> longValue) {
+            public boolean offer(Tuple4<Long, Double, Date, Date> longValue) {
                 return true;
             }
 
@@ -443,22 +443,22 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             }
 
             @Override
-            public Tuple4<Long, Long, Date, Date> remove() {
+            public Tuple4<Long, Double, Date, Date> remove() {
                 throw new UnsupportedOperationException("Method not implemented");
             }
 
             @Override
-            public Tuple4<Long, Long, Date, Date> poll() {
+            public Tuple4<Long, Double, Date, Date> poll() {
                 return value;
             }
 
             @Override
-            public Tuple4<Long, Long, Date, Date> element() {
+            public Tuple4<Long, Double, Date, Date> element() {
                 return value;
             }
 
             @Override
-            public Tuple4<Long, Long, Date, Date> peek() {
+            public Tuple4<Long, Double, Date, Date> peek() {
                 return value;
             }
 
@@ -478,7 +478,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             }
 
             @Override
-            public Iterator<Tuple4<Long, Long, Date, Date>> iterator() {
+            public Iterator<Tuple4<Long, Double, Date, Date>> iterator() {
                 throw new UnsupportedOperationException("Method not implemented");
             }
 
@@ -498,7 +498,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             }
 
             @Override
-            public boolean addAll(Collection<? extends Tuple4<Long, Long, Date, Date>> c) {
+            public boolean addAll(Collection<? extends Tuple4<Long, Double, Date, Date>> c) {
                 throw new UnsupportedOperationException("Method not implemented");
             }
 
@@ -729,7 +729,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
     private interface LdbcSimpleQueryFactory {
         Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -752,11 +752,11 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
     }
 
     public static class ResultBufferReplenishFun implements BufferReplenishFun {
-        private final Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer;
+        private final Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer;
         private final Queue<Long> personIdBuffer;
         private final Queue<Long> companyIdBuffer;
 
-        public ResultBufferReplenishFun(Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+        public ResultBufferReplenishFun(Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
                                         Queue<Long> personIdBuffer,
                                         Queue<Long> companyIdBuffer) {
             this.accountIdBuffer = accountIdBuffer;
@@ -820,7 +820,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                     ComplexRead8 complexRead8 = (ComplexRead8) operation;
                     for (ComplexRead8Result complexRead8Result : typedResults) {
                         accountIdBuffer.add(new Tuple4<>(complexRead8Result.getDstId(),
-                            complexRead8.getThreshold(),
+                            THRESHOLD,
                             complexRead8.getStartTime(),
                             complexRead8.getEndTime()));
                     }
@@ -879,7 +879,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
     private class NoOpFactory implements LdbcSimpleQueryFactory {
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -904,7 +904,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -940,7 +940,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -982,7 +982,7 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
@@ -1041,14 +1041,14 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            Tuple4<Long, Double, Date, Date> tuple4 = accountIdBuffer.poll();
             if (null == tuple4) {
                 return null;
             } else {
@@ -1098,14 +1098,14 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            Tuple4<Long, Double, Date, Date> tuple4 = accountIdBuffer.poll();
             if (null == tuple4) {
                 return null;
             } else {
@@ -1157,14 +1157,14 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            Tuple4<Long, Double, Date, Date> tuple4 = accountIdBuffer.poll();
             if (null == tuple4) {
                 return null;
             } else {
@@ -1216,19 +1216,19 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            Tuple4<Long, Double, Date, Date> tuple4 = accountIdBuffer.poll();
             if (null == tuple4) {
                 return null;
             } else {
                 long id = tuple4._1();
-                long threshold = tuple4._2();
+                double threshold = tuple4._2();
                 Date startTime = tuple4._3();
                 Date endTime = tuple4._4();
                 Operation operation = new SimpleRead4(id, threshold, startTime, endTime);
@@ -1276,19 +1276,19 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            Tuple4<Long, Double, Date, Date> tuple4 = accountIdBuffer.poll();
             if (null == tuple4) {
                 return null;
             } else {
                 long id = tuple4._1();
-                long threshold = tuple4._2();
+                double threshold = tuple4._2();
                 Date startTime = tuple4._3();
                 Date endTime = tuple4._4();
                 Operation operation = new SimpleRead5(id, threshold, startTime, endTime);
@@ -1340,14 +1340,14 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
 
         @Override
         public Operation create(
-            Queue<Tuple4<Long, Long, Date, Date>> accountIdBuffer,
+            Queue<Tuple4<Long, Double, Date, Date>> accountIdBuffer,
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
-            Tuple4<Long, Long, Date, Date> tuple4 = accountIdBuffer.poll();
+            Tuple4<Long, Double, Date, Date> tuple4 = accountIdBuffer.poll();
             if (null == tuple4) {
                 return null;
             } else {

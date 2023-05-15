@@ -26,12 +26,12 @@ public class SimpleRead4 extends LdbcOperation<List<SimpleRead4Result>> {
     public static final String END_TIME = "endTime";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
-    private final long threshold;
+    private final double threshold;
     private final Date startTime;
     private final Date endTime;
 
     public SimpleRead4(@JsonProperty(ID) long id,
-                       @JsonProperty(THRESHOLD) long threshold,
+                       @JsonProperty(THRESHOLD) double threshold,
                        @JsonProperty(START_TIME) Date startTime,
                        @JsonProperty(END_TIME) Date endTime) {
         this.id = id;
@@ -56,7 +56,7 @@ public class SimpleRead4 extends LdbcOperation<List<SimpleRead4Result>> {
         return id;
     }
 
-    public long getThreshold() {
+    public double getThreshold() {
         return threshold;
     }
 

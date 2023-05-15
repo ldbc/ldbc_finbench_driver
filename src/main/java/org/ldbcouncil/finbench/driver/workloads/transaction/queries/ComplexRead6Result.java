@@ -8,12 +8,12 @@ public class ComplexRead6Result {
     public static final String SUM_EDGE1_AMOUNT = "sumEdge1Amount";
     public static final String SUM_EDGE2_AMOUNT = "sumEdge2Amount";
     private final long midId;
-    private final long sumEdge1Amount;
-    private final long sumEdge2Amount;
+    private final double sumEdge1Amount;
+    private final double sumEdge2Amount;
 
     public ComplexRead6Result(@JsonProperty(MID_ID) long midId,
-                              @JsonProperty(SUM_EDGE1_AMOUNT) long sumEdge1Amount,
-                              @JsonProperty(SUM_EDGE2_AMOUNT) long sumEdge2Amount) {
+                              @JsonProperty(SUM_EDGE1_AMOUNT) double sumEdge1Amount,
+                              @JsonProperty(SUM_EDGE2_AMOUNT) double sumEdge2Amount) {
         this.midId = midId;
         this.sumEdge1Amount = sumEdge1Amount;
         this.sumEdge2Amount = sumEdge2Amount;
@@ -23,11 +23,11 @@ public class ComplexRead6Result {
         return midId;
     }
 
-    public long getSumEdge1Amount() {
+    public double getSumEdge1Amount() {
         return sumEdge1Amount;
     }
 
-    public long getSumEdge2Amount() {
+    public double getSumEdge2Amount() {
         return sumEdge2Amount;
     }
 

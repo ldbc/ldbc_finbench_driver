@@ -22,12 +22,12 @@ public class Write5 extends LdbcOperation<LdbcNoResult> {
     private final long personId;
     private final Date time;
     private final long loanId;
-    private final long amount;
+    private final double amount;
 
     public Write5(@JsonProperty(PERSON_ID) long personId,
                   @JsonProperty(TIME) Date time,
                   @JsonProperty(LOAN_ID) long loanId,
-                  @JsonProperty(AMOUNT) long amount) {
+                  @JsonProperty(AMOUNT) double amount) {
         this.personId = personId;
         this.time = time;
         this.loanId = loanId;
@@ -58,7 +58,7 @@ public class Write5 extends LdbcOperation<LdbcNoResult> {
         return loanId;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 
