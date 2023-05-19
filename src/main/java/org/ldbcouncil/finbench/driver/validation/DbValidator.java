@@ -52,7 +52,7 @@ public class DbValidator {
 
         // Results of complex read5 are in a fixed order.
         boolean lastQueryComplexRead5 = false;
-        List<Path> batchComplexRead5Results;
+        List<Path> batchComplexRead5Results = new ArrayList<>();
 
         Operation operation = null;
         while (true) {
