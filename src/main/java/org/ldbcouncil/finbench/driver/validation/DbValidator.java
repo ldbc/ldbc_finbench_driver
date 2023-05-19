@@ -3,7 +3,9 @@ package org.ldbcouncil.finbench.driver.validation;
 import static java.lang.String.format;
 
 import java.text.DecimalFormat;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Set;
 import org.ldbcouncil.finbench.driver.Db;
 import org.ldbcouncil.finbench.driver.DbConnectionState;
@@ -14,7 +16,10 @@ import org.ldbcouncil.finbench.driver.OperationHandlerRunnableContext;
 import org.ldbcouncil.finbench.driver.ResultReporter;
 import org.ldbcouncil.finbench.driver.Workload;
 import org.ldbcouncil.finbench.driver.WorkloadException;
+import org.ldbcouncil.finbench.driver.result.Path;
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5Result;
 
 public class DbValidator {
     /**
@@ -28,7 +33,7 @@ public class DbValidator {
      * @return DbValidationResult
      * @throws WorkloadException
      */
-    public DbValidationResult validate(Iterator<ValidationParam> validationParameters,
+    public DbValidationResult validate(ListIterator<ValidationParam> validationParameters,
                                        Db db,
                                        int validationParamsCount,
                                        Workload workload) throws WorkloadException {
@@ -44,6 +49,10 @@ public class DbValidator {
         int validationParamsCrashedSoFar = 0;
         int validationParamsIncorrectSoFar = 0;
         int validationParamsSkippedSoFar = 0;
+
+        // Results of complex read5 are in a fixed order.
+        boolean lastQueryComplexRead5 = false;
+        List<Path> batchComplexRead5Results;
 
         Operation operation = null;
         while (true) {
@@ -105,16 +114,53 @@ public class DbValidator {
 
             Object actualOperationResult = resultReporter.result();
 
-            if (!actualOperationResult.equals(expectedOperationResult)) {
-                validationParamsIncorrectSoFar++;
-                dbValidationResult
-                    .reportIncorrectResultForOperation(operation, expectedOperationResult, actualOperationResult);
-                continue;
+            // Result of ComplexRead5 may not be in the same order
+            // Check this @Bingtong
+            if (operation.type() == ComplexRead5.TYPE) {
+                if (!lastQueryComplexRead5) {
+                    lastQueryComplexRead5 = true;
+                    batchComplexRead5Results = prefetchComplexRead5Results(validationParam, validationParameters);
+                }
+                ComplexRead5Result actual = (ComplexRead5Result) actualOperationResult;
+                // Override the path equals method
+                if (!batchComplexRead5Results.contains(actual.getPath())) {
+                    validationParamsIncorrectSoFar++;
+                    dbValidationResult.reportIncorrectResultForOperation(operation, expectedOperationResult,
+                                                                         actualOperationResult);
+                    continue;
+                }
+            } else {
+                lastQueryComplexRead5 = false;
+                if (!actualOperationResult.equals(expectedOperationResult)) {
+                    validationParamsIncorrectSoFar++;
+                    dbValidationResult
+                        .reportIncorrectResultForOperation(operation, expectedOperationResult, actualOperationResult);
+                    continue;
+                }
             }
 
             dbValidationResult.reportSuccessfulExecution(operation);
         }
         System.out.println("\n----");
         return dbValidationResult;
+    }
+
+    List<Path> prefetchComplexRead5Results(ValidationParam current,
+                                           ListIterator<ValidationParam> validationParameters) {
+        List<Path> batch = new ArrayList<>();
+        ComplexRead5Result result = (ComplexRead5Result) current.operationResult();
+        batch.add(result.getPath());
+        ValidationParam next = null;
+        while (validationParameters.hasNext()) {
+            next = validationParameters.next();
+            if (next.operation().type() == ComplexRead5.TYPE) {
+                result = (ComplexRead5Result) next.operationResult();
+                batch.add(result.getPath());
+            } else {
+                validationParameters.previous(); // go back
+                break;
+            }
+        }
+        return batch;
     }
 }

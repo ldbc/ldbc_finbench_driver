@@ -79,7 +79,7 @@ public class ValidateDatabaseMode implements DriverMode<DbValidationResult> {
             try {
                 DbValidator dbValidator = new DbValidator();
                 databaseValidationResult = dbValidator.validate(
-                    validationParamList.iterator(),
+                    validationParamList.listIterator(),
                     db,
                     validationParamList.size(),
                     w

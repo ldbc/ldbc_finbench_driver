@@ -32,6 +32,7 @@ public class Path {
         return path;
     }
 
+    // Modify here
     @Override
     public boolean equals(Object o) {
         if (this == o) {
