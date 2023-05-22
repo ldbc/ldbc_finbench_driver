@@ -46,6 +46,8 @@ public interface ResultReporter {
                 errorReporter.reportError(this, errMsg);
                 throw new DbException(errMsg);
             }
+            // If the results are out of order, additional sorting is required.
+            operation.resultSort(result);
         }
 
         @Override

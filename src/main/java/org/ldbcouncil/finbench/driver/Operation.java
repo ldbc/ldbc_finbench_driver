@@ -82,4 +82,8 @@ public abstract class Operation<RESULT_TYPE> {
     public Operation newInstance() {
         throw new UnsupportedOperationException();
     }
+
+    public void resultSort(RESULT_TYPE result) {
+
+    }
 }
