@@ -14,6 +14,7 @@ import org.ldbcouncil.finbench.driver.DbException;
 import org.ldbcouncil.finbench.driver.OperationHandler;
 import org.ldbcouncil.finbench.driver.ResultReporter;
 import org.ldbcouncil.finbench.driver.log.LoggingService;
+import org.ldbcouncil.finbench.driver.result.Path;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
@@ -25,6 +26,7 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
@@ -194,6 +196,22 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead5 cr5, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr5.toString());
+            List<ComplexRead5Result> complexRead5Results = new ArrayList<>();
+            List<Long> path1 =  new ArrayList<>();
+            path1.add(1L);
+            path1.add(2L);
+            path1.add(3L);
+            List<Long> path2 =  new ArrayList<>();
+            path2.add(2L);
+            path2.add(3L);
+            path2.add(4L);
+            complexRead5Results.add(new ComplexRead5Result(new Path(path1)));
+            complexRead5Results.add(new ComplexRead5Result(new Path(path2)));
+
+            // validation
+            // complexRead5Results.add(new ComplexRead5Result(new Path(path2)));
+            // complexRead5Results.add(new ComplexRead5Result(new Path(path1)));
+            resultReporter.report(complexRead5Results.size(), complexRead5Results, cr5);
         }
     }
 

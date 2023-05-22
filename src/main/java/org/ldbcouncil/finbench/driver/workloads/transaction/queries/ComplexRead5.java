@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -136,6 +137,10 @@ public class ComplexRead5 extends LdbcOperation<List<ComplexRead5Result>> {
             + ", truncationOrder="
             + truncationOrder
             + '}';
+    }
+
+    public void resultSort(List<ComplexRead5Result> result) {
+        result.sort(Comparator.comparingLong(ComplexRead5Result::hashCode));
     }
 }
 
