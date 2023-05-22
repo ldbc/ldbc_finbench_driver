@@ -4,11 +4,16 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.ldbcouncil.finbench.driver.result.Path;
 import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5Result;
 
 public class TransactionQueryEqualityTest {
     public long id1;
@@ -69,7 +74,25 @@ public class TransactionQueryEqualityTest {
 
     @Test
     public void complexRead5ShouldDoEqualsCorrectly() {
-        // TODO add complex read params equals test
+        List<ComplexRead5Result> query1 = new ArrayList<>();
+        List<ComplexRead5Result> query2 = new ArrayList<>();
+        List<Long> path1 =  new ArrayList<>();
+        path1.add(1L);
+        path1.add(2L);
+        path1.add(3L);
+        List<Long> path2 =  new ArrayList<>();
+        path2.add(2L);
+        path2.add(3L);
+        path2.add(4L);
+        query1.add(new ComplexRead5Result(new Path(path1)));
+        query1.add(new ComplexRead5Result(new Path(path2)));
+        query2.add(new ComplexRead5Result(new Path(path2)));
+        query2.add(new ComplexRead5Result(new Path(path1)));
+        ComplexRead5 complexRead5 = new ComplexRead5(0, null, null,
+            0, null);
+        complexRead5.resultSort(query1);
+        complexRead5.resultSort(query2);
+        assertThat(query1, equalTo(query2));
     }
 
     @Test
