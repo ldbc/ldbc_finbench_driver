@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
@@ -29,25 +30,33 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
     public static final String AMOUNT = "amount";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
+    public static final String TRUNCATION_LIMIT = "truncationLimit";
+    public static final String TRUNCATION_ORDER = "truncationOrder";
     private final long srcId;
     private final long dstId;
     private final Date time;
     private final double amount;
     private final Date startTime;
     private final Date endTime;
+    private final int truncationLimit;
+    private final TruncationOrder truncationOrder;
 
     public ReadWrite1(@JsonProperty(SRC_ID) long srcId,
                       @JsonProperty(DST_ID) long dstId,
                       @JsonProperty(TIME) Date time,
                       @JsonProperty(AMOUNT) double amount,
                       @JsonProperty(START_TIME) Date startTime,
-                      @JsonProperty(END_TIME) Date endTime) {
+                      @JsonProperty(END_TIME) Date endTime,
+                      @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
+                      @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
         this.srcId = srcId;
         this.dstId = dstId;
         this.time = time;
         this.amount = amount;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.truncationLimit = truncationLimit;
+        this.truncationOrder = truncationOrder;
     }
 
     public ReadWrite1(ReadWrite1 operation) {
@@ -57,6 +66,8 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
         this.amount = operation.amount;
         this.startTime = operation.startTime;
         this.endTime = operation.endTime;
+        this.truncationLimit = operation.truncationLimit;
+        this.truncationOrder = operation.truncationOrder;
     }
 
     @Override
@@ -88,6 +99,14 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
         return endTime;
     }
 
+    public int getTruncationLimit() {
+        return truncationLimit;
+    }
+
+    public TruncationOrder getTruncationOrder() {
+        return truncationOrder;
+    }
+
     @Override
     public int type() {
         return TYPE;
@@ -102,6 +121,8 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
             .put(AMOUNT, amount)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
+            .put(TRUNCATION_LIMIT, truncationLimit)
+            .put(TRUNCATION_ORDER, truncationOrder)
             .build();
     }
 
@@ -124,12 +145,14 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
             && Objects.equals(time, that.time)
             && amount == that.amount
             && Objects.equals(startTime, that.startTime)
-            && Objects.equals(endTime, that.endTime);
+            && Objects.equals(endTime, that.endTime)
+            && truncationLimit == that.truncationLimit
+            && truncationOrder == that.truncationOrder;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, time, amount, startTime, endTime);
+        return Objects.hash(srcId, dstId, time, amount, startTime, endTime, truncationLimit, truncationOrder);
     }
 
     @Override
@@ -147,6 +170,10 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
             + startTime
             + ", endTime="
             + endTime
+            + ", truncationLimit="
+            + truncationLimit
+            + ", truncationOrder="
+            + truncationOrder
             + '}';
     }
 }

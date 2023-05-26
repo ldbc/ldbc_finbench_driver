@@ -12,6 +12,7 @@ import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader;
 import org.ldbcouncil.finbench.driver.generator.EventStreamReader.EventDecoder;
+import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite3;
@@ -495,6 +496,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long amt = rs.getLong(6);
                 Date startTime = new Date(rs.getLong(7));
                 Date endTime = new Date(rs.getLong(8));
+                int truncationLimit = rs.getInt(9);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(10));
 
                 Operation operation = new ReadWrite1(
                     srcId,
@@ -502,7 +505,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     currentTime,
                     amt,
                     startTime,
-                    endTime);
+                    endTime,
+                    truncationLimit,
+                    truncationOrder);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -532,6 +537,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 Date startTime = new Date(rs.getLong(8));
                 Date endTime = new Date(rs.getLong(9));
                 float ratioThreshold = rs.getFloat(10);
+                int truncationLimit = rs.getInt(11);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(12));
 
                 Operation operation = new ReadWrite2(
                     srcId,
@@ -541,7 +548,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     amountThreshold,
                     startTime,
                     endTime,
-                    ratioThreshold);
+                    ratioThreshold,
+                    truncationLimit,
+                    truncationOrder);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -569,6 +578,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long threshold = rs.getLong(6);
                 Date startTime = new Date(rs.getLong(7));
                 Date endTime = new Date(rs.getLong(8));
+                int truncationLimit = rs.getInt(9);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(10));
 
                 Operation operation = new ReadWrite3(
                     srcId,
@@ -576,7 +587,9 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     currentTime,
                     threshold,
                     startTime,
-                    endTime);
+                    endTime,
+                    truncationLimit,
+                    truncationOrder);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
