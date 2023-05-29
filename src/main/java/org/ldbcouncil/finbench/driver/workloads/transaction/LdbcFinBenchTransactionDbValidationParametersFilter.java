@@ -10,13 +10,10 @@ import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilter;
 import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilterAcceptance;
 import org.ldbcouncil.finbench.driver.Workload.DbValidationParametersFilterResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
-import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.SimpleRead2;
@@ -95,25 +92,17 @@ class LdbcFinBenchTransactionDbValidationParametersFilter implements DbValidatio
     }
 
     /**
-     * Inject short reads after a LdbcUpdate operation is scheduled.
+     * Inject simple reads after a LdbcUpdate operation is scheduled.
      *
      * @param operation The update operation
      * @return List of short reads operations
      */
     private List<Operation> generateOperationsToInject(Operation operation) {
         List<Operation> operationsToInject = new ArrayList<>();
+        // The input from ComplexRead as the input to SimpleRead (only Account type)
         switch (operation.type()) {
             case ComplexRead1.TYPE: {
                 ComplexRead1 updateOperation = (ComplexRead1) operation;
-                injectAccountSimples(operationsToInject,
-                    updateOperation.getId(),
-                    LdbcFinBenchSimpleReadGenerator.THRESHOLD,
-                    updateOperation.getStartTime(),
-                    updateOperation.getEndTime());
-                break;
-            }
-            case ComplexRead2.TYPE: {
-                ComplexRead2 updateOperation = (ComplexRead2) operation;
                 injectAccountSimples(operationsToInject,
                     updateOperation.getId(),
                     LdbcFinBenchSimpleReadGenerator.THRESHOLD,
@@ -128,6 +117,11 @@ class LdbcFinBenchTransactionDbValidationParametersFilter implements DbValidatio
                     LdbcFinBenchSimpleReadGenerator.THRESHOLD,
                     updateOperation.getStartTime(),
                     updateOperation.getEndTime());
+                injectAccountSimples(operationsToInject,
+                    updateOperation.getId2(),
+                    LdbcFinBenchSimpleReadGenerator.THRESHOLD,
+                    updateOperation.getStartTime(),
+                    updateOperation.getEndTime());
                 break;
             }
             case ComplexRead4.TYPE: {
@@ -137,12 +131,8 @@ class LdbcFinBenchTransactionDbValidationParametersFilter implements DbValidatio
                     LdbcFinBenchSimpleReadGenerator.THRESHOLD,
                     updateOperation.getStartTime(),
                     updateOperation.getEndTime());
-                break;
-            }
-            case ComplexRead5.TYPE: {
-                ComplexRead5 updateOperation = (ComplexRead5) operation;
                 injectAccountSimples(operationsToInject,
-                    updateOperation.getId(),
+                    updateOperation.getId2(),
                     LdbcFinBenchSimpleReadGenerator.THRESHOLD,
                     updateOperation.getStartTime(),
                     updateOperation.getEndTime());
@@ -159,15 +149,6 @@ class LdbcFinBenchTransactionDbValidationParametersFilter implements DbValidatio
             }
             case ComplexRead7.TYPE: {
                 ComplexRead7 updateOperation = (ComplexRead7) operation;
-                injectAccountSimples(operationsToInject,
-                    updateOperation.getId(),
-                    updateOperation.getThreshold(),
-                    updateOperation.getStartTime(),
-                    updateOperation.getEndTime());
-                break;
-            }
-            case ComplexRead8.TYPE: {
-                ComplexRead8 updateOperation = (ComplexRead8) operation;
                 injectAccountSimples(operationsToInject,
                     updateOperation.getId(),
                     updateOperation.getThreshold(),
