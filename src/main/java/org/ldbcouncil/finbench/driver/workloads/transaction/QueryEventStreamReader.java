@@ -153,17 +153,13 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 long id2 = rs.getLong(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
-                int truncationLimit = rs.getInt(5);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead3(
                     id1,
                     id2,
                     startTime,
-                    endTime,
-                    truncationLimit,
-                    truncationOrder
+                    endTime
                 );
                 query.setDependencyTimeStamp(dependencyTimeStamp);
                 query.setExpiryTimeStamp(expiryTimeStamp);
@@ -187,17 +183,13 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 long id2 = rs.getLong(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
-                int truncationLimit = rs.getInt(5);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead4(
                     id1,
                     id2,
                     startTime,
-                    endTime,
-                    truncationLimit,
-                    truncationOrder
+                    endTime
                 );
                 query.setDependencyTimeStamp(dependencyTimeStamp);
                 query.setExpiryTimeStamp(expiryTimeStamp);

@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import org.ldbcouncil.finbench.driver.truncation.TruncationOrder;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
 public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
@@ -28,28 +27,20 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
     public static final String ID2 = "id2";
     public static final String START_TIME = "startTime";
     public static final String END_TIME = "endTime";
-    public static final String TRUNCATION_LIMIT = "truncationLimit";
-    public static final String TRUNCATION_ORDER = "truncationOrder";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id1;
     private final long id2;
     private final Date startTime;
     private final Date endTime;
-    private final int truncationLimit;
-    private final TruncationOrder truncationOrder;
 
     public ComplexRead4(@JsonProperty(ID1) long id1,
                         @JsonProperty(ID2) long id2,
                         @JsonProperty(START_TIME) Date startTime,
-                        @JsonProperty(END_TIME) Date endTime,
-                        @JsonProperty(TRUNCATION_LIMIT) int truncationLimit,
-                        @JsonProperty(TRUNCATION_ORDER) TruncationOrder truncationOrder) {
+                        @JsonProperty(END_TIME) Date endTime) {
         this.id1 = id1;
         this.id2 = id2;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.truncationLimit = truncationLimit;
-        this.truncationOrder = truncationOrder;
     }
 
     public ComplexRead4(ComplexRead4 operation) {
@@ -57,8 +48,6 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
         this.id2 = operation.id2;
         this.startTime = operation.startTime;
         this.endTime = operation.endTime;
-        this.truncationLimit = operation.truncationLimit;
-        this.truncationOrder = operation.truncationOrder;
     }
 
     @Override
@@ -82,14 +71,6 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
         return endTime;
     }
 
-    public int getTruncationLimit() {
-        return truncationLimit;
-    }
-
-    public TruncationOrder getTruncationOrder() {
-        return truncationOrder;
-    }
-
     @Override
     public int type() {
         return TYPE;
@@ -102,8 +83,6 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
             .put(ID2, id2)
             .put(START_TIME, startTime)
             .put(END_TIME, endTime)
-            .put(TRUNCATION_LIMIT, truncationLimit)
-            .put(TRUNCATION_ORDER, truncationOrder)
             .build();
     }
 
@@ -124,14 +103,12 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
         return id1 == that.id1
             && id2 == that.id2
             && Objects.equals(startTime, that.startTime)
-            && Objects.equals(endTime, that.endTime)
-            && truncationLimit == that.truncationLimit
-            && truncationOrder == that.truncationOrder;
+            && Objects.equals(endTime, that.endTime);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id1, id2, startTime, endTime, truncationLimit, truncationOrder);
+        return Objects.hash(id1, id2, startTime, endTime);
     }
 
     @Override
@@ -145,10 +122,6 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
             + startTime
             + ", endTime="
             + endTime
-            + ", truncationLimit="
-            + truncationLimit
-            + ", truncationOrder="
-            + truncationOrder
             + '}';
     }
 }
