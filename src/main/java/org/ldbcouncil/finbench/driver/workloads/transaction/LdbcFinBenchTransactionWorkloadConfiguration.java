@@ -93,7 +93,8 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
 
     public static final int BUFFERED_QUEUE_SIZE = 4;
     public static final String INSERTS_DIRECTORY = "inserts";
-    public static final String INSERTS_DATE_COLUMN = "creationDate";
+    public static final String INSERTS_DATE_COLUMN = "createTime";
+    public static final String DELETE_DATE_COLUMN = "deleteTime";
     public static final String FILE_SEPARATOR = ".";
     public static final String DEFAULT_FILE_SUFFIX = "csv";
 
@@ -584,7 +585,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
      */
     public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping() {
         Map<Class<? extends Operation>, String> classToFileNameMapping = new HashMap<>();
-        // Inserts TODO INSERTS_DIRECTORY
+        // Inserts
         classToFileNameMapping.put(Write1.class, "/AddPersonWrite1");
         classToFileNameMapping.put(Write2.class, "/AddCompanyWrite2");
         classToFileNameMapping.put(Write3.class, "/AddMediumWrite3");
@@ -631,7 +632,7 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         classToDateColumnNameMapping.put(Write14.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write15.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write16.class, INSERTS_DATE_COLUMN);
-        classToDateColumnNameMapping.put(Write17.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write17.class, DELETE_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write18.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write19.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite1.class, INSERTS_DATE_COLUMN);
