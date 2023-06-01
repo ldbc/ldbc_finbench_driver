@@ -265,8 +265,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long personId = rs.getLong(3);
-                long loanId = rs.getLong(3);
-                double loanAmount = rs.getDouble(6);
+                long loanId = rs.getLong(4);
+                double loanAmount = rs.getDouble(5);
                 double balance = rs.getDouble(6);
                 Date time = new Date(scheduledStartTimeAsMilli);
 
@@ -298,8 +298,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long companyId = rs.getLong(3);
-                long loanId = rs.getLong(3);
-                double loanAmount = rs.getDouble(6);
+                long loanId = rs.getLong(4);
+                double loanAmount = rs.getDouble(5);
                 double balance = rs.getDouble(6);
                 Date time = new Date(scheduledStartTimeAsMilli);
 
@@ -333,7 +333,7 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long personId = rs.getLong(3);
                 long companyId = rs.getLong(4);
                 Date time = new Date(scheduledStartTimeAsMilli);
-                double ratio = rs.getDouble(6);
+                double ratio = rs.getDouble(5);
 
                 Operation operation = new Write8(
                     personId,
@@ -364,7 +364,7 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long companyId1 = rs.getLong(3);
                 long companyId2 = rs.getLong(4);
                 Date time = new Date(scheduledStartTimeAsMilli);
-                double ratio = rs.getDouble(6);
+                double ratio = rs.getDouble(5);
 
                 Operation operation = new Write9(
                     companyId1,
@@ -543,8 +543,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long loanId = rs.getLong(3);
-                long accountId = rs.getLong(4);
+                long loanId = rs.getLong(4);
+                long accountId = rs.getLong(3);
                 Date time = new Date(scheduledStartTimeAsMilli);
                 double amount = rs.getDouble(5);
 
@@ -680,10 +680,10 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long srcId = rs.getLong(3);
                 long dstId = rs.getLong(4);
-                Date currentTime = new Date(rs.getLong(5));
-                long amt = rs.getLong(6);
-                Date startTime = new Date(rs.getLong(7));
-                Date endTime = new Date(rs.getLong(8));
+                Date currentTime = new Date(scheduledStartTimeAsMilli);
+                long amt = rs.getLong(5);
+                Date startTime = new Date(rs.getLong(6));
+                Date endTime = new Date(rs.getLong(7));
 
                 Operation operation = new ReadWrite1(
                     srcId,
@@ -715,14 +715,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long srcId = rs.getLong(3);
                 long dstId = rs.getLong(4);
-                Date currentTime = new Date(rs.getLong(5));
-                long amt = rs.getLong(6);
-                long amountThreshold = rs.getLong(7);
-                Date startTime = new Date(rs.getLong(8));
-                Date endTime = new Date(rs.getLong(9));
-                float ratioThreshold = rs.getFloat(10);
-                int truncationLimit = rs.getInt(11);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(12));
+                Date currentTime = new Date(scheduledStartTimeAsMilli);
+                long amt = rs.getLong(5);
+                double amountThreshold = rs.getDouble(6);
+                Date startTime = new Date(rs.getLong(7));
+                Date endTime = new Date(rs.getLong(8));
+                float ratioThreshold = rs.getFloat(9);
+                int truncationLimit = rs.getInt(10);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(11));
 
                 Operation operation = new ReadWrite2(
                     srcId,
@@ -758,12 +758,12 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long srcId = rs.getLong(3);
                 long dstId = rs.getLong(4);
-                Date currentTime = new Date(rs.getLong(5));
-                long threshold = rs.getLong(6);
-                Date startTime = new Date(rs.getLong(7));
-                Date endTime = new Date(rs.getLong(8));
-                int truncationLimit = rs.getInt(9);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(10));
+                Date currentTime = new Date(scheduledStartTimeAsMilli);
+                double threshold = rs.getDouble(5);
+                Date startTime = new Date(rs.getLong(6));
+                Date endTime = new Date(rs.getLong(7));
+                int truncationLimit = rs.getInt(8);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(9));
 
                 Operation operation = new ReadWrite3(
                     srcId,
