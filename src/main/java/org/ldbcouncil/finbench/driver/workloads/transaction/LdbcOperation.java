@@ -32,6 +32,12 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write16;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write17;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write18;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write19;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -80,6 +86,12 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
     @JsonSubTypes.Type(Write11.class),
     @JsonSubTypes.Type(Write12.class),
     @JsonSubTypes.Type(Write13.class),
+    @JsonSubTypes.Type(Write14.class),
+    @JsonSubTypes.Type(Write15.class),
+    @JsonSubTypes.Type(Write16.class),
+    @JsonSubTypes.Type(Write17.class),
+    @JsonSubTypes.Type(Write18.class),
+    @JsonSubTypes.Type(Write19.class),
     @JsonSubTypes.Type(ReadWrite1.class),
     @JsonSubTypes.Type(ReadWrite2.class),
     @JsonSubTypes.Type(ReadWrite3.class)

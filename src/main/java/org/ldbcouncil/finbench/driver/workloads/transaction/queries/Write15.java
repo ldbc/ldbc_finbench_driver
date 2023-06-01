@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
- * Transaction workload write query 12:
- * -- Add Transfer Between Accounts --
- * Add a *transfer* edge from an *Account* node to another *Account* node.
+ * Transaction workload write query 15:
+ * -- Add Deposit Between Loan And Account --
+ * Add a *deposit* edge from a *Loan* node to an *Account* node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,45 +13,45 @@ import java.util.Objects;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class Write12 extends LdbcOperation<LdbcNoResult> {
-    public static final int TYPE = 1012;
-    public static final String ACCOUNT_ID1 = "accountId1";
-    public static final String ACCOUNT_ID2 = "accountId2";
+public class Write15 extends LdbcOperation<LdbcNoResult> {
+    public static final int TYPE = 1015;
+    public static final String LOAN_ID = "loanId";
+    public static final String ACCOUNT_ID = "accountId";
     public static final String TIME = "time";
     public static final String AMOUNT = "amount";
-    private final long accountId1;
-    private final long accountId2;
+    private final long loanId;
+    private final long accountId;
     private final Date time;
     private final double amount;
 
-    public Write12(@JsonProperty(ACCOUNT_ID1) long accountId1,
-                   @JsonProperty(ACCOUNT_ID2) long accountId2,
+    public Write15(@JsonProperty(LOAN_ID) long loanId,
+                   @JsonProperty(ACCOUNT_ID) long accountId,
                    @JsonProperty(TIME) Date time,
                    @JsonProperty(AMOUNT) double amount) {
-        this.accountId1 = accountId1;
-        this.accountId2 = accountId2;
+        this.loanId = loanId;
+        this.accountId = accountId;
         this.time = time;
         this.amount = amount;
     }
 
-    public Write12(Write12 operation) {
-        this.accountId1 = operation.accountId1;
-        this.accountId2 = operation.accountId2;
+    public Write15(Write15 operation) {
+        this.loanId = operation.loanId;
+        this.accountId = operation.accountId;
         this.time = operation.time;
         this.amount = operation.amount;
     }
 
     @Override
-    public Write12 newInstance() {
-        return new Write12(this);
+    public Write15 newInstance() {
+        return new Write15(this);
     }
 
-    public long getAccountId1() {
-        return accountId1;
+    public long getLoanId() {
+        return loanId;
     }
 
-    public long getAccountId2() {
-        return accountId2;
+    public long getAccountId() {
+        return accountId;
     }
 
     public Date getTime() {
@@ -70,8 +70,8 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(ACCOUNT_ID1, accountId1)
-            .put(ACCOUNT_ID2, accountId2)
+            .put(LOAN_ID, loanId)
+            .put(ACCOUNT_ID, accountId)
             .put(TIME, time)
             .put(AMOUNT, amount)
             .build();
@@ -90,25 +90,25 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Write12 that = (Write12) o;
-        return accountId1 == that.accountId1
-            && accountId2 == that.accountId2
+        Write15 that = (Write15) o;
+        return loanId == that.loanId
+            && accountId == that.accountId
             && Objects.equals(time, that.time)
             && amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountId1, accountId2, time, amount);
+        return Objects.hash(loanId, accountId, time, amount);
     }
 
     @Override
     public String toString() {
-        return "Write12{"
-            + "accountId1="
-            + accountId1
-            + ", accountId2="
-            + accountId2
+        return "Write15{"
+            + "loanId="
+            + loanId
+            + ", accountId="
+            + accountId
             + ", time="
             + time
             + ", amount="

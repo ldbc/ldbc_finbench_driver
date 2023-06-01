@@ -46,6 +46,12 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write16;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write17;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write18;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write19;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -237,6 +243,12 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static final String WRITE_OPERATION_11_ENABLE_KEY = asEnableKey(Write11.class);
     public static final String WRITE_OPERATION_12_ENABLE_KEY = asEnableKey(Write12.class);
     public static final String WRITE_OPERATION_13_ENABLE_KEY = asEnableKey(Write13.class);
+    public static final String WRITE_OPERATION_14_ENABLE_KEY = asEnableKey(Write14.class);
+    public static final String WRITE_OPERATION_15_ENABLE_KEY = asEnableKey(Write15.class);
+    public static final String WRITE_OPERATION_16_ENABLE_KEY = asEnableKey(Write16.class);
+    public static final String WRITE_OPERATION_17_ENABLE_KEY = asEnableKey(Write17.class);
+    public static final String WRITE_OPERATION_18_ENABLE_KEY = asEnableKey(Write18.class);
+    public static final String WRITE_OPERATION_19_ENABLE_KEY = asEnableKey(Write19.class);
     public static final String READ_WRITE_OPERATION_1_ENABLE_KEY = asEnableKey(ReadWrite1.class);
     public static final String READ_WRITE_OPERATION_2_ENABLE_KEY = asEnableKey(ReadWrite2.class);
     public static final String READ_WRITE_OPERATION_3_ENABLE_KEY = asEnableKey(ReadWrite3.class);
@@ -254,6 +266,12 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         WRITE_OPERATION_11_ENABLE_KEY,
         WRITE_OPERATION_12_ENABLE_KEY,
         WRITE_OPERATION_13_ENABLE_KEY,
+        WRITE_OPERATION_14_ENABLE_KEY,
+        WRITE_OPERATION_15_ENABLE_KEY,
+        WRITE_OPERATION_16_ENABLE_KEY,
+        WRITE_OPERATION_17_ENABLE_KEY,
+        WRITE_OPERATION_18_ENABLE_KEY,
+        WRITE_OPERATION_19_ENABLE_KEY,
         READ_WRITE_OPERATION_1_ENABLE_KEY,
         READ_WRITE_OPERATION_2_ENABLE_KEY,
         READ_WRITE_OPERATION_3_ENABLE_KEY
@@ -511,6 +529,12 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         operationTypeToClassMapping.put(Write11.TYPE, Write11.class);
         operationTypeToClassMapping.put(Write12.TYPE, Write12.class);
         operationTypeToClassMapping.put(Write13.TYPE, Write13.class);
+        operationTypeToClassMapping.put(Write14.TYPE, Write14.class);
+        operationTypeToClassMapping.put(Write15.TYPE, Write15.class);
+        operationTypeToClassMapping.put(Write16.TYPE, Write16.class);
+        operationTypeToClassMapping.put(Write17.TYPE, Write17.class);
+        operationTypeToClassMapping.put(Write18.TYPE, Write18.class);
+        operationTypeToClassMapping.put(Write19.TYPE, Write19.class);
         operationTypeToClassMapping.put(ReadWrite1.TYPE, ReadWrite1.class);
         operationTypeToClassMapping.put(ReadWrite2.TYPE, ReadWrite2.class);
         operationTypeToClassMapping.put(ReadWrite3.TYPE, ReadWrite3.class);
@@ -561,22 +585,28 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
     public static Map<Class<? extends Operation>, String> getUpdateStreamClassToPathMapping() {
         Map<Class<? extends Operation>, String> classToFileNameMapping = new HashMap<>();
         // Inserts TODO INSERTS_DIRECTORY
-        classToFileNameMapping.put(Write1.class, "/write_1_param");
-        classToFileNameMapping.put(Write2.class, "/write_2_param");
-        classToFileNameMapping.put(Write3.class, "/write_3_param");
-        classToFileNameMapping.put(Write4.class, "/write_4_param");
-        classToFileNameMapping.put(Write5.class, "/write_5_param");
-        classToFileNameMapping.put(Write6.class, "/write_6_param");
-        classToFileNameMapping.put(Write7.class, "/write_7_param");
-        classToFileNameMapping.put(Write8.class, "/write_8_param");
-        classToFileNameMapping.put(Write9.class, "/write_9_param");
-        classToFileNameMapping.put(Write10.class, "/write_10_param");
-        classToFileNameMapping.put(Write11.class, "/write_11_param");
-        classToFileNameMapping.put(Write12.class, "/write_12_param");
-        classToFileNameMapping.put(Write13.class, "/write_13_param");
-        classToFileNameMapping.put(ReadWrite1.class, "/read_write_1_param");
-        classToFileNameMapping.put(ReadWrite2.class, "/read_write_2_param");
-        classToFileNameMapping.put(ReadWrite3.class, "/read_write_3_param");
+        classToFileNameMapping.put(Write1.class, "/AddPersonWrite1");
+        classToFileNameMapping.put(Write2.class, "/AddCompanyWrite2");
+        classToFileNameMapping.put(Write3.class, "/AddMediumWrite3");
+        classToFileNameMapping.put(Write4.class, "/AddPersonOwnAccountWrite4");
+        classToFileNameMapping.put(Write5.class, "/AddCompanyOwnAccountWrite5");
+        classToFileNameMapping.put(Write6.class, "/AddPersonApplyLoanWrite6");
+        classToFileNameMapping.put(Write7.class, "/AddCompanyApplyLoanWrite7");
+        classToFileNameMapping.put(Write8.class, "/AddPersonInvestCompanyWrite8");
+        classToFileNameMapping.put(Write9.class, "/AddCompanyInvestCompanyWrite9");
+        classToFileNameMapping.put(Write10.class, "/AddPersonGuaranteePersonWrite10");
+        classToFileNameMapping.put(Write11.class, "/AddCompanyGuaranteeCompanyWrite11");
+        classToFileNameMapping.put(Write12.class, "/AddAccountTransferAccountWrite12");
+        classToFileNameMapping.put(Write13.class, "/AddAccountWithdrawAccountWrite13");
+        classToFileNameMapping.put(Write14.class, "/AddAccountRepayLoanWrite14");
+        classToFileNameMapping.put(Write15.class, "/AddLoanDepositAccountWrite15");
+        classToFileNameMapping.put(Write16.class, "/AddMediumSigninAccountWrite16");
+        classToFileNameMapping.put(Write17.class, "/DeleteAccountWrite17");
+        classToFileNameMapping.put(Write18.class, "/UpdateAccountWrite18");
+        classToFileNameMapping.put(Write19.class, "/UpdatePersonWrite19");
+        classToFileNameMapping.put(ReadWrite1.class, "/AddAccountTransferAccountReadWrite1");
+        classToFileNameMapping.put(ReadWrite2.class, "/AddAccountTransferAccountReadWrite2");
+        classToFileNameMapping.put(ReadWrite3.class, "/AddPersonGuaranteePersonReadWrite3");
         return classToFileNameMapping;
     }
 
@@ -598,6 +628,12 @@ public abstract class LdbcFinBenchTransactionWorkloadConfiguration {
         classToDateColumnNameMapping.put(Write11.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write12.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(Write13.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write14.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write15.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write16.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write17.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write18.class, INSERTS_DATE_COLUMN);
+        classToDateColumnNameMapping.put(Write19.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite1.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite2.class, INSERTS_DATE_COLUMN);
         classToDateColumnNameMapping.put(ReadWrite3.class, INSERTS_DATE_COLUMN);

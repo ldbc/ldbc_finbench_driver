@@ -21,6 +21,12 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write16;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write17;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write18;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write19;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -67,6 +73,12 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
         decoders.put(Write11.class, new EventDecoderWrite11());
         decoders.put(Write12.class, new EventDecoderWrite12());
         decoders.put(Write13.class, new EventDecoderWrite13());
+        decoders.put(Write14.class, new EventDecoderWrite14());
+        decoders.put(Write15.class, new EventDecoderWrite15());
+        decoders.put(Write16.class, new EventDecoderWrite16());
+        decoders.put(Write17.class, new EventDecoderWrite17());
+        decoders.put(Write18.class, new EventDecoderWrite18());
+        decoders.put(Write19.class, new EventDecoderWrite19());
         decoders.put(ReadWrite1.class, new EventDecoderReadWrite1());
         decoders.put(ReadWrite2.class, new EventDecoderReadWrite2());
         decoders.put(ReadWrite3.class, new EventDecoderReadWrite3());
@@ -101,18 +113,12 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long personId = rs.getLong(3);
                 String personName = rs.getString(4);
-                long accountId = rs.getLong(5);
-                Date currentTime = new Date(rs.getLong(6));
-                boolean accountBlocked = rs.getBoolean(7);
-                String accountType = rs.getString(8);
+                boolean isBlocked = rs.getBoolean(5);
 
                 Operation operation = new Write1(
                     personId,
                     personName,
-                    accountId,
-                    currentTime,
-                    accountBlocked,
-                    accountType);
+                    isBlocked);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -136,18 +142,12 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
                 long companyId = rs.getLong(3);
                 String companyName = rs.getString(4);
-                long accountId = rs.getLong(5);
-                Date currentTime = new Date(rs.getLong(6));
-                boolean accountBlocked = rs.getBoolean(7);
-                String accountType = rs.getString(8);
+                boolean isBlocked = rs.getBoolean(5);
 
                 Operation operation = new Write2(
                     companyId,
                     companyName,
-                    accountId,
-                    currentTime,
-                    accountBlocked,
-                    accountType);
+                    isBlocked);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -169,16 +169,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long srcId = rs.getLong(3);
-                long dstId = rs.getLong(4);
-                Date timestamp = new Date(rs.getLong(5));
-                long amount = rs.getLong(6);
+                long mediumId = rs.getLong(3);
+                String mediumType = rs.getString(4);
+                boolean isBlocked = rs.getBoolean(5);
 
                 Operation operation = new Write3(
-                    srcId,
-                    dstId,
-                    timestamp,
-                    amount);
+                    mediumId,
+                    mediumType,
+                    isBlocked);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -200,16 +198,18 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long srcId = rs.getLong(3);
-                long dstId = rs.getLong(4);
-                Date timestamp = new Date(rs.getLong(5));
-                long amount = rs.getLong(6);
+                long personId = rs.getLong(3);
+                long accountId = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                String accountType = rs.getString(5);
+                boolean accountBlocked = rs.getBoolean(6);
 
                 Operation operation = new Write4(
-                    srcId,
-                    dstId,
-                    timestamp,
-                    amount);
+                    personId,
+                    accountId,
+                    time,
+                    accountBlocked,
+                    accountType);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -231,16 +231,18 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long personId = rs.getLong(3);
-                Date currentTime = new Date(rs.getLong(4));
-                long loanId = rs.getLong(5);
-                long loanAmount = rs.getLong(6);
+                long companyId = rs.getLong(3);
+                long accountId = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                String accountType = rs.getString(5);
+                boolean accountBlocked = rs.getBoolean(6);
 
                 Operation operation = new Write5(
-                    personId,
-                    currentTime,
-                    loanId,
-                    loanAmount);
+                    companyId,
+                    accountId,
+                    time,
+                    accountBlocked,
+                    accountType);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -262,16 +264,18 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long companyId = rs.getLong(3);
-                Date currentTime = new Date(rs.getLong(4));
-                long loanId = rs.getLong(5);
-                long loanAmount = rs.getLong(6);
+                long personId = rs.getLong(3);
+                long loanId = rs.getLong(3);
+                double loanAmount = rs.getDouble(6);
+                double balance = rs.getDouble(6);
+                Date time = new Date(scheduledStartTimeAsMilli);
 
                 Operation operation = new Write6(
-                    companyId,
-                    currentTime,
+                    personId,
                     loanId,
-                    loanAmount);
+                    loanAmount,
+                    balance,
+                    time);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -293,16 +297,18 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long accountId = rs.getLong(3);
-                long mediumId = rs.getLong(4);
-                boolean mediumBlocked = rs.getBoolean(5);
-                Date currentTime = new Date(rs.getLong(6));
+                long companyId = rs.getLong(3);
+                long loanId = rs.getLong(3);
+                double loanAmount = rs.getDouble(6);
+                double balance = rs.getDouble(6);
+                Date time = new Date(scheduledStartTimeAsMilli);
 
                 Operation operation = new Write7(
-                    accountId,
-                    mediumId,
-                    mediumBlocked,
-                    currentTime);
+                    companyId,
+                    loanId,
+                    loanAmount,
+                    balance,
+                    time);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -324,16 +330,16 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long accountId = rs.getLong(3);
-                long loanId = rs.getLong(4);
-                Date currentTime = new Date(rs.getLong(5));
-                long amount = rs.getLong(6);
+                long personId = rs.getLong(3);
+                long companyId = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                double ratio = rs.getDouble(6);
 
                 Operation operation = new Write8(
-                    accountId,
-                    loanId,
-                    currentTime,
-                    amount);
+                    personId,
+                    companyId,
+                    time,
+                    ratio);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -355,16 +361,16 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long accountId = rs.getLong(3);
-                long loanId = rs.getLong(4);
-                Date currentTime = new Date(rs.getLong(5));
-                long amount = rs.getLong(6);
+                long companyId1 = rs.getLong(3);
+                long companyId2 = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                double ratio = rs.getDouble(6);
 
                 Operation operation = new Write9(
-                    accountId,
-                    loanId,
-                    currentTime,
-                    amount);
+                    companyId1,
+                    companyId2,
+                    time,
+                    ratio);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -386,10 +392,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long accountId = rs.getLong(3);
+                long personId1 = rs.getLong(3);
+                long personId2 = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
 
                 Operation operation = new Write10(
-                    accountId);
+                    personId1,
+                    personId2,
+                    time);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -411,10 +421,14 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long personId = rs.getLong(3);
+                long companyId1 = rs.getLong(3);
+                long companyId2 = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
 
                 Operation operation = new Write11(
-                    personId);
+                    companyId1,
+                    companyId2,
+                    time);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -436,14 +450,16 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long pid1 = rs.getLong(3);
-                long pid2 = rs.getLong(4);
-                Date currentTime = new Date(rs.getLong(5));
+                long accountId1 = rs.getLong(3);
+                long accountId2 = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                double amount = rs.getDouble(5);
 
                 Operation operation = new Write12(
-                    pid1,
-                    pid2,
-                    currentTime);
+                    accountId1,
+                    accountId2,
+                    time,
+                    amount);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
@@ -465,16 +481,188 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
             try {
                 long scheduledStartTimeAsMilli = getOperationDate(rs);
                 long dependencyTimeStamp = getDependencyTimeStamp(rs);
-                long id = rs.getLong(3);
+                long accountId1 = rs.getLong(3);
+                long accountId2 = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                double amount = rs.getDouble(5);
 
                 Operation operation = new Write13(
-                    id);
+                    accountId1,
+                    accountId2,
+                    time,
+                    amount);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);
                 return operation;
             } catch (SQLException e) {
                 throw new WorkloadException(format("Error while decoding ResultSet for Write13: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite14 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return Write14 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
+                long loanId = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                double amount = rs.getDouble(5);
+
+                Operation operation = new Write14(
+                    accountId,
+                    loanId,
+                    time,
+                    amount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write14: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite15 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return Write15 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long loanId = rs.getLong(3);
+                long accountId = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+                double amount = rs.getDouble(5);
+
+                Operation operation = new Write15(
+                    loanId,
+                    accountId,
+                    time,
+                    amount);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write15: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite16 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return Write16 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long mediumId = rs.getLong(3);
+                long accountId = rs.getLong(4);
+                Date time = new Date(scheduledStartTimeAsMilli);
+
+                Operation operation = new Write16(
+                    mediumId,
+                    accountId,
+                    time);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write16: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite17 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return Write17 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
+
+                Operation operation = new Write17(
+                    accountId);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write17: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite18 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return Write18 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long accountId = rs.getLong(3);
+
+                Operation operation = new Write18(
+                    accountId);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write18: %s", e));
+            }
+        }
+    }
+
+    public static class EventDecoderWrite19 implements EventStreamReader.EventDecoder<Operation> {
+        /**
+         * @param rs ResultSet object containing the row to decode
+         * @return Write19 Object
+         * @throws WorkloadException when an error occurs reading the resultSet
+         */
+        @Override
+        public Operation decodeEvent(ResultSet rs) throws WorkloadException {
+            try {
+                long scheduledStartTimeAsMilli = getOperationDate(rs);
+                long dependencyTimeStamp = getDependencyTimeStamp(rs);
+                long personId = rs.getLong(3);
+
+                Operation operation = new Write19(
+                    personId);
+                operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
+                operation.setTimeStamp(scheduledStartTimeAsMilli);
+                operation.setDependencyTimeStamp(dependencyTimeStamp);
+                return operation;
+            } catch (SQLException e) {
+                throw new WorkloadException(format("Error while decoding ResultSet for Write19: %s", e));
             }
         }
     }
@@ -496,8 +684,6 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long amt = rs.getLong(6);
                 Date startTime = new Date(rs.getLong(7));
                 Date endTime = new Date(rs.getLong(8));
-                int truncationLimit = rs.getInt(9);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(10));
 
                 Operation operation = new ReadWrite1(
                     srcId,
@@ -505,9 +691,7 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                     currentTime,
                     amt,
                     startTime,
-                    endTime,
-                    truncationLimit,
-                    truncationOrder);
+                    endTime);
                 operation.setScheduledStartTimeAsMilli(scheduledStartTimeAsMilli);
                 operation.setTimeStamp(scheduledStartTimeAsMilli);
                 operation.setDependencyTimeStamp(dependencyTimeStamp);

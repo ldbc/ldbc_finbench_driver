@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
- * Transaction workload write query 10:
- * -- Add Guarantee Between Persons --
- * Add a *guarantee* edge from a *Person* node to another *Person* node.
+ * Transaction workload write query 16:
+ * -- Account signed in with Medium --
+ *  Add a *signIn* edge from medium to an *Account* node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,40 +13,40 @@ import java.util.Objects;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
-public class Write10 extends LdbcOperation<LdbcNoResult> {
-    public static final int TYPE = 1010;
-    public static final String PERSON_ID1 = "personId1";
-    public static final String PERSON_ID2 = "personId2";
+public class Write16 extends LdbcOperation<LdbcNoResult> {
+    public static final int TYPE = 1016;
+    public static final String MEDIUM_ID = "mediumId";
+    public static final String ACCOUNT_ID = "accountId";
     public static final String TIME = "time";
-    private final long personId1;
-    private final long personId2;
+    private final long mediumId;
+    private final long accountId;
     private final Date time;
 
-    public Write10(@JsonProperty(PERSON_ID1) long personId1,
-                   @JsonProperty(PERSON_ID2) long personId2,
+    public Write16(@JsonProperty(MEDIUM_ID) long mediumId,
+                   @JsonProperty(ACCOUNT_ID) long accountId,
                    @JsonProperty(TIME) Date time) {
-        this.personId1 = personId1;
-        this.personId2 = personId2;
+        this.mediumId = mediumId;
+        this.accountId = accountId;
         this.time = time;
     }
 
-    public Write10(Write10 operation) {
-        this.personId1 = operation.personId1;
-        this.personId2 = operation.personId2;
+    public Write16(Write16 operation) {
+        this.mediumId = operation.mediumId;
+        this.accountId = operation.accountId;
         this.time = operation.time;
     }
 
     @Override
-    public Write10 newInstance() {
-        return new Write10(this);
+    public Write16 newInstance() {
+        return new Write16(this);
     }
 
-    public long getPersonId1() {
-        return personId1;
+    public long getMediumId() {
+        return mediumId;
     }
 
-    public long getPersonId2() {
-        return personId2;
+    public long getAccountId() {
+        return accountId;
     }
 
     public Date getTime() {
@@ -61,8 +61,8 @@ public class Write10 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(PERSON_ID1, personId1)
-            .put(PERSON_ID2, personId2)
+            .put(MEDIUM_ID, mediumId)
+            .put(ACCOUNT_ID, accountId)
             .put(TIME, time)
             .build();
     }
@@ -80,24 +80,24 @@ public class Write10 extends LdbcOperation<LdbcNoResult> {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Write10 that = (Write10) o;
-        return personId1 == that.personId1
-            && personId2 == that.personId2
+        Write16 that = (Write16) o;
+        return mediumId == that.mediumId
+            && accountId == that.accountId
             && Objects.equals(time, that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId1, personId2, time);
+        return Objects.hash(mediumId, accountId, time);
     }
 
     @Override
     public String toString() {
-        return "Write10{"
-            + "personId1="
-            + personId1
-            + ", personId2="
-            + personId2
+        return "Write16{"
+            + "mediumId="
+            + mediumId
+            + ", accountId="
+            + accountId
             + ", time="
             + time
             + '}';

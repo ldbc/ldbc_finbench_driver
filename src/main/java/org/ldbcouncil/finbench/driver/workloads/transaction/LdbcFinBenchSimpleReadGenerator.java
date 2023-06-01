@@ -57,6 +57,12 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write16;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write17;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write18;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write19;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -289,6 +295,12 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         simpleQueryFactories[Write11.TYPE] = new NoOpFactory();
         simpleQueryFactories[Write12.TYPE] = new NoOpFactory();
         simpleQueryFactories[Write13.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write14.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write15.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write16.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write17.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write18.TYPE] = new NoOpFactory();
+        simpleQueryFactories[Write19.TYPE] = new NoOpFactory();
 
         simpleQueryFactories[ReadWrite1.TYPE] = new NoOpFactory();
         simpleQueryFactories[ReadWrite2.TYPE] = new NoOpFactory();

@@ -1,13 +1,12 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 2:
- * -- Add an Account Node owned by Company --
- * Add an account node. Add a Company node and an own edge from it to the account Node.
+ * -- Add a Company Node --
+ * Add a Company node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
-import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
@@ -17,38 +16,23 @@ public class Write2 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1002;
     public static final String COMPANY_ID = "companyId";
     public static final String COMPANY_NAME = "companyName";
-    public static final String ACCOUNT_ID = "accountId";
-    public static final String TIME = "time";
-    public static final String ACCOUNT_BLOCKED = "accountBlocked";
-    public static final String ACCOUNT_TYPE = "accountType";
+    public static final String IS_BLOCKED = "isBlocked";
     private final long companyId;
     private final String companyName;
-    private final long accountId;
-    private final Date time;
-    private final boolean accountBlocked;
-    private final String accountType;
+    private final boolean isBlocked;
 
     public Write2(@JsonProperty(COMPANY_ID) long companyId,
                   @JsonProperty(COMPANY_NAME) String companyName,
-                  @JsonProperty(ACCOUNT_ID) long accountId,
-                  @JsonProperty(TIME) Date time,
-                  @JsonProperty(ACCOUNT_BLOCKED) boolean accountBlocked,
-                  @JsonProperty(ACCOUNT_TYPE) String accountType) {
+                  @JsonProperty(IS_BLOCKED) boolean isBlocked) {
         this.companyId = companyId;
         this.companyName = companyName;
-        this.accountId = accountId;
-        this.time = time;
-        this.accountBlocked = accountBlocked;
-        this.accountType = accountType;
+        this.isBlocked = isBlocked;
     }
 
     public Write2(Write2 operation) {
         this.companyId = operation.companyId;
         this.companyName = operation.companyName;
-        this.accountId = operation.accountId;
-        this.time = operation.time;
-        this.accountBlocked = operation.accountBlocked;
-        this.accountType = operation.accountType;
+        this.isBlocked = operation.isBlocked;
     }
 
     @Override
@@ -64,20 +48,8 @@ public class Write2 extends LdbcOperation<LdbcNoResult> {
         return companyName;
     }
 
-    public long getAccountId() {
-        return accountId;
-    }
-
-    public Date getTime() {
-        return time;
-    }
-
-    public boolean getAccountBlocked() {
-        return accountBlocked;
-    }
-
-    public String getAccountType() {
-        return accountType;
+    public boolean getIsBlocked() {
+        return isBlocked;
     }
 
     @Override
@@ -90,10 +62,7 @@ public class Write2 extends LdbcOperation<LdbcNoResult> {
         return ImmutableMap.<String, Object>builder()
             .put(COMPANY_ID, companyId)
             .put(COMPANY_NAME, companyName)
-            .put(ACCOUNT_ID, accountId)
-            .put(TIME, time)
-            .put(ACCOUNT_BLOCKED, accountBlocked)
-            .put(ACCOUNT_TYPE, accountType)
+            .put(IS_BLOCKED, isBlocked)
             .build();
     }
 
@@ -113,15 +82,12 @@ public class Write2 extends LdbcOperation<LdbcNoResult> {
         Write2 that = (Write2) o;
         return companyId == that.companyId
             && Objects.equals(companyName, that.companyName)
-            && accountId == that.accountId
-            && Objects.equals(time, that.time)
-            && accountBlocked == that.accountBlocked
-            && Objects.equals(accountType, that.accountType);
+            && isBlocked == that.isBlocked;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(companyId, companyName, accountId, time, accountBlocked, accountType);
+        return Objects.hash(companyId, companyName, isBlocked);
     }
 
     @Override
@@ -131,14 +97,8 @@ public class Write2 extends LdbcOperation<LdbcNoResult> {
             + companyId
             + ", companyName="
             + companyName
-            + ", accountId="
-            + accountId
-            + ", time="
-            + time
-            + ", accountBlocked="
-            + accountBlocked
-            + ", accountType="
-            + accountType
+            + ", isBlocked="
+            + isBlocked
             + '}';
     }
 }

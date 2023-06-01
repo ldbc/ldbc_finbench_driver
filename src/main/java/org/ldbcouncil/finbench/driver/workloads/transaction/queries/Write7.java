@@ -2,7 +2,7 @@ package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 7:
  * -- Account signed in with Medium --
- * Add an Medium node and add a signIn edge from it to an existed Account node.
+ * Add Loan applied by Company
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,29 +15,34 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
 public class Write7 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1007;
-    public static final String ACCOUNT_ID = "accountId";
-    public static final String MEDIUM_ID = "mediumId";
-    public static final String MEDIUM_BLOCKED = "mediumBlocked";
+    public static final String COMPANY_ID = "companyId";
+    public static final String LOAN_ID = "loanId";
+    public static final String LOAN_AMOUNT = "loanAmount";
+    public static final String BALANCE = "balance";
     public static final String TIME = "time";
-    private final long accountId;
-    private final long mediumId;
-    private final boolean mediumBlocked;
+    private final long companyId;
+    private final long loanId;
+    private final double loanAmount;
+    private final double balance;
     private final Date time;
 
-    public Write7(@JsonProperty(ACCOUNT_ID) long accountId,
-                  @JsonProperty(MEDIUM_ID) long mediumId,
-                  @JsonProperty(MEDIUM_BLOCKED) boolean mediumBlocked,
+    public Write7(@JsonProperty(COMPANY_ID) long companyId,
+                  @JsonProperty(LOAN_ID) long loanId,
+                  @JsonProperty(LOAN_AMOUNT) double loanAmount,
+                  @JsonProperty(BALANCE) double balance,
                   @JsonProperty(TIME) Date time) {
-        this.accountId = accountId;
-        this.mediumId = mediumId;
-        this.mediumBlocked = mediumBlocked;
+        this.companyId = companyId;
+        this.loanId = loanId;
+        this.loanAmount = loanAmount;
+        this.balance = balance;
         this.time = time;
     }
 
     public Write7(Write7 operation) {
-        this.accountId = operation.accountId;
-        this.mediumId = operation.mediumId;
-        this.mediumBlocked = operation.mediumBlocked;
+        this.companyId = operation.companyId;
+        this.loanId = operation.loanId;
+        this.loanAmount = operation.loanAmount;
+        this.balance = operation.balance;
         this.time = operation.time;
     }
 
@@ -46,16 +51,20 @@ public class Write7 extends LdbcOperation<LdbcNoResult> {
         return new Write7(this);
     }
 
-    public long getAccountId() {
-        return accountId;
+    public long getCompanyId() {
+        return companyId;
     }
 
-    public long getMediumId() {
-        return mediumId;
+    public long getLoanId() {
+        return loanId;
     }
 
-    public boolean getMediumBlocked() {
-        return mediumBlocked;
+    public double getLoanAmount() {
+        return loanAmount;
+    }
+
+    public double getBalance() {
+        return balance;
     }
 
     public Date getTime() {
@@ -70,9 +79,10 @@ public class Write7 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(ACCOUNT_ID, accountId)
-            .put(MEDIUM_ID, mediumId)
-            .put(MEDIUM_BLOCKED, mediumBlocked)
+            .put(COMPANY_ID, companyId)
+            .put(LOAN_ID, loanId)
+            .put(LOAN_AMOUNT, loanAmount)
+            .put(BALANCE, balance)
             .put(TIME, time)
             .build();
     }
@@ -91,26 +101,29 @@ public class Write7 extends LdbcOperation<LdbcNoResult> {
             return false;
         }
         Write7 that = (Write7) o;
-        return accountId == that.accountId
-            && mediumId == that.mediumId
-            && mediumBlocked == that.mediumBlocked
+        return companyId == that.companyId
+            && loanId == that.loanId
+            && loanAmount == that.loanAmount
+            && balance == that.balance
             && Objects.equals(time, that.time);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(accountId, mediumId, mediumBlocked, time);
+        return Objects.hash(companyId, loanId, loanAmount, balance, time);
     }
 
     @Override
     public String toString() {
         return "Write7{"
-            + "accountId="
-            + accountId
-            + ", mediumId="
-            + mediumId
-            + ", mediumBlocked="
-            + mediumBlocked
+            + "companyId="
+            + companyId
+            + ", loanId="
+            + loanId
+            + ", loanAmount="
+            + loanAmount
+            + ", balance="
+            + balance
             + ", time="
             + time
             + '}';

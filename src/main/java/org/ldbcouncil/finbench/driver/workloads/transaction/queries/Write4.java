@@ -1,9 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 4:
- * -- Add withdraw between accounts --
- * Add a withdraw edge from an existed account node to another existed account node whose type
-is card.
+ * -- Add an Account Node owned by Person --
+ * Add an *Account* node and an *own* edge from *Person* to the *Account* node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,30 +15,35 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
 public class Write4 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1004;
-    public static final String SRC_ID = "srcId";
-    public static final String DST_ID = "dstId";
+    public static final String PERSON_ID = "personId";
+    public static final String ACCOUNT_ID = "accountId";
     public static final String TIME = "time";
-    public static final String AMOUNT = "amount";
-    private final long srcId;
-    private final long dstId;
+    public static final String ACCOUNT_BLOCKED = "accountBlocked";
+    public static final String ACCOUNT_TYPE = "accountType";
+    private final long personId;
+    private final long accountId;
     private final Date time;
-    private final double amount;
+    private final boolean accountBlocked;
+    private final String accountType;
 
-    public Write4(@JsonProperty(SRC_ID) long srcId,
-                  @JsonProperty(DST_ID) long dstId,
+    public Write4(@JsonProperty(PERSON_ID) long personId,
+                  @JsonProperty(ACCOUNT_ID) long accountId,
                   @JsonProperty(TIME) Date time,
-                  @JsonProperty(AMOUNT) double amount) {
-        this.srcId = srcId;
-        this.dstId = dstId;
+                  @JsonProperty(ACCOUNT_BLOCKED) boolean accountBlocked,
+                  @JsonProperty(ACCOUNT_TYPE) String accountType) {
+        this.personId = personId;
+        this.accountId = accountId;
         this.time = time;
-        this.amount = amount;
+        this.accountBlocked = accountBlocked;
+        this.accountType = accountType;
     }
 
     public Write4(Write4 operation) {
-        this.srcId = operation.srcId;
-        this.dstId = operation.dstId;
+        this.personId = operation.personId;
+        this.accountId = operation.accountId;
         this.time = operation.time;
-        this.amount = operation.amount;
+        this.accountBlocked = operation.accountBlocked;
+        this.accountType = operation.accountType;
     }
 
     @Override
@@ -47,20 +51,24 @@ public class Write4 extends LdbcOperation<LdbcNoResult> {
         return new Write4(this);
     }
 
-    public long getSrcId() {
-        return srcId;
+    public long getPersonId() {
+        return personId;
     }
 
-    public long getDstId() {
-        return dstId;
+    public long getAccountId() {
+        return accountId;
     }
 
     public Date getTime() {
         return time;
     }
 
-    public double getAmount() {
-        return amount;
+    public boolean getAccountBlocked() {
+        return accountBlocked;
+    }
+
+    public String getAccountType() {
+        return accountType;
     }
 
     @Override
@@ -71,10 +79,11 @@ public class Write4 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(SRC_ID, srcId)
-            .put(DST_ID, dstId)
+            .put(PERSON_ID, personId)
+            .put(ACCOUNT_ID, accountId)
             .put(TIME, time)
-            .put(AMOUNT, amount)
+            .put(ACCOUNT_BLOCKED, accountBlocked)
+            .put(ACCOUNT_TYPE, accountType)
             .build();
     }
 
@@ -92,28 +101,31 @@ public class Write4 extends LdbcOperation<LdbcNoResult> {
             return false;
         }
         Write4 that = (Write4) o;
-        return srcId == that.srcId
-            && dstId == that.dstId
+        return personId == that.personId
+            && accountId == that.accountId
             && Objects.equals(time, that.time)
-            && amount == that.amount;
+            && accountBlocked == that.accountBlocked
+            && Objects.equals(accountType, that.accountType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, time, amount);
+        return Objects.hash(personId, accountId, time, accountBlocked, accountType);
     }
 
     @Override
     public String toString() {
         return "Write4{"
-            + "srcId="
-            + srcId
-            + ", dstId="
-            + dstId
+            + "personId="
+            + personId
+            + ", accountId="
+            + accountId
             + ", time="
             + time
-            + ", amount="
-            + amount
+            + ", accountBlocked="
+            + accountBlocked
+            + ", accountType="
+            + accountType
             + '}';
     }
 }
