@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 5:
- * -- Add Loan applied by Person --
- * Add a Loan Node and add an apply edge from an existed person node to it.
+ * --  Add an Account Node owned by Company --
+ * Add an *Account* node and an *own* edge from *Company* to the *Account* node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,30 +15,35 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
 public class Write5 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1005;
-    public static final String PERSON_ID = "personId";
+    public static final String COMPANY_ID = "companyId";
+    public static final String ACCOUNT_ID = "accountId";
     public static final String TIME = "time";
-    public static final String LOAN_ID = "loanId";
-    public static final String AMOUNT = "amount";
-    private final long personId;
+    public static final String ACCOUNT_BLOCKED = "accountBlocked";
+    public static final String ACCOUNT_TYPE = "accountType";
+    private final long companyId;
+    private final long accountId;
     private final Date time;
-    private final long loanId;
-    private final double amount;
+    private final boolean accountBlocked;
+    private final String accountType;
 
-    public Write5(@JsonProperty(PERSON_ID) long personId,
+    public Write5(@JsonProperty(COMPANY_ID) long companyId,
+                  @JsonProperty(ACCOUNT_ID) long accountId,
                   @JsonProperty(TIME) Date time,
-                  @JsonProperty(LOAN_ID) long loanId,
-                  @JsonProperty(AMOUNT) double amount) {
-        this.personId = personId;
+                  @JsonProperty(ACCOUNT_BLOCKED) boolean accountBlocked,
+                  @JsonProperty(ACCOUNT_TYPE) String accountType) {
+        this.companyId = companyId;
+        this.accountId = accountId;
         this.time = time;
-        this.loanId = loanId;
-        this.amount = amount;
+        this.accountBlocked = accountBlocked;
+        this.accountType = accountType;
     }
 
     public Write5(Write5 operation) {
-        this.personId = operation.personId;
+        this.companyId = operation.companyId;
+        this.accountId = operation.accountId;
         this.time = operation.time;
-        this.loanId = operation.loanId;
-        this.amount = operation.amount;
+        this.accountBlocked = operation.accountBlocked;
+        this.accountType = operation.accountType;
     }
 
     @Override
@@ -46,20 +51,24 @@ public class Write5 extends LdbcOperation<LdbcNoResult> {
         return new Write5(this);
     }
 
-    public long getPersonId() {
-        return personId;
+    public long getCompanyId() {
+        return companyId;
+    }
+
+    public long getAccountId() {
+        return accountId;
     }
 
     public Date getTime() {
         return time;
     }
 
-    public long getLoanId() {
-        return loanId;
+    public boolean getAccountBlocked() {
+        return accountBlocked;
     }
 
-    public double getAmount() {
-        return amount;
+    public String getAccountType() {
+        return accountType;
     }
 
     @Override
@@ -70,10 +79,11 @@ public class Write5 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(PERSON_ID, personId)
+            .put(COMPANY_ID, companyId)
+            .put(ACCOUNT_ID, accountId)
             .put(TIME, time)
-            .put(LOAN_ID, loanId)
-            .put(AMOUNT, amount)
+            .put(ACCOUNT_BLOCKED, accountBlocked)
+            .put(ACCOUNT_TYPE, accountType)
             .build();
     }
 
@@ -91,28 +101,31 @@ public class Write5 extends LdbcOperation<LdbcNoResult> {
             return false;
         }
         Write5 that = (Write5) o;
-        return personId == that.personId
+        return companyId == that.companyId
+            && accountId == that.accountId
             && Objects.equals(time, that.time)
-            && loanId == that.loanId
-            && amount == that.amount;
+            && accountBlocked == that.accountBlocked
+            && Objects.equals(accountType, that.accountType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId, time, loanId, amount);
+        return Objects.hash(companyId, accountId, time, accountBlocked, accountType);
     }
 
     @Override
     public String toString() {
         return "Write5{"
-            + "personId="
-            + personId
+            + "companyId="
+            + companyId
+            + ", accountId="
+            + accountId
             + ", time="
             + time
-            + ", loanId="
-            + loanId
-            + ", amount="
-            + amount
+            + ", accountBlocked="
+            + accountBlocked
+            + ", accountType="
+            + accountType
             + '}';
     }
 }

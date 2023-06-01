@@ -1,6 +1,5 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction;
 
-import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -56,26 +55,11 @@ public class TransactionUpdateEventStreamReaderTest {
             .thenReturn("B")
             .thenReturn("C")
             .thenReturn("D");
-        when(rs.getLong(5))
-            .thenReturn(1001L)
-            .thenReturn(1002L)
-            .thenReturn(1003L)
-            .thenReturn(1004L);
-        when(rs.getLong(6))
-            .thenReturn(1343523122735L)
-            .thenReturn(1343523122735L)
-            .thenReturn(1343523122735L)
-            .thenReturn(1343523122735L);
-        when(rs.getBoolean(7))
+        when(rs.getBoolean(5))
             .thenReturn(true)
             .thenReturn(true)
             .thenReturn(false)
             .thenReturn(false);
-        when(rs.getString(8))
-            .thenReturn("AA")
-            .thenReturn("BB")
-            .thenReturn("CC")
-            .thenReturn("DD");
         EventStreamReader.EventDecoder<Operation> decoder = new UpdateEventStreamReader.EventDecoderWrite1();
         FileLoader loader = new FileLoader(db);
         Iterator<Operation> opStream = loader.loadOperationStream("/somepath", decoder);
@@ -91,38 +75,22 @@ public class TransactionUpdateEventStreamReaderTest {
         operation = (Write1) reader.next();
         assertThat(operation.getPersonId(), is(1L));
         assertThat(operation.getPersonName(), is("A"));
-        assertThat(operation.getAccountId(), is(1001L));
-        assertThat(operation.getTime().getTime(),
-            equalTo(1343523122735L));
-        assertThat(operation.getAccountBlocked(), is(true));
-        assertThat(operation.getAccountType(), is("AA"));
+        assertThat(operation.getIsBlocked(), is(true));
 
         operation = (Write1) reader.next();
         assertThat(operation.getPersonId(), is(2L));
         assertThat(operation.getPersonName(), is("B"));
-        assertThat(operation.getAccountId(), is(1002L));
-        assertThat(operation.getTime().getTime(),
-            equalTo(1343523122735L));
-        assertThat(operation.getAccountBlocked(), is(true));
-        assertThat(operation.getAccountType(), is("BB"));
+        assertThat(operation.getIsBlocked(), is(true));
 
         operation = (Write1) reader.next();
         assertThat(operation.getPersonId(), is(3L));
         assertThat(operation.getPersonName(), is("C"));
-        assertThat(operation.getAccountId(), is(1003L));
-        assertThat(operation.getTime().getTime(),
-            equalTo(1343523122735L));
-        assertThat(operation.getAccountBlocked(), is(false));
-        assertThat(operation.getAccountType(), is("CC"));
+        assertThat(operation.getIsBlocked(), is(false));
 
         operation = (Write1) reader.next();
         assertThat(operation.getPersonId(), is(4L));
         assertThat(operation.getPersonName(), is("D"));
-        assertThat(operation.getAccountId(), is(1004L));
-        assertThat(operation.getTime().getTime(),
-            equalTo(1343523122735L));
-        assertThat(operation.getAccountBlocked(), is(false));
-        assertThat(operation.getAccountType(), is("DD"));
+        assertThat(operation.getIsBlocked(), is(false));
 
         assertThat(reader.hasNext(), is(false));
     }

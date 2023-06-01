@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 12:
- * -- Add guarantee between persons --
- * Add a guarantee edge from an existed person node to another existed person node.
+ * -- Add Transfer Between Accounts --
+ * Add a *transfer* edge from an *Account* node to another *Account* node.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,25 +15,30 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
 public class Write12 extends LdbcOperation<LdbcNoResult> {
     public static final int TYPE = 1012;
-    public static final String PID1 = "pid1";
-    public static final String PID2 = "pid2";
+    public static final String ACCOUNT_ID1 = "accountId1";
+    public static final String ACCOUNT_ID2 = "accountId2";
     public static final String TIME = "time";
-    private final long pid1;
-    private final long pid2;
+    public static final String AMOUNT = "amount";
+    private final long accountId1;
+    private final long accountId2;
     private final Date time;
+    private final double amount;
 
-    public Write12(@JsonProperty(PID1) long pid1,
-                   @JsonProperty(PID2) long pid2,
-                   @JsonProperty(TIME) Date time) {
-        this.pid1 = pid1;
-        this.pid2 = pid2;
+    public Write12(@JsonProperty(ACCOUNT_ID1) long accountId1,
+                   @JsonProperty(ACCOUNT_ID2) long accountId2,
+                   @JsonProperty(TIME) Date time,
+                   @JsonProperty(AMOUNT) double amount) {
+        this.accountId1 = accountId1;
+        this.accountId2 = accountId2;
         this.time = time;
+        this.amount = amount;
     }
 
     public Write12(Write12 operation) {
-        this.pid1 = operation.pid1;
-        this.pid2 = operation.pid2;
+        this.accountId1 = operation.accountId1;
+        this.accountId2 = operation.accountId2;
         this.time = operation.time;
+        this.amount = operation.amount;
     }
 
     @Override
@@ -41,16 +46,20 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
         return new Write12(this);
     }
 
-    public long getPid1() {
-        return pid1;
+    public long getAccountId1() {
+        return accountId1;
     }
 
-    public long getPid2() {
-        return pid2;
+    public long getAccountId2() {
+        return accountId2;
     }
 
     public Date getTime() {
         return time;
+    }
+
+    public double getAmount() {
+        return amount;
     }
 
     @Override
@@ -61,9 +70,10 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(PID1, pid1)
-            .put(PID2, pid2)
+            .put(ACCOUNT_ID1, accountId1)
+            .put(ACCOUNT_ID2, accountId2)
             .put(TIME, time)
+            .put(AMOUNT, amount)
             .build();
     }
 
@@ -81,25 +91,28 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
             return false;
         }
         Write12 that = (Write12) o;
-        return pid1 == that.pid1
-            && pid2 == that.pid2
-            && Objects.equals(time, that.time);
+        return accountId1 == that.accountId1
+            && accountId2 == that.accountId2
+            && Objects.equals(time, that.time)
+            && amount == that.amount;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pid1, pid2, time);
+        return Objects.hash(accountId1, accountId2, time, amount);
     }
 
     @Override
     public String toString() {
         return "Write12{"
-            + "pid1="
-            + pid1
-            + ", pid2="
-            + pid2
+            + "accountId1="
+            + accountId1
+            + ", accountId2="
+            + accountId2
             + ", time="
             + time
+            + ", amount="
+            + amount
             + '}';
     }
 }

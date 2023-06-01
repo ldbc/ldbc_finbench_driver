@@ -34,13 +34,13 @@ public class TransactionQueryEqualityTest {
         startTime1 = new Date(1);
         endTime1 = new Date(2);
         truncationLimit1 = 10;
-        truncationOrder1 = TruncationOrder.DESC;
+        truncationOrder1 = TruncationOrder.TIMESTAMP_DESCENDING;
 
         id2 = 2;
         startTime2 = new Date(3);
         endTime2 = new Date(4);
         truncationLimit2 = 100;
-        truncationOrder2 = TruncationOrder.ASC;
+        truncationOrder2 = TruncationOrder.TIMESTAMP_ASCENDING;
     }
 
     @Test

@@ -153,17 +153,13 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 long id2 = rs.getLong(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
-                int truncationLimit = rs.getInt(5);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead3(
                     id1,
                     id2,
                     startTime,
-                    endTime,
-                    truncationLimit,
-                    truncationOrder
+                    endTime
                 );
                 query.setDependencyTimeStamp(dependencyTimeStamp);
                 query.setExpiryTimeStamp(expiryTimeStamp);
@@ -187,17 +183,13 @@ public class QueryEventStreamReader implements Iterator<Operation> {
                 long id2 = rs.getLong(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
-                int truncationLimit = rs.getInt(5);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(6));
                 long dependencyTimeStamp = 0;
                 long expiryTimeStamp = Long.MAX_VALUE;
                 Operation query = new ComplexRead4(
                     id1,
                     id2,
                     startTime,
-                    endTime,
-                    truncationLimit,
-                    truncationOrder
+                    endTime
                 );
                 query.setDependencyTimeStamp(dependencyTimeStamp);
                 query.setExpiryTimeStamp(expiryTimeStamp);
@@ -250,8 +242,8 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
                 long id = rs.getLong(1);
-                long threshold1 = rs.getLong(2);
-                long threshold2 = rs.getLong(3);
+                double threshold1 = rs.getDouble(2);
+                double threshold2 = rs.getDouble(3);
                 Date startTime = new Date(rs.getLong(4));
                 Date endTime = new Date(rs.getLong(5));
                 int truncationLimit = rs.getInt(6);
@@ -286,7 +278,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
                 long id = rs.getLong(1);
-                long threshold = rs.getLong(2);
+                double threshold = rs.getLong(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
                 int truncationLimit = rs.getInt(5);
@@ -320,7 +312,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
                 long id = rs.getLong(1);
-                long threshold = rs.getLong(2);
+                float threshold = rs.getFloat(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
                 int truncationLimit = rs.getInt(5);
@@ -354,7 +346,7 @@ public class QueryEventStreamReader implements Iterator<Operation> {
         public Operation decodeEvent(ResultSet rs) throws WorkloadException {
             try {
                 long id = rs.getLong(1);
-                long threshold = rs.getLong(2);
+                double threshold = rs.getDouble(2);
                 Date startTime = new Date(rs.getLong(3));
                 Date endTime = new Date(rs.getLong(4));
                 int truncationLimit = rs.getInt(5);
