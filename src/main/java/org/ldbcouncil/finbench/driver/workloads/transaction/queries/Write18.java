@@ -1,8 +1,8 @@
 package org.ldbcouncil.finbench.driver.workloads.transaction.queries;
 /*
  * Transaction workload write query 18:
- * -- Block a Person of high risk --
- *  Set a *Person*'s isBlocked to True.
+ * -- Block a Account of high risk --
+ *  Set an *Account*'s isBlocked to True.
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -13,16 +13,16 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 
 public class Write18 extends LdbcOperation<LdbcNoResult> {
-    public static final int TYPE = 1019;
-    public static final String PERSON_ID = "personId";
-    private final long personId;
+    public static final int TYPE = 1018;
+    public static final String ACCOUNT_ID = "accountId";
+    private final long accountId;
 
-    public Write18(@JsonProperty(PERSON_ID) long personId) {
-        this.personId = personId;
+    public Write18(@JsonProperty(ACCOUNT_ID) long accountId) {
+        this.accountId = accountId;
     }
 
     public Write18(Write18 operation) {
-        this.personId = operation.personId;
+        this.accountId = operation.accountId;
     }
 
     @Override
@@ -30,8 +30,8 @@ public class Write18 extends LdbcOperation<LdbcNoResult> {
         return new Write18(this);
     }
 
-    public long getPersonId() {
-        return personId;
+    public long getAccountId() {
+        return accountId;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class Write18 extends LdbcOperation<LdbcNoResult> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(PERSON_ID, personId)
+            .put(ACCOUNT_ID, accountId)
             .build();
     }
 
@@ -60,19 +60,19 @@ public class Write18 extends LdbcOperation<LdbcNoResult> {
             return false;
         }
         Write18 that = (Write18) o;
-        return personId == that.personId;
+        return accountId == that.accountId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId);
+        return Objects.hash(accountId);
     }
 
     @Override
     public String toString() {
         return "Write18{"
-            + "personId="
-            + personId
+            + "accountId="
+            + accountId
             + '}';
     }
 }
