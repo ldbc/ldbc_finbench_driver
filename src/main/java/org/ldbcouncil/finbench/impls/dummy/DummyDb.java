@@ -18,19 +18,28 @@ import org.ldbcouncil.finbench.driver.result.Path;
 import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcNoResult;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead10Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead11Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead12Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead1Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead2Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead3Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead4Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead5Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead6Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead7Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead8Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ComplexRead9Result;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite1;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.ReadWrite3;
@@ -46,6 +55,12 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write10;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write11;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write12;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write13;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write14;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write15;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write16;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write17;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write18;
+import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write19;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write2;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write3;
 import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write4;
@@ -98,6 +113,12 @@ public class DummyDb extends Db {
         registerOperationHandler(Write11.class, Write11Handler.class);
         registerOperationHandler(Write12.class, Write12Handler.class);
         registerOperationHandler(Write13.class, Write13Handler.class);
+        registerOperationHandler(Write14.class, Write14Handler.class);
+        registerOperationHandler(Write15.class, Write15Handler.class);
+        registerOperationHandler(Write16.class, Write16Handler.class);
+        registerOperationHandler(Write17.class, Write17Handler.class);
+        registerOperationHandler(Write18.class, Write18Handler.class);
+        registerOperationHandler(Write19.class, Write19Handler.class);
 
         // read-writes
         registerOperationHandler(ReadWrite1.class, ReadWrite1Handler.class);
@@ -180,6 +201,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead3 cr3, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr3.toString());
+            List<ComplexRead3Result> complexRead3Results = new ArrayList<>();
+            ComplexRead3Result complexRead3Result = new ComplexRead3Result(3);
+            complexRead3Results.add(complexRead3Result);
+            resultReporter.report(complexRead3Results.size(), complexRead3Results, cr3);
         }
     }
 
@@ -188,6 +213,11 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead4 cr4, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr4.toString());
+            List<ComplexRead4Result> complexRead4Results = new ArrayList<>();
+            ComplexRead4Result complexRead4Result = new ComplexRead4Result(4, 0, 
+                0, 0, 0, 0, 0);
+            complexRead4Results.add(complexRead4Result);
+            resultReporter.report(complexRead4Results.size(), complexRead4Results, cr4);
         }
     }
 
@@ -220,6 +250,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead6 cr6, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr6.toString());
+            List<ComplexRead6Result> complexRead6Results = new ArrayList<>();
+            ComplexRead6Result complexRead6Result = new ComplexRead6Result(6, 0, 0);
+            complexRead6Results.add(complexRead6Result);
+            resultReporter.report(complexRead6Results.size(), complexRead6Results, cr6);
         }
     }
 
@@ -228,6 +262,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead7 cr7, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr7.toString());
+            List<ComplexRead7Result> complexRead7Results = new ArrayList<>();
+            ComplexRead7Result complexRead7Result = new ComplexRead7Result(0, 0, 0);
+            complexRead7Results.add(complexRead7Result);
+            resultReporter.report(complexRead7Results.size(), complexRead7Results, cr7);
         }
     }
 
@@ -236,6 +274,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead8 cr8, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr8.toString());
+            List<ComplexRead8Result> complexRead8Results = new ArrayList<>();
+            ComplexRead8Result complexRead8Result = new ComplexRead8Result(0, 0, 0);
+            complexRead8Results.add(complexRead8Result);
+            resultReporter.report(complexRead8Results.size(), complexRead8Results, cr8);
         }
     }
 
@@ -244,6 +286,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead9 cr9, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr9.toString());
+            List<ComplexRead9Result> complexRead9Results = new ArrayList<>();
+            ComplexRead9Result complexRead9Result = new ComplexRead9Result(9, 0, 0);
+            complexRead9Results.add(complexRead9Result);
+            resultReporter.report(complexRead9Results.size(), complexRead9Results, cr9);
         }
     }
 
@@ -252,6 +298,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead10 cr10, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr10.toString());
+            List<ComplexRead10Result> complexRead10Results = new ArrayList<>();
+            ComplexRead10Result complexRead10Result = new ComplexRead10Result(0);
+            complexRead10Results.add(complexRead10Result);
+            resultReporter.report(complexRead10Results.size(), complexRead10Results, cr10);
         }
     }
 
@@ -260,6 +310,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead11 cr11, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr11.toString());
+            List<ComplexRead11Result> complexRead11Results = new ArrayList<>();
+            ComplexRead11Result complexRead11Result = new ComplexRead11Result(0, 0);
+            complexRead11Results.add(complexRead11Result);
+            resultReporter.report(complexRead11Results.size(), complexRead11Results, cr11);
         }
     }
 
@@ -268,6 +322,10 @@ public class DummyDb extends Db {
         public void executeOperation(ComplexRead12 cr12, DummyDbConnectionState dummyDbConnectionState,
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(cr12.toString());
+            List<ComplexRead12Result> complexRead12Results = new ArrayList<>();
+            ComplexRead12Result complexRead12Result = new ComplexRead12Result(0, 0);
+            complexRead12Results.add(complexRead12Result);
+            resultReporter.report(complexRead12Results.size(), complexRead12Results, cr12);
         }
     }
 
@@ -441,6 +499,60 @@ public class DummyDb extends Db {
                                      ResultReporter resultReporter) throws DbException {
             DummyDb.logger.info(w13.toString());
             resultReporter.report(0, LdbcNoResult.INSTANCE, w13);
+        }
+    }
+
+    public static class Write14Handler implements OperationHandler<Write14, DummyDbConnectionState> {
+        @Override
+        public void executeOperation(Write14 w14, DummyDbConnectionState dummyDbConnectionState,
+                                     ResultReporter resultReporter) throws DbException {
+            DummyDb.logger.info(w14.toString());
+            resultReporter.report(0, LdbcNoResult.INSTANCE, w14);
+        }
+    }
+
+    public static class Write15Handler implements OperationHandler<Write15, DummyDbConnectionState> {
+        @Override
+        public void executeOperation(Write15 w15, DummyDbConnectionState dummyDbConnectionState,
+                                     ResultReporter resultReporter) throws DbException {
+            DummyDb.logger.info(w15.toString());
+            resultReporter.report(0, LdbcNoResult.INSTANCE, w15);
+        }
+    }
+
+    public static class Write16Handler implements OperationHandler<Write16, DummyDbConnectionState> {
+        @Override
+        public void executeOperation(Write16 w16, DummyDbConnectionState dummyDbConnectionState,
+                                     ResultReporter resultReporter) throws DbException {
+            DummyDb.logger.info(w16.toString());
+            resultReporter.report(0, LdbcNoResult.INSTANCE, w16);
+        }
+    }
+
+    public static class Write17Handler implements OperationHandler<Write17, DummyDbConnectionState> {
+        @Override
+        public void executeOperation(Write17 w17, DummyDbConnectionState dummyDbConnectionState,
+                                     ResultReporter resultReporter) throws DbException {
+            DummyDb.logger.info(w17.toString());
+            resultReporter.report(0, LdbcNoResult.INSTANCE, w17);
+        }
+    }
+
+    public static class Write18Handler implements OperationHandler<Write18, DummyDbConnectionState> {
+        @Override
+        public void executeOperation(Write18 w18, DummyDbConnectionState dummyDbConnectionState,
+                                     ResultReporter resultReporter) throws DbException {
+            DummyDb.logger.info(w18.toString());
+            resultReporter.report(0, LdbcNoResult.INSTANCE, w18);
+        }
+    }
+
+    public static class Write19Handler implements OperationHandler<Write19, DummyDbConnectionState> {
+        @Override
+        public void executeOperation(Write19 w19, DummyDbConnectionState dummyDbConnectionState,
+                                     ResultReporter resultReporter) throws DbException {
+            DummyDb.logger.info(w19.toString());
+            resultReporter.report(0, LdbcNoResult.INSTANCE, w19);
         }
     }
 
