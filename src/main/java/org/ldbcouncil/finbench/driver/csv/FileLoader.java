@@ -79,8 +79,8 @@ public class FileLoader {
             Connection connection = db.getConnection();
             stmt = connection.createStatement();
             ResultSet rs = stmt.executeQuery(
-                format("SELECT * FROM %s WHERE %s >= %d AND %s < %d;", viewName, batchColumnName, offset,
-                    batchColumnName, offset + batchSize));
+                format("SELECT * FROM %s WHERE %s >= %d AND %s < %d ORDER BY %s ASC", viewName, batchColumnName, offset,
+                    batchColumnName, offset + batchSize, batchColumnName));
             while (rs.next()) {
                 Operation obj = decoder.decodeEvent(rs);
                 results.add(obj);
