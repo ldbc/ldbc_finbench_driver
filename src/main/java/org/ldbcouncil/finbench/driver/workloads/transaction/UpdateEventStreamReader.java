@@ -682,8 +682,8 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dstId = rs.getLong(4);
                 Date currentTime = new Date(scheduledStartTimeAsMilli);
                 long amt = rs.getLong(5);
-                Date startTime = new Date(rs.getLong(6));
-                Date endTime = new Date(rs.getLong(7));
+                Date startTime = new Date(rs.getLong(9));
+                Date endTime = new Date(rs.getLong(10));
 
                 Operation operation = new ReadWrite1(
                     srcId,
@@ -717,12 +717,12 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long dstId = rs.getLong(4);
                 Date currentTime = new Date(scheduledStartTimeAsMilli);
                 long amt = rs.getLong(5);
-                double amountThreshold = rs.getDouble(10);
-                Date startTime = new Date(rs.getLong(6));
-                Date endTime = new Date(rs.getLong(7));
-                float ratioThreshold = rs.getFloat(11);
-                int truncationLimit = rs.getInt(8);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(9));
+                double amountThreshold = rs.getDouble(13);
+                Date startTime = new Date(rs.getLong(9));
+                Date endTime = new Date(rs.getLong(10));
+                float ratioThreshold = rs.getFloat(14);
+                int truncationLimit = rs.getInt(11);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(12));
 
                 Operation operation = new ReadWrite2(
                     srcId,
@@ -759,11 +759,11 @@ public class UpdateEventStreamReader implements Iterator<Operation> {
                 long srcId = rs.getLong(3);
                 long dstId = rs.getLong(4);
                 Date currentTime = new Date(scheduledStartTimeAsMilli);
-                double threshold = rs.getDouble(9);
-                Date startTime = new Date(rs.getLong(5));
-                Date endTime = new Date(rs.getLong(6));
-                int truncationLimit = rs.getInt(7);
-                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(8));
+                double threshold = rs.getDouble(10);
+                Date startTime = new Date(rs.getLong(6));
+                Date endTime = new Date(rs.getLong(7));
+                int truncationLimit = rs.getInt(8);
+                TruncationOrder truncationOrder = TruncationOrder.valueOf(rs.getString(9));
 
                 Operation operation = new ReadWrite3(
                     srcId,
