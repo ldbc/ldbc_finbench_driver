@@ -71,7 +71,8 @@ public class RunnableOperationStreamBatchLoader extends Thread {
 
                 classToLastValue.put(enabledClass, boundaries._2());
 
-                if (boundaries._1() < offset) {
+                // avoid empty incremental lead to file offset = -1
+                if (boundaries._1() != -1 && boundaries._1() < offset) {
                     offset = boundaries._1();
                 }
             }
