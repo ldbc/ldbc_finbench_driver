@@ -2,6 +2,7 @@
 target/
 .vscode/
 *.iml
+dependency-reduced-pom.xml
 validation_params.csv
 results/
 validation_params-failed-actual.json
