@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import org.ldbcouncil.finbench.driver.ChildOperationGenerator;
@@ -585,6 +586,7 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
         int batchQueueSize = LdbcFinBenchTransactionWorkloadConfiguration.BUFFERED_QUEUE_SIZE;
 
         BlockingQueue<Iterator<Operation>> blockingQueue = new LinkedBlockingQueue<>(batchQueueSize);
+        CountDownLatch finishInit = new CountDownLatch(1);
         runnableBatchLoader = new RunnableOperationStreamBatchLoader(
             loader,
             gf,
@@ -592,10 +594,15 @@ public class LdbcFinBenchTransactionWorkload extends Workload {
             fileSuffix,
             blockingQueue,
             dependencyUpdateOperationTypes,
-            batchSizeInMillis
+            batchSizeInMillis,
+            finishInit
         );
         runnableBatchLoader.start();
-
+        try {
+            finishInit.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         OperationStreamBuffer buffer = new OperationStreamBuffer(blockingQueue);
         BufferedIterator bufferedIterator = new BufferedIterator(buffer);
         bufferedIterator.init();
