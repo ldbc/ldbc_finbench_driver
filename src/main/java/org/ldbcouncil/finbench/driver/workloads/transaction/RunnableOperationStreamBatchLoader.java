@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.CountDownLatch;
 import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.csv.FileLoader;
@@ -25,6 +26,7 @@ public class RunnableOperationStreamBatchLoader extends Thread {
     private final String fileSuffix;
     private final Set<Class<? extends Operation>> enabledUpdateOperationTypes;
     private final BlockingQueue<Iterator<Operation>> blockingQueue;
+    private final CountDownLatch finishInit;
 
     public RunnableOperationStreamBatchLoader(
         FileLoader loader,
@@ -33,7 +35,8 @@ public class RunnableOperationStreamBatchLoader extends Thread {
         String fileSuffix,
         BlockingQueue<Iterator<Operation>> blockingQueue,
         Set<Class<? extends Operation>> enabledUpdateOperationTypes,
-        long batchSize
+        long batchSize,
+        CountDownLatch finishInit
     ) {
         this.loader = loader;
         this.gf = gf;
@@ -42,6 +45,7 @@ public class RunnableOperationStreamBatchLoader extends Thread {
         this.blockingQueue = blockingQueue;
         this.enabledUpdateOperationTypes = enabledUpdateOperationTypes;
         this.batchSize = batchSize;
+        this.finishInit = finishInit;
     }
 
     /**
@@ -91,12 +95,19 @@ public class RunnableOperationStreamBatchLoader extends Thread {
                 // Waits for a free slot.
                 blockingQueue.put(newBatch);
                 offset = offset + batchSize;
+                if (finishInit.getCount() == 1) {
+                    finishInit.countDown();
+                }
             }
         } catch (WorkloadException | SQLException ew) {
             ew.printStackTrace();
             Thread.currentThread().interrupt();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } finally {
+            if (finishInit.getCount() == 1) {
+                finishInit.countDown();
+            }
         }
     }
 
