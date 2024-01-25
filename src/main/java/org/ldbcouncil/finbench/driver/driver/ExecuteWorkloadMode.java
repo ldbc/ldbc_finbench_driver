@@ -67,7 +67,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         long randomSeed) throws DriverException {
         this.controlService = controlService;
         this.timeSource = timeSource;
-        this.loggingService = controlService.loggingServiceFactory().loggingServiceFor(getClass().getSimpleName());
+        this.loggingService = controlService.loggingServiceFactory()
+            .loggingServiceFor(getClass().getSimpleName());
         this.randomSeed = randomSeed;
         this.temporalUtil = new TemporalUtil();
         this.resultsDirectory = new ResultsDirectory(controlService.configuration());
@@ -89,7 +90,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
 
     @Override
     public Object startExecutionAndAwaitCompletion() throws DriverException {
-        if (controlService.configuration().warmupCount() > 0) {
+        if (controlService.configuration()
+            .warmupCount() > 0) {
             loggingService.info("\n"
                 + " --------------------\n"
                 + " --- Warmup Phase ---\n"
@@ -102,7 +104,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
                 // As objects in the pool would otherwise hold references to services used during warmup
                 database.reInit();
             } catch (DbException e) {
-                throw new DriverException(format("Error reinitializing DB: %s", database.getClass().getName()), e);
+                throw new DriverException(format("Error reinitializing DB: %s", database.getClass()
+                    .getName()), e);
             }
         } else {
             loggingService.info("\n"
@@ -143,9 +146,11 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
             resultsLogWriter = (null == resultsLog)
                 ? new NullResultsLogWriter()
                 : new SimpleResultsLogWriter(
-                resultsLog,
-                controlService.configuration().timeUnit(),
-                controlService.configuration().flushLog());
+                    resultsLog,
+                    controlService.configuration()
+                        .timeUnit(),
+                    controlService.configuration()
+                        .flushLog());
         } catch (IOException e) {
             throw new DriverException(
                 format("Error creating results log writer for: %s", resultsLog.getAbsolutePath()), e);
@@ -157,11 +162,16 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         loggingService.info("Scanning workload streams to calculate their limits...");
 
         long offset = (warmup)
-            ? controlService.configuration().skipCount()
-            : controlService.configuration().skipCount() + controlService.configuration().warmupCount();
+            ? controlService.configuration()
+            .skipCount()
+            : controlService.configuration()
+                .skipCount() + controlService.configuration()
+                .warmupCount();
         long limit = (warmup)
-            ? controlService.configuration().warmupCount()
-            : controlService.configuration().operationCount();
+            ? controlService.configuration()
+            .warmupCount()
+            : controlService.configuration()
+                .operationCount();
 
         WorkloadStreams workloadStreams;
         long minimumTimeStamp;
@@ -181,18 +191,22 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
             minimumTimeStamp = streamsAndWorkloadAndMinimumTimeStamp._3();
         } catch (Exception e) {
             throw new DriverException(format("Error loading workload class: %s",
-                controlService.configuration().workloadClassName()), e);
+                controlService.configuration()
+                    .workloadClassName()), e);
         }
-        loggingService.info(format("Loaded workload: %s", workload.getClass().getName()));
+        loggingService.info(format("Loaded workload: %s", workload.getClass()
+            .getName()));
 
-        loggingService.info(format("Retrieving workload stream: %s", workload.getClass().getSimpleName()));
+        loggingService.info(format("Retrieving workload stream: %s", workload.getClass()
+            .getSimpleName()));
         controlService.setWorkloadStartTimeAsMilli(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
         WorkloadStreams timeMappedWorkloadStreams;
         try {
             timeMappedWorkloadStreams = WorkloadStreams.timeOffsetAndCompressWorkloadStreams(
                 workloadStreams,
                 controlService.workloadStartTimeAsMilli(),
-                controlService.configuration().timeCompressionRatio(),
+                controlService.configuration()
+                    .timeCompressionRatio(),
                 gf
             );
         } catch (WorkloadException e) {
@@ -204,17 +218,23 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         //  ================
         if (null == database) {
             try {
-                database = ClassLoaderHelper.loadDb(controlService.configuration().dbClassName());
+                database = ClassLoaderHelper.loadDb(controlService.configuration()
+                    .dbClassName());
                 database.init(
-                    controlService.configuration().asMap(),
-                    controlService.loggingServiceFactory().loggingServiceFor(database.getClass().getSimpleName()),
+                    controlService.configuration()
+                        .asMap(),
+                    controlService.loggingServiceFactory()
+                        .loggingServiceFor(database.getClass()
+                            .getSimpleName()),
                     workload.operationTypeToClassMapping()
                 );
             } catch (DbException e) {
                 throw new DriverException(
-                    format("Error initializing DB: %s", controlService.configuration().dbClassName()), e);
+                    format("Error initializing DB: %s", controlService.configuration()
+                        .dbClassName()), e);
             }
-            loggingService.info(format("Loaded DB: %s", database.getClass().getName()));
+            loggingService.info(format("Loaded DB: %s", database.getClass()
+                .getName()));
         }
 
         //  ========================
@@ -225,7 +245,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
             metricsService = new DisruptorSbeMetricsService(
                 timeSource,
                 errorReporter,
-                controlService.configuration().timeUnit(),
+                controlService.configuration()
+                    .timeUnit(),
                 DisruptorSbeMetricsService.DEFAULT_HIGHEST_EXPECTED_RUNTIME_DURATION_AS_NANO,
                 resultsLogWriter,
                 workload.operationTypeToClassMapping(),
@@ -263,10 +284,14 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
                 errorReporter,
                 completionTimeService,
                 controlService.loggingServiceFactory(),
-                controlService.configuration().threadCount(),
-                controlService.configuration().statusDisplayIntervalAsSeconds(),
-                controlService.configuration().spinnerSleepDurationAsMilli(),
-                controlService.configuration().ignoreScheduledStartTimes(),
+                controlService.configuration()
+                    .threadCount(),
+                controlService.configuration()
+                    .statusDisplayIntervalAsSeconds(),
+                controlService.configuration()
+                    .spinnerSleepDurationAsMilli(),
+                controlService.configuration()
+                    .ignoreScheduledStartTimes(),
                 operationHandlerExecutorsBoundedQueueSize);
         } catch (Exception e) {
             throw new DriverException(format("Error instantiating %s", WorkloadRunner.class.getSimpleName()), e);
@@ -278,7 +303,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         // TODO note, this MUST be done after creation of Workload Runner because Workload Runner creates the
         // TODO "writers" for completion time service (refactor this mess at some stage)
         try {
-            if (completionTimeService.getAllWriters().isEmpty()) {
+            if (completionTimeService.getAllWriters()
+                .isEmpty()) {
                 // There are no completion time writers, CT would never advance or be non-null,
                 // set to max so nothing ever waits on it
                 long nearlyMaxPossibleTimeAsMilli = Long.MAX_VALUE - 1;
@@ -326,7 +352,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
 
     private void doExecute(boolean warmup) throws DriverException {
         try {
-            ConcurrentErrorReporter errorReporter = workloadRunner.getFuture().get();
+            ConcurrentErrorReporter errorReporter = workloadRunner.getFuture()
+                .get();
             loggingService.info("Shutting down workload...");
             workload.close();
             if (errorReporter.errorEncountered()) {
@@ -346,7 +373,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         loggingService.info("Shutting down metrics collection service...");
         WorkloadResultsSnapshot workloadResults;
         try {
-            workloadResults = metricsService.getWriter().results();
+            workloadResults = metricsService.getWriter()
+                .results();
             metricsService.shutdown();
         } catch (MetricsCollectionException e) {
             throw new DriverException("Error during shutdown of metrics collection service", e);
@@ -371,10 +399,13 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
                 File configurationFile = resultsDirectory.getOrCreateConfigurationFile(warmup);
                 Files.write(
                     configurationFile.toPath(),
-                    controlService.configuration().toPropertiesString().getBytes(StandardCharsets.UTF_8)
+                    controlService.configuration()
+                        .toPropertiesString()
+                        .getBytes(StandardCharsets.UTF_8)
                 );
                 resultsLogWriter.close();
-                if (!controlService.configuration().ignoreScheduledStartTimes()) {
+                if (!controlService.configuration()
+                    .ignoreScheduledStartTimes()) {
                     loggingService.info("Validating workload results...");
                     // TODO make this feature accessible directly
                     ResultsLogValidator resultsLogValidator = new ResultsLogValidator();
@@ -391,23 +422,27 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
                         format("Exporting workload results validation to: %s",
                             resultsValidationFile.getAbsolutePath())
                     );
-//                    Files.write(
-//                        resultsValidationFile.toPath(),
-//                        resultsLogValidationSummary.toJson().getBytes(StandardCharsets.UTF_8)
-//                    );
+                    // Files.write(
+                    //    resultsValidationFile.toPath(),
+                    //    resultsLogValidationSummary.toJson()
+                    //        .getBytes(StandardCharsets.UTF_8)
+                    // );
                     // TODO export result
                     ResultsLogValidationResult validationResult = resultsLogValidator.validate(
                         resultsLogValidationSummary,
                         resultsLogValidationTolerances,
-                        controlService.configuration().recordDelayedOperations(),
+                        controlService.configuration()
+                            .recordDelayedOperations(),
                         workloadResults
                     );
                     loggingService.info(validationResult.getScheduleAuditResult(
-                        controlService.configuration().recordDelayedOperations()
+                        controlService.configuration()
+                            .recordDelayedOperations()
                     ));
                     Files.write(
                         resultsValidationFile.toPath(),
-                        resultsLogValidationSummary.toJson().getBytes(StandardCharsets.UTF_8)
+                        resultsLogValidationSummary.toJson()
+                            .getBytes(StandardCharsets.UTF_8)
                     );
                 }
             }

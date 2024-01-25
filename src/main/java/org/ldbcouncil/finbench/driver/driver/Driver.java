@@ -4,7 +4,6 @@ import static java.lang.String.format;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import org.ldbcouncil.finbench.driver.control.ConsoleAndFileDriverConfiguration;
 import org.ldbcouncil.finbench.driver.control.ControlService;
 import org.ldbcouncil.finbench.driver.control.DriverConfigurationException;
@@ -33,10 +32,10 @@ public class Driver {
             ConsoleAndFileDriverConfiguration configuration = ConsoleAndFileDriverConfiguration.fromArgs(args);
             long workloadStartTimeAsMilli = systemTimeSource.nowAsMilli() + TimeUnit.SECONDS.toMillis(5);
             controlService = new LocalControlService(
-                    workloadStartTimeAsMilli,
-                    configuration,
-                    loggingServiceFactory,
-                    systemTimeSource);
+                workloadStartTimeAsMilli,
+                configuration,
+                loggingServiceFactory,
+                systemTimeSource);
             Driver driver = new Driver();
             DriverMode<?> driverMode = driver.getDriverModeFor(controlService);
             driverMode.init();
@@ -64,17 +63,19 @@ public class Driver {
      * @throws DriverException When one or more required parameters are missing
      */
     public DriverMode<?> getDriverModeFor(ControlService controlService) throws DriverException {
-        if (controlService.configuration().shouldPrintHelpString()) {
+        if (controlService.configuration()
+            .shouldPrintHelpString()) {
             return new PrintHelpMode(controlService);
         }
 
         List<String> missingParams =
-                ConsoleAndFileDriverConfiguration.checkMissingParams(controlService.configuration());
+            ConsoleAndFileDriverConfiguration.checkMissingParams(controlService.configuration());
         if (!missingParams.isEmpty()) {
             throw new DriverException(format("Missing required parameters: %s", missingParams.toString()));
         }
 
-        OperationMode mode = OperationMode.valueOf(controlService.configuration().mode());
+        OperationMode mode = OperationMode.valueOf(controlService.configuration()
+            .mode());
 
         switch (mode) {
             case CREATE_VALIDATION:

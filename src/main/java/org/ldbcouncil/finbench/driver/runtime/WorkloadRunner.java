@@ -12,7 +12,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.ldbcouncil.finbench.driver.Db;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.WorkloadStreams;
@@ -133,7 +132,8 @@ public class WorkloadRunner {
         private void startThread(long milli) {
             if (workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
                 workloadRunnerThread.start();
-                // You cannot sleep(milli) directly, because if the execution finishes in the meantime, you will sleep for extra time
+                // You cannot sleep(milli) directly, because if the execution finishes in the meantime,
+                // you will sleep for extra time
 
                 AtomicBoolean expire = new AtomicBoolean(false);
                 Timer timer = new Timer();
