@@ -4,12 +4,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+
 import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 
 public class WorkloadResultsSnapshot {
@@ -41,11 +43,11 @@ public class WorkloadResultsSnapshot {
     }
 
     public WorkloadResultsSnapshot(
-        Iterable<OperationMetricsSnapshot> metrics,
-        long startTimeAsMilli,
-        long latestFinishTimeAsMilli,
-        long operationCount,
-        TimeUnit unit) {
+            Iterable<OperationMetricsSnapshot> metrics,
+            long startTimeAsMilli,
+            long latestFinishTimeAsMilli,
+            long operationCount,
+            TimeUnit unit) {
         this.metrics = Lists.newArrayList(metrics);
         this.metrics.sort(new OperationTypeMetricsManager.OperationMetricsNameComparator());
         this.startTimeAsUnit = unit.convert(startTimeAsMilli, TimeUnit.MILLISECONDS);
@@ -111,8 +113,8 @@ public class WorkloadResultsSnapshot {
     @Override
     public String toString() {
         return "WorkloadResultsSnapshot{" + "metrics=" + metrics + ", unit=" + unit + ", startTimeAsUnit="
-            + startTimeAsUnit + ", latestFinishTimeAsUnit=" + latestFinishTimeAsUnit + ", totalRunDurationAsUnit="
-            + totalRunDurationAsUnit + ", operationCount=" + operationCount + ", throughput=" + throughput + '}';
+                + startTimeAsUnit + ", latestFinishTimeAsUnit=" + latestFinishTimeAsUnit + ", totalRunDurationAsUnit="
+                + totalRunDurationAsUnit + ", operationCount=" + operationCount + ", throughput=" + throughput + '}';
     }
 
     @Override

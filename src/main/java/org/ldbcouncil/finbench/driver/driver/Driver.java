@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
 import org.ldbcouncil.finbench.driver.control.ConsoleAndFileDriverConfiguration;
 import org.ldbcouncil.finbench.driver.control.ControlService;
 import org.ldbcouncil.finbench.driver.control.DriverConfigurationException;
@@ -25,17 +26,17 @@ public class Driver {
         // Initial loggin service
         LoggingServiceFactory loggingServiceFactory = new Log4jLoggingServiceFactory(detailedStatus);
         LoggingService loggingService = loggingServiceFactory.loggingServiceFor(Driver.class.getSimpleName());
+        loggingService.info("Driver Simple Name：" + Driver.class.getSimpleName());
 
-        //
         try {
             TimeSource systemTimeSource = new SystemTimeSource();
             ConsoleAndFileDriverConfiguration configuration = ConsoleAndFileDriverConfiguration.fromArgs(args);
             long workloadStartTimeAsMilli = systemTimeSource.nowAsMilli() + TimeUnit.SECONDS.toMillis(5);
             controlService = new LocalControlService(
-                workloadStartTimeAsMilli,
-                configuration,
-                loggingServiceFactory,
-                systemTimeSource);
+                    workloadStartTimeAsMilli,
+                    configuration,
+                    loggingServiceFactory,
+                    systemTimeSource);
             Driver driver = new Driver();
             DriverMode<?> driverMode = driver.getDriverModeFor(controlService);
             driverMode.init();
@@ -47,11 +48,11 @@ public class Driver {
             System.exit(1);
         } catch (Exception e) {
             loggingService.info("Driver terminated unexpectedly\n" + ConcurrentErrorReporter.stackTraceToString(e));
-            System.exit(1);
         } finally {
             if (null != controlService) {
                 controlService.shutdown();
             }
+            System.exit(0);
         }
     }
 
@@ -68,7 +69,7 @@ public class Driver {
         }
 
         List<String> missingParams =
-            ConsoleAndFileDriverConfiguration.checkMissingParams(controlService.configuration());
+                ConsoleAndFileDriverConfiguration.checkMissingParams(controlService.configuration());
         if (!missingParams.isEmpty()) {
             throw new DriverException(format("Missing required parameters: %s", missingParams.toString()));
         }
@@ -82,6 +83,8 @@ public class Driver {
                 return new CalculateWorkloadStatisticsMode(controlService, RANDOM_SEED);
             case VALIDATE_DATABASE:
                 return new ValidateDatabaseMode(controlService);
+            case AUTOMATIC_TEST:
+                return new AutomaticTestMode(controlService, new SystemTimeSource(), RANDOM_SEED);
             case EXECUTE_BENCHMARK:
             default: // Execute benchmark is default behaviour
                 return new ExecuteWorkloadMode(controlService, new SystemTimeSource(), RANDOM_SEED);

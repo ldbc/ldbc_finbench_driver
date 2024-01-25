@@ -25,7 +25,7 @@ public class ValidationParamsToJson {
     }
 
     public void serializeValidationParameters(File outputFile) throws IOException {
-        // // Assert that serialization/marshalling is performed correctly
+        // Assert that serialization/marshalling is performed correctly
         if (this.performSerializationMarshallingChecks) {
             String serializedValidationParams;
             try {

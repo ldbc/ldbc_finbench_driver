@@ -391,10 +391,10 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
                         format("Exporting workload results validation to: %s",
                             resultsValidationFile.getAbsolutePath())
                     );
-                    Files.write(
-                        resultsValidationFile.toPath(),
-                        resultsLogValidationSummary.toJson().getBytes(StandardCharsets.UTF_8)
-                    );
+//                    Files.write(
+//                        resultsValidationFile.toPath(),
+//                        resultsLogValidationSummary.toJson().getBytes(StandardCharsets.UTF_8)
+//                    );
                     // TODO export result
                     ResultsLogValidationResult validationResult = resultsLogValidator.validate(
                         resultsLogValidationSummary,
