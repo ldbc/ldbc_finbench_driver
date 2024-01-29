@@ -130,33 +130,36 @@ public class WorkloadRunner {
         }
 
         private void startThread(long milli) {
-            if (workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
-                workloadRunnerThread.start();
-                // You cannot sleep(milli) directly, because if the execution finishes in the meantime,
-                // you will sleep for extra time
-
-                AtomicBoolean expire = new AtomicBoolean(false);
-                Timer timer = new Timer();
-                while (workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
-                    Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI);
-                }
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        expire.set(true);
-                    }
-                }, milli);
-                while (!expire.get() && workloadRunnerThread.state().equals(WorkloadRunnerThreadState.RUNNING)) {
-                    Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI_AUTOMATIC);
-                }
-                timer.cancel();
+            if (!workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
+                workloadRunnerThread.shutdownEverything(WorkloadRunnerThread.ShutdownType.FORCED,
+                        new ConcurrentErrorReporter());
             }
+            workloadRunnerThread.start();
+            // You cannot sleep(milli) directly, because if the execution finishes in the meantime, you will
+            // sleep for extra time
+
+            AtomicBoolean expire = new AtomicBoolean(false);
+            Timer timer = new Timer();
+            while (workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
+                Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI);
+            }
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    expire.set(true);
+                }
+            }, milli);
+            while (!expire.get() && workloadRunnerThread.state().equals(WorkloadRunnerThreadState.RUNNING)) {
+                Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI_AUTOMATIC);
+            }
+            timer.cancel();
             if (isCancelled || isDone) {
                 throw new IllegalStateException("Can not call method after future has been cancelled or completed");
             }
             workloadRunnerThread.interrupt();
             isCancelled = true;
             isDone = true;
+            workloadRunnerThread.stateRef.set(WorkloadRunnerThreadState.COMPLETED_SUCCEEDED);
         }
 
         @Override

@@ -58,9 +58,11 @@ public interface DriverConfiguration {
 
     double dichotomyErrorRange();
 
-    double tcrLeft();
+    double tcrMin();
 
-    double tcrRight();
+    double tcrMax();
+
+    double timeoutRate();
 
     String toPropertiesString() throws DriverConfigurationException;
 

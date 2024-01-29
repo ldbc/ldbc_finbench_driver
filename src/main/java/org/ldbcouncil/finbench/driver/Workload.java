@@ -32,7 +32,8 @@ public abstract class Workload implements Closeable {
             boolean warmup
     ) {
         long excessiveDelayThresholdAsMilli = TimeUnit.SECONDS.toMillis(1);
-        double toleratedExcessiveDelayCountPercentage = 0.05; // 95% of the queries must run below delay threshold
+        // Specifies the fraction of the delay threshold that is allowed to be exceeded
+        double toleratedExcessiveDelayCountPercentage = configuration.timeoutRate();
         long toleratedExcessiveDelayCount = // Total tolerated excessive delay count
                 (warmup) ? Math.round(configuration.warmupCount() * toleratedExcessiveDelayCountPercentage)
                         : Math.round(configuration.operationCount() * toleratedExcessiveDelayCountPercentage);
@@ -50,10 +51,12 @@ public abstract class Workload implements Closeable {
      * @return
      */
     public ResultsLogValidationTolerances resultsLogValidationTolerancesAutomatic(
+            DriverConfiguration configuration,
             long operationCount
     ) {
         long excessiveDelayThresholdAsMilli = TimeUnit.SECONDS.toMillis(1);
-        double toleratedExcessiveDelayCountPercentage = 0.05; // 95% of the queries must run below delay threshold
+        // Specifies the fraction of the delay threshold that is allowed to be exceeded
+        double toleratedExcessiveDelayCountPercentage = configuration.timeoutRate();
         // Total tolerated excessive delay count
         long toleratedExcessiveDelayCount = Math.round(operationCount * toleratedExcessiveDelayCountPercentage);
         return new ResultsLogValidationTolerances(

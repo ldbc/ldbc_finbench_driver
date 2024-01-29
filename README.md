@@ -46,6 +46,7 @@ The driver operates in three modes:
 - CREATE_VALIDATION
 - VALIDATE_DATABASE
 - EXECUTE_BENCHMARK
+- AUTOMATIC_TEST
 
 #### CREATE_VALIDATION
 
@@ -75,6 +76,29 @@ Perform the performance test with `EXECUTE_BENCHMARK` mode.  Here are some cruci
 3. **ignore_scheduled_start_times**: Determines whether the driver should follow the scheduled timings for sending requests. If set to true, the driver sends requests as soon as they are prepared, regardless of the schedule.
 4. **warmup**: Denotes the number of preliminary test items processed before the actual benchmarking begins.
 5. **operation_count**: Sets the number of test items executed during the actual benchmarking phase after the warm-up. 
+
+```shell
+mode=EXECUTE_BENCHMARK
+thread_count=1
+time_compression_ratio=0.001
+ignore_scheduled_start_times=false
+warmup=5
+operation_count=10000
+```
+
+
+#### AUTOMATIC_TEST
+
+Perform the performance test with `AUTOMATIC_TEST` mode.  Here are some crucial configuration parameters that need adjustment when operating the driver:
+
+1. **estimate**：Quickly estimate the duration of each test in the phase (millisecond). if -1, the operation to 
+   complete the number of. (Default: 300000)
+2. **accurate**：The duration of each test in the precise tuning phase (millisecond). if -1, the operation to 
+   complete the number of operation_count is finished (Default: 7200000)
+3. **error_range**：Binary end condition, tolerance range (Default: 1E-5)
+4. **tcr_min**：Minimum time compression ratio limit (Default: 1E-9)
+5. **tcr_max**：Maximum time compression ratio limit (Default: 1)
+6. **timeout_rate**：Specifies the fraction of the delay threshold that is allowed to be exceeded（默认是: 0.05）
 
 ```shell
 mode=EXECUTE_BENCHMARK

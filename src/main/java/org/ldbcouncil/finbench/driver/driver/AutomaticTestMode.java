@@ -65,13 +65,13 @@ public class AutomaticTestMode implements DriverMode<Object> {
     private ResultsLogWriter resultsLogWriter = null;
 
     public AutomaticTestMode(
-        ControlService controlService,
-        TimeSource timeSource,
-        long randomSeed) throws DriverException {
+            ControlService controlService,
+            TimeSource timeSource,
+            long randomSeed) throws DriverException {
         this.controlService = controlService;
         this.timeSource = timeSource;
         this.loggingService = controlService.loggingServiceFactory()
-            .loggingServiceFor(getClass().getSimpleName());
+                .loggingServiceFor(getClass().getSimpleName());
         this.randomSeed = randomSeed;
         this.temporalUtil = new TemporalUtil();
         this.resultsDirectory = new ResultsDirectory(controlService.configuration());
@@ -89,43 +89,38 @@ public class AutomaticTestMode implements DriverMode<Object> {
 
     @Override
     public Object startExecutionAndAwaitCompletion() throws DriverException {
-        double l = controlService.configuration()
-            .tcrLeft();
-        double r = controlService.configuration()
-            .tcrRight();
+        double l = controlService.configuration().tcrMin();
+        double r = controlService.configuration().tcrMax();
         // Record the results of the current and last successful one
         ResultsLogValidationResult successfulResult = new ResultsLogValidationResult();
         ResultsLogValidationResult currentResult;
 
-        loggingService.info("-----------------------------Rapid prediction phase-----------------------------");
+        loggingService.info("--------------------------Rapid estimate phase--------------------------");
         // Assuming that tcr=1, the approximate number of basic operations required in a minute
         // (initially set to be larger, and later change according to the machine situation)
         long baseCnt = 10000;
         // Stores the original total number of operations
-        long sourceCnt = controlService.configuration()
-            .operationCount();
+        long sourceOpCnt = controlService.configuration().operationCount();
+        long sourceWaCnt = controlService.configuration().operationCount();
         // Gets the binary end condition, tolerance range
-        double range = controlService.configuration()
-            .dichotomyErrorRange();
+        double range = controlService.configuration().dichotomyErrorRange();
         // Time compression ratio of this round
         double tcr = 0;
+        int numberOfRounds = 1;
         while (r - l >= range) {
             // The first time you try to run with the tcr specified by the configuration
             if (tcr != 0) {
                 tcr = l + (r - l) / 2;
-                controlService.configuration()
-                    .setTimeCompressionRatio(tcr);
+                controlService.configuration().setTimeCompressionRatio(tcr);
             } else {
-                tcr = controlService.configuration()
-                    .timeCompressionRatio();
+                tcr = controlService.configuration().timeCompressionRatio();
             }
             // Sets the number of preheat operations
-            computeWarmupCount(baseCnt, sourceCnt);
-            loggingService.info(String.format("New round: Compression ratio: %f,\t warmup count: %d",
-                tcr, controlService.configuration()
-                    .warmupCount()));
-            currentResult = validationTest(true, controlService.configuration()
-                .estimateTestTime());
+            computeRunOperationCount(baseCnt, sourceWaCnt, sourceOpCnt);
+            loggingService.info(String.format("New round %d: Compression ratio: %f,\t warmup count: %d",
+                    numberOfRounds++, tcr, controlService.configuration().warmupCount()
+            ));
+            currentResult = validationTest(true);
 
             if (currentResult.isSuccessful()) {
                 r = tcr;
@@ -135,54 +130,46 @@ public class AutomaticTestMode implements DriverMode<Object> {
             }
             // Based on the current throughput, determine the base operand per minute at tcr=1,
             // then *1/3 to avoid accidents
-            baseCnt = (long) (Math.ceil(currentResult.throughput()) * tcr * 80);
+            baseCnt = (long) (Math.ceil(currentResult.throughput()) * tcr * 60);
         }
 
-        loggingService.info("-----------------------------Precise tuning phase-----------------------------");
+        loggingService.info("--------------------------Accurate adjust parameter phase--------------------------");
         // The theory is accurate tcr >= estimated tcr,
         // to prevent accidents and give a little bit of room that may be smaller
-        l = controlService.configuration()
-            .tcrLeft() + (l - controlService.configuration()
-            .tcrLeft()) * 0.7;
-        r = Math.min(l * 10, controlService.configuration()
-            .tcrRight());
+        l = controlService.configuration().tcrMin() + (l - controlService.configuration().tcrMin()) * 0.7;
+        r = Math.min(l * 10, controlService.configuration().tcrMax());
         // Ensure that at least one precision tuning phase is performed
         tcr = 0;
+        numberOfRounds = 0;
         do {
             // The first attempt is to run with the results of the estimation phase
             if (tcr != 0) {
                 tcr = l + (r - l) / 2;
-                controlService.configuration()
-                    .setTimeCompressionRatio(tcr);
+                controlService.configuration().setTimeCompressionRatio(tcr);
             } else {
-                tcr = controlService.configuration()
-                    .timeCompressionRatio();
+                tcr = controlService.configuration().timeCompressionRatio();
             }
             // Set the number of operations for the warm-up and formal phases
-            computeWarmupCount(baseCnt, sourceCnt);
-            computeRunOperationCount(baseCnt, sourceCnt);
+            computeRunOperationCount(baseCnt, sourceWaCnt, sourceOpCnt);
             loggingService.info(String.format(
-                "New round: Compression ratio: %f,\t warmup count: %d,\t operation count: %d",
-                tcr, controlService.configuration()
-                    .warmupCount(),
-                controlService.configuration()
-                    .operationCount()));
+                    "New round %d: Compression ratio: %f,\t warmup count: %d,\t operation count: %d",
+                    numberOfRounds++, tcr, controlService.configuration().warmupCount(),
+                    controlService.configuration().operationCount()
+            ));
 
-            currentResult = validationTest(false, controlService.configuration()
-                .accurateTestTime());
+            currentResult = validationTest(false);
             if (currentResult.isSuccessful()) {
                 r = tcr;
                 successfulResult = currentResult;
             } else {
                 l = tcr;
             }
-            baseCnt = (long) (Math.ceil(currentResult.throughput()) * tcr * 80);
+            baseCnt = (long) (Math.ceil(currentResult.throughput()) * tcr * 60);
         } while (r - l >= range);
 
         // If finding the last l is not successful, replace it with the last successful one
         if (!currentResult.isSuccessful()) {
-            controlService.configuration()
-                .setTimeCompressionRatio(r);
+            controlService.configuration().setTimeCompressionRatio(r);
             // At this point, the state of the machine has slipped, and there is no need to repeat the test
         }
         try {
@@ -199,42 +186,24 @@ public class AutomaticTestMode implements DriverMode<Object> {
     }
 
     /**
-     * Sets the number of preheat operations
+     * Set the number of operations
      *
      * @param baseCnt   When tcr=1，estimateTestTime=300000 the number of base operations
-     * @param sourceCnt The operand specified in the configuration
-     */
-    public void computeWarmupCount(long baseCnt,
-                                   long sourceCnt) {
-        if (controlService.configuration()
-            .estimateTestTime() != -1) {
-            controlService.configuration()
-                .setWarmupCount((long) Math.max(
-                    baseCnt / controlService.configuration()
-                        .timeCompressionRatio()
-                        * Math.ceil(controlService.configuration()
-                        .estimateTestTime() / 60000.0), sourceCnt
-                ));
-        }
-    }
-
-    /**
-     * Set the number of official running phases
-     *
-     * @param baseCnt   When tcr=1，estimateTestTime=300000 the number of base operations
-     * @param sourceCnt The operand specified in the configuration
      */
     public void computeRunOperationCount(long baseCnt,
-                                         long sourceCnt) {
-        if (controlService.configuration()
-            .accurateTestTime() != -1) {
-            controlService.configuration()
-                .setOperationCount((long) Math.max(
-                    baseCnt / controlService.configuration()
-                        .timeCompressionRatio()
-                        * Math.ceil(controlService.configuration()
-                        .accurateTestTime() / 60000.0), sourceCnt
-                ));
+                                         long sourceWaCnt,
+                                         long sourceOpCnt) {
+
+        double perMinute = baseCnt * 30 / controlService.configuration().timeCompressionRatio();
+        if (controlService.configuration().estimateTestTime() != -1) {
+            controlService.configuration().setWarmupCount((long) Math.max(
+                    perMinute * (controlService.configuration().estimateTestTime() / 60000.0), sourceWaCnt
+            ));
+        }
+        if (controlService.configuration().accurateTestTime() != -1) {
+            controlService.configuration().setOperationCount((long) Math.max(
+                    perMinute * (controlService.configuration().accurateTestTime() / 60000.0), sourceOpCnt
+            ));
         }
     }
 
@@ -243,36 +212,32 @@ public class AutomaticTestMode implements DriverMode<Object> {
      *
      * @return ResultsLogValidationResult test result
      */
-    private ResultsLogValidationResult validationTest(boolean warmup,
-                                                      long milli) throws DriverException {
-        ResultsLogValidationResult result = executionAndAwaitCompletion(warmup, milli);
+    private ResultsLogValidationResult validationTest(boolean warmup) throws DriverException {
+        ResultsLogValidationResult result = executionAndAwaitCompletion(warmup);
         if (result == null) {
             loggingService.info("Obtain result The test result failed");
             return new ResultsLogValidationResult();
         }
         loggingService.info(String.format("\n"
-                + "----------------------------This test check %s----------------------------\n"
-                + "----------------------------tcr: %f----------------------------\n"
-                + "----------------------------throughput: %f----------------------------\n"
-                + "----------------------------onTimeRatio: %f----------------------------",
-            result.isSuccessful() ? "PASS" : "FAILURE",
-            controlService.configuration()
-                .timeCompressionRatio(), result.throughput(), result.onTimeRatio()));
+                        + "----------------------------This test check %s----------------------------\n"
+                        + "----------------------------tcr: %f----------------------------\n"
+                        + "----------------------------throughput: %f----------------------------\n"
+                        + "----------------------------onTimeRatio: %f----------------------------",
+                result.isSuccessful() ? "PASS" : "FAILURE",
+                controlService.configuration().timeCompressionRatio(), result.throughput(), result.onTimeRatio()));
         return result;
     }
 
-    public ResultsLogValidationResult executionAndAwaitCompletion(boolean warmup,
-                                                                  long milli)
-        throws DriverException {
+    public ResultsLogValidationResult executionAndAwaitCompletion(boolean warmup)
+            throws DriverException {
         ResultsLogValidationResult result = null;
-        if (controlService.configuration()
-            .warmupCount() > 0) {
+        if (controlService.configuration().warmupCount() > 0) {
             loggingService.info("\n"
-                + " --------------------\n"
-                + " --- Warmup Phase ---\n"
-                + " --------------------");
+                    + " --------------------\n"
+                    + " --- Warmup Phase ---\n"
+                    + " --------------------");
             doInit(true);
-            result = doExecute(true, milli);
+            result = doExecute(true, controlService.configuration().estimateTestTime());
             try {
                 // TODO remove in future
                 // This is necessary to clear the runnable context pool
@@ -281,22 +246,22 @@ public class AutomaticTestMode implements DriverMode<Object> {
                 database.reInitAutomatic();
             } catch (DbException e) {
                 throw new DriverException(format("Error reinitializing DB: %s", database.getClass()
-                    .getName()), e);
+                        .getName()), e);
             }
         } else {
             loggingService.info("\n"
-                + " ---------------------------------\n"
-                + " --- No Warmup Phase Requested ---\n"
-                + " ---------------------------------");
+                    + " ---------------------------------\n"
+                    + " --- No Warmup Phase Requested ---\n"
+                    + " ---------------------------------");
         }
-        // If the warm-up phase runs out, return directly
-        if (!warmup && result != null && result.isSuccessful()) {
+
+        if (!warmup) {
             loggingService.info("\n"
-                + " -----------------\n"
-                + " --- Run Phase ---\n"
-                + " -----------------");
+                    + " -----------------\n"
+                    + " --- Run Phase ---\n"
+                    + " -----------------");
             doInit(false);
-            result = doExecute(false, -1);
+            result = doExecute(false, controlService.configuration().accurateTestTime());
             try {
                 // TODO remove in future
                 // This is necessary to clear the runnable context pool
@@ -305,7 +270,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
                 database.reInitAutomatic();
             } catch (DbException e) {
                 throw new DriverException(format("Error reinitializing DB: %s", database.getClass()
-                    .getName()), e);
+                        .getName()), e);
             }
         }
         return result;
@@ -321,16 +286,14 @@ public class AutomaticTestMode implements DriverMode<Object> {
         File resultsLog = resultsDirectory.getOrCreateResultsLogFile(warmup);
         try {
             resultsLogWriter = (null == resultsLog)
-                ? new NullResultsLogWriter()
-                : new SimpleResultsLogWriter(
-                    resultsLog,
-                    controlService.configuration()
-                        .timeUnit(),
-                    controlService.configuration()
-                        .flushLog());
+                    ? new NullResultsLogWriter()
+                    : new SimpleResultsLogWriter(
+                            resultsLog,
+                            controlService.configuration().timeUnit(),
+                            controlService.configuration().flushLog());
         } catch (IOException e) {
             throw new DriverException(
-                format("Error creating results log writer for: %s", resultsLog.getAbsolutePath()), e);
+                    format("Error creating results log writer for: %s", resultsLog.getAbsolutePath()), e);
         }
 
         //  ------------------
@@ -339,52 +302,43 @@ public class AutomaticTestMode implements DriverMode<Object> {
         loggingService.info("Scanning workload streams to calculate their limits...");
 
         long offset = (warmup)
-            ? controlService.configuration()
-            .skipCount()
-            : controlService.configuration()
-                .skipCount() + controlService.configuration()
-                .warmupCount();
+                ? controlService.configuration().skipCount()
+                : controlService.configuration().skipCount() + controlService.configuration().warmupCount();
         long limit = (warmup)
-            ? controlService.configuration()
-            .warmupCount()
-            : controlService.configuration()
-                .operationCount();
+                ? controlService.configuration().warmupCount()
+                : controlService.configuration().operationCount();
 
         WorkloadStreams workloadStreams;
         long minimumTimeStamp;
         try {
             boolean returnStreamsWithDbConnector = true;
             Tuple3<WorkloadStreams, Workload, Long> streamsAndWorkloadAndMinimumTimeStamp =
-                WorkloadStreams.createNewWorkloadWithOffsetAndLimitedWorkloadStreams(
-                    controlService.configuration(),
-                    gf,
-                    returnStreamsWithDbConnector,
-                    offset,
-                    limit,
-                    controlService.loggingServiceFactory()
-                );
+                    WorkloadStreams.createNewWorkloadWithOffsetAndLimitedWorkloadStreams(
+                            controlService.configuration(),
+                            gf,
+                            returnStreamsWithDbConnector,
+                            offset,
+                            limit,
+                            controlService.loggingServiceFactory()
+                    );
             workloadStreams = streamsAndWorkloadAndMinimumTimeStamp._1();
             workload = streamsAndWorkloadAndMinimumTimeStamp._2();
             minimumTimeStamp = streamsAndWorkloadAndMinimumTimeStamp._3();
         } catch (Exception e) {
             throw new DriverException(format("Error loading workload class: %s",
-                controlService.configuration()
-                    .workloadClassName()), e);
+                    controlService.configuration().workloadClassName()), e);
         }
-        loggingService.info(format("Loaded workload: %s", workload.getClass()
-            .getName()));
+        loggingService.info(format("Loaded workload: %s", workload.getClass().getName()));
 
-        loggingService.info(format("Retrieving workload stream: %s", workload.getClass()
-            .getSimpleName()));
+        loggingService.info(format("Retrieving workload stream: %s", workload.getClass().getSimpleName()));
         controlService.setWorkloadStartTimeAsMilli(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
         WorkloadStreams timeMappedWorkloadStreams;
         try {
             timeMappedWorkloadStreams = WorkloadStreams.timeOffsetAndCompressWorkloadStreams(
-                workloadStreams,
-                controlService.workloadStartTimeAsMilli(),
-                controlService.configuration()
-                    .timeCompressionRatio(),
-                gf
+                    workloadStreams,
+                    controlService.workloadStartTimeAsMilli(),
+                    controlService.configuration().timeCompressionRatio(),
+                    gf
             );
         } catch (WorkloadException e) {
             throw new DriverException("Error while retrieving operation stream for workload", e);
@@ -395,23 +349,17 @@ public class AutomaticTestMode implements DriverMode<Object> {
         //  ---------------=
         if (null == database) {
             try {
-                database = ClassLoaderHelper.loadDb(controlService.configuration()
-                    .dbClassName());
+                database = ClassLoaderHelper.loadDb(controlService.configuration().dbClassName());
                 database.init(
-                    controlService.configuration()
-                        .asMap(),
-                    controlService.loggingServiceFactory()
-                        .loggingServiceFor(database.getClass()
-                            .getSimpleName()),
-                    workload.operationTypeToClassMapping()
+                        controlService.configuration().asMap(),
+                        controlService.loggingServiceFactory().loggingServiceFor(database.getClass().getSimpleName()),
+                        workload.operationTypeToClassMapping()
                 );
             } catch (DbException e) {
                 throw new DriverException(
-                    format("Error initializing DB: %s", controlService.configuration()
-                        .dbClassName()), e);
+                        format("Error initializing DB: %s", controlService.configuration().dbClassName()), e);
             }
-            loggingService.info(format("Loaded DB: %s", database.getClass()
-                .getName()));
+            loggingService.info(format("Loaded DB: %s", database.getClass().getName()));
         }
 
         //  ------------------------
@@ -420,14 +368,13 @@ public class AutomaticTestMode implements DriverMode<Object> {
         try {
             // TODO create metrics service factory so different ones can be easily created
             metricsService = new DisruptorSbeMetricsService(
-                timeSource,
-                errorReporter,
-                controlService.configuration()
-                    .timeUnit(),
-                DisruptorSbeMetricsService.DEFAULT_HIGHEST_EXPECTED_RUNTIME_DURATION_AS_NANO,
-                resultsLogWriter,
-                workload.operationTypeToClassMapping(),
-                controlService.loggingServiceFactory()
+                    timeSource,
+                    errorReporter,
+                    controlService.configuration().timeUnit(),
+                    DisruptorSbeMetricsService.DEFAULT_HIGHEST_EXPECTED_RUNTIME_DURATION_AS_NANO,
+                    resultsLogWriter,
+                    workload.operationTypeToClassMapping(),
+                    controlService.loggingServiceFactory()
             );
         } catch (MetricsCollectionException e) {
             throw new DriverException("Error creating metrics service", e);
@@ -439,10 +386,10 @@ public class AutomaticTestMode implements DriverMode<Object> {
         CompletionTimeServiceAssistant completionTimeServiceAssistant = new CompletionTimeServiceAssistant();
         try {
             completionTimeService =
-                completionTimeServiceAssistant.newThreadedQueuedCompletionTimeService(
-                    timeSource,
-                    errorReporter
-                );
+                    completionTimeServiceAssistant.newThreadedQueuedCompletionTimeService(
+                            timeSource,
+                            errorReporter
+                    );
         } catch (CompletionTimeException e) {
             throw new DriverException("Error instantiating Completion Time Service", e);
         }
@@ -454,22 +401,18 @@ public class AutomaticTestMode implements DriverMode<Object> {
         try {
             int operationHandlerExecutorsBoundedQueueSize = DefaultQueues.DEFAULT_BOUND_1000;
             workloadRunner = new WorkloadRunner(
-                timeSource,
-                database,
-                timeMappedWorkloadStreams,
-                metricsService,
-                errorReporter,
-                completionTimeService,
-                controlService.loggingServiceFactory(),
-                controlService.configuration()
-                    .threadCount(),
-                controlService.configuration()
-                    .statusDisplayIntervalAsSeconds(),
-                controlService.configuration()
-                    .spinnerSleepDurationAsMilli(),
-                controlService.configuration()
-                    .ignoreScheduledStartTimes(),
-                operationHandlerExecutorsBoundedQueueSize);
+                    timeSource,
+                    database,
+                    timeMappedWorkloadStreams,
+                    metricsService,
+                    errorReporter,
+                    completionTimeService,
+                    controlService.loggingServiceFactory(),
+                    controlService.configuration().threadCount(),
+                    controlService.configuration().statusDisplayIntervalAsSeconds(),
+                    controlService.configuration().spinnerSleepDurationAsMilli(),
+                    controlService.configuration().ignoreScheduledStartTimes(),
+                    operationHandlerExecutorsBoundedQueueSize);
         } catch (Exception e) {
             throw new DriverException(format("Error instantiating %s", WorkloadRunner.class.getSimpleName()), e);
         }
@@ -480,8 +423,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
         // TODO note, this MUST be done after creation of Workload Runner because Workload Runner creates the
         // TODO "writers" for completion time service (refactor this mess at some stage)
         try {
-            if (completionTimeService.getAllWriters()
-                .isEmpty()) {
+            if (completionTimeService.getAllWriters().isEmpty()) {
                 // There are no completion time writers, CT would never advance or be non-null,
                 // set to max so nothing ever waits on it
                 long nearlyMaxPossibleTimeAsMilli = Long.MAX_VALUE - 1;
@@ -495,35 +437,35 @@ public class AutomaticTestMode implements DriverMode<Object> {
             } else {
                 // There are some completion time writers, initialize them to lowest time stamp in workload
                 completionTimeServiceAssistant.writeInitiatedAndCompletedTimesToAllWriters(
-                    completionTimeService, minimumTimeStamp - 1);
+                        completionTimeService, minimumTimeStamp - 1);
                 completionTimeServiceAssistant
-                    .writeInitiatedAndCompletedTimesToAllWriters(completionTimeService, minimumTimeStamp);
+                        .writeInitiatedAndCompletedTimesToAllWriters(completionTimeService, minimumTimeStamp);
                 boolean completionTimeAdvancedToDesiredTime =
-                    completionTimeServiceAssistant.waitForCompletionTime(
-                        timeSource,
-                        minimumTimeStamp - 1,
-                        TimeUnit.SECONDS.toMillis(5),
-                        completionTimeService,
-                        errorReporter
-                    );
+                        completionTimeServiceAssistant.waitForCompletionTime(
+                                timeSource,
+                                minimumTimeStamp - 1,
+                                TimeUnit.SECONDS.toMillis(5),
+                                completionTimeService,
+                                errorReporter
+                        );
                 long completionTimeWaitTimeoutDurationAsMilli = TimeUnit.SECONDS.toMillis(5);
                 if (!completionTimeAdvancedToDesiredTime) {
                     throw new DriverException(
-                        format(
-                            "Timed out [%s] while waiting for completion time to advance to workload "
-                                + "start time\nCurrent CT: %s\nWaiting For CT: %s",
-                            completionTimeWaitTimeoutDurationAsMilli,
-                            completionTimeService.completionTimeAsMilli(),
-                            controlService.workloadStartTimeAsMilli())
+                            format(
+                                    "Timed out [%s] while waiting for completion time to advance to workload "
+                                            + "start time\nCurrent CT: %s\nWaiting For CT: %s",
+                                    completionTimeWaitTimeoutDurationAsMilli,
+                                    completionTimeService.completionTimeAsMilli(),
+                                    controlService.workloadStartTimeAsMilli())
                     );
                 }
                 loggingService.info("CT: " + temporalUtil
-                    .milliTimeToDateTimeString(completionTimeService.completionTimeAsMilli()) + " / "
-                    + completionTimeService.completionTimeAsMilli());
+                        .milliTimeToDateTimeString(completionTimeService.completionTimeAsMilli()) + " / "
+                        + completionTimeService.completionTimeAsMilli());
             }
         } catch (CompletionTimeException e) {
             throw new DriverException(
-                "Error while writing initial initiated and completed times to Completion Time Service", e);
+                    "Error while writing initial initiated and completed times to Completion Time Service", e);
         }
     }
 
@@ -533,8 +475,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
             ConcurrentErrorReporter errorReporter = null;
             if (milli == -1) {
                 // To execute normally, follow the EXECUTE_BENCHMARK process
-                errorReporter = workloadRunner.getFuture()
-                    .get();
+                errorReporter = workloadRunner.getFuture().get();
             } else {
                 errorReporter = workloadRunner.getFuture(milli);
             }
@@ -557,8 +498,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
         loggingService.info("Shutting down metrics collection service...");
         WorkloadResultsSnapshot workloadResults;
         try {
-            workloadResults = metricsService.getWriter()
-                .results();
+            workloadResults = metricsService.getWriter().results();
             metricsService.shutdown();
         } catch (MetricsCollectionException e) {
             throw new DriverException("Error during shutdown of metrics collection service", e);
@@ -573,37 +513,35 @@ public class AutomaticTestMode implements DriverMode<Object> {
             if (resultsDirectory.exists()) {
                 File resultsSummaryFile = resultsDirectory.getOrCreateResultsSummaryFile(warmup);
                 loggingService.info(
-                    format("Exporting workload metrics to %s...", resultsSummaryFile.getAbsolutePath())
+                        format("Exporting workload metrics to %s...", resultsSummaryFile.getAbsolutePath())
                 );
                 MetricsManager.export(workloadResults,
-                    new JsonWorkloadMetricsFormatter(),
-                    new FileOutputStream(resultsSummaryFile),
-                    Charsets.UTF_8
+                        new JsonWorkloadMetricsFormatter(),
+                        new FileOutputStream(resultsSummaryFile),
+                        Charsets.UTF_8
                 );
                 File configurationFile = resultsDirectory.getOrCreateConfigurationFile(warmup);
                 Files.write(
-                    configurationFile.toPath(),
-                    controlService.configuration()
-                        .toPropertiesString()
-                        .getBytes(StandardCharsets.UTF_8)
+                        configurationFile.toPath(),
+                        controlService.configuration().toPropertiesString().getBytes(StandardCharsets.UTF_8)
                 );
                 resultsLogWriter.close();
-                if (!controlService.configuration()
-                    .ignoreScheduledStartTimes()) {
+                if (!controlService.configuration().ignoreScheduledStartTimes()) {
                     loggingService.info("Validating workload results...");
                     // TODO make this feature accessible directly
                     ResultsLogValidator resultsLogValidator = new ResultsLogValidator();
                     ResultsLogValidationTolerances resultsLogValidationTolerances =
-                        workload.resultsLogValidationTolerancesAutomatic(workloadResults.totalOperationCount());
+                            workload.resultsLogValidationTolerancesAutomatic(controlService.configuration(),
+                                    workloadResults.totalOperationCount());
 
                     ResultsLogValidationSummary resultsLogValidationSummary = resultsLogValidator.compute(
-                        resultsDirectory.getOrCreateResultsLogFile(warmup),
-                        resultsLogValidationTolerances.excessiveDelayThresholdAsMilli()
+                            resultsDirectory.getOrCreateResultsLogFile(warmup),
+                            resultsLogValidationTolerances.excessiveDelayThresholdAsMilli()
                     );
                     File resultsValidationFile = resultsDirectory.getOrCreateResultsValidationFile(warmup);
                     loggingService.info(
-                        format("Exporting workload results validation to: %s",
-                            resultsValidationFile.getAbsolutePath())
+                            format("Exporting workload results validation to: %s",
+                                    resultsValidationFile.getAbsolutePath())
                     );
                     // Files.write(
                     //        resultsValidationFile.toPath(),
@@ -611,18 +549,16 @@ public class AutomaticTestMode implements DriverMode<Object> {
                     // );
                     // TODO export result
                     ResultsLogValidationResult validationResult = resultsLogValidator.validateAutomatic(
-                        resultsLogValidationSummary,
-                        resultsLogValidationTolerances,
-                        workloadResults
+                            resultsLogValidationSummary,
+                            resultsLogValidationTolerances,
+                            workloadResults
                     );
                     loggingService.info(validationResult.getScheduleAuditResult(
-                        controlService.configuration()
-                            .recordDelayedOperations()
+                            controlService.configuration().recordDelayedOperations()
                     ));
                     Files.write(
-                        resultsValidationFile.toPath(),
-                        resultsLogValidationSummary.toJson()
-                            .getBytes(StandardCharsets.UTF_8)
+                            resultsValidationFile.toPath(),
+                            resultsLogValidationSummary.toJson().getBytes(StandardCharsets.UTF_8)
                     );
                     return validationResult;
                 }

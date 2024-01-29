@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Time;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,14 +109,14 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static final long ESTIMATE_TEST_DEFAULT_TIME = 5 * 60 * 1000;
     public static final String ESTIMATE_TEST_DEFAULT_TIME_STRING = Long.toString(ESTIMATE_TEST_DEFAULT_TIME);
     public static final String ESTIMATE_TEST_TIME_DESCRIPTION = format(
-        "Quickly estimate the duration of each test in the phase (default: %s), if -1,"
-            + " the operation to complete the number of warmup is finished", ESTIMATE_TEST_DEFAULT_TIME_STRING);
+        "Quickly estimate the duration of each test in the phase (default: %s)."
+            + "if -1, the operation to complete the number of warmup is finished", ESTIMATE_TEST_DEFAULT_TIME_STRING);
     public static final String ACCURATE_TEST_TIME_ARG = "att";
     public static final long ACCURATE_TEST_DEFAULT_TIME = 7200 * 1000;
     public static final String ACCURATE_TEST_DEFAULT_TIME_STRING = Long.toString(ACCURATE_TEST_DEFAULT_TIME);
     public static final String ACCURATE_TEST_TIME_DESCRIPTION = format(
-        "The duration of each test in the precision tuning phase (default: %s). If -1,"
-            + " the operation on the number of operation_count is completed",
+        "The duration of each test in the precision tuning phase (default: %s)."
+            + "If -1, the operation on the number of operation_count is completed",
         ACCURATE_TEST_DEFAULT_TIME_STRING);
     public static final String DICHOTOMY_ERROR_RANGE_ARG = "der";
     public static final double DEFAULT_DICHOTOMY_ERROR_RANGE = 1E-5;
@@ -132,6 +133,12 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static final String DEFAULT_TCR_MAX_STRING = Double.toString(DEFAULT_TCR_MAX);
     public static final String TCR_MAX_DESCRIPTION = format(
         "Maximum time compression ratio limit (default: %s)", DEFAULT_TCR_MAX_STRING);
+    public static final String TIMEOUT_RATE_ARG = "timeoutRate";
+    public static final double DEFAULT_TIMEOUT_RATE = 0.05; // 95% of the queries must run below delay threshold
+    public static final String DEFAULT_TIMEOUT_RATE_STRING = Double.toString(DEFAULT_TIMEOUT_RATE);
+    public static final String TIMEOUT_RATE_DESCRIPTION = format(
+        "Specifies the fraction of the delay threshold that is allowed to be exceeded (default: %s)",
+        DEFAULT_TIMEOUT_RATE_STRING);
 
 
     public static final String PROPERTY_FILE_ARG = "P";
@@ -199,6 +206,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     public static final String DICHOTOMY_ERROR_RANGE_ARG_LONG = "error_range";
     public static final String TCR_MIN_ARG_LONG = "tcr_min";
     public static final String TCR_MAX_ARG_LONG = "tcr_max";
+    public static final String TIMEOUT_RATE_ARG_LONG = "timeout_rate";
     private static final String PROPERTY_FILE_DESCRIPTION =
         "load properties from file(s) - files will be loaded in the order provided\n"
             + "first files are highest priority; later values will not override earlier values";
@@ -230,8 +238,9 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     private final long estimateTestTime;
     private final long accurateTestTime;
     private final double dichotomyErrorRange;
-    private final double tcrLeft;
-    private final double tcrRight;
+    private final double tcrMin;
+    private final double tcrMax;
+    private final double timeoutRate;
 
     public ConsoleAndFileDriverConfiguration(Map<String, String> paramsMap,
                                              String mode,
@@ -257,8 +266,9 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
                                              long estimateTestTime,
                                              long accurateTestTime,
                                              double dichotomyErrorRange,
-                                             double tcrLeft,
-                                             double tcrRight) {
+                                             double tcrMin,
+                                             double tcrMax,
+                                             double timeoutRate) {
         if (null == paramsMap) {
             paramsMap = new HashMap<>();
         }
@@ -286,8 +296,9 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         this.estimateTestTime = estimateTestTime;
         this.accurateTestTime = accurateTestTime;
         this.dichotomyErrorRange = dichotomyErrorRange;
-        this.tcrLeft = tcrLeft;
-        this.tcrRight = tcrRight;
+        this.tcrMin = tcrMin;
+        this.tcrMax = tcrMax;
+        this.timeoutRate = timeoutRate;
         if (null != mode) {
             paramsMap.put(MODE_ARG, mode);
         }
@@ -320,8 +331,9 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         paramsMap.put(ESTIMATE_TEST_TIME_ARG, Long.toString(estimateTestTime));
         paramsMap.put(ACCURATE_TEST_TIME_ARG, Long.toString(accurateTestTime));
         paramsMap.put(DICHOTOMY_ERROR_RANGE_ARG, Double.toString(dichotomyErrorRange));
-        paramsMap.put(TCR_MIN_ARG, Double.toString(tcrLeft));
-        paramsMap.put(TCR_MAX_ARG, Double.toString(tcrRight));
+        paramsMap.put(TCR_MIN_ARG, Double.toString(tcrMin));
+        paramsMap.put(TCR_MAX_ARG, Double.toString(tcrMax));
+        paramsMap.put(TIMEOUT_RATE_ARG, Double.toString(timeoutRate));
         // Validation specific
         if (null != databaseValidationFilePath) {
             paramsMap.put(DB_VALIDATION_FILE_PATH_ARG, databaseValidationFilePath);
@@ -359,6 +371,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         defaultParamsMap.put(DICHOTOMY_ERROR_RANGE_ARG, DEFAULT_DICHOTOMY_ERROR_RANGE_STRING);
         defaultParamsMap.put(TCR_MIN_ARG, DEFAULT_TCR_MIN_STRING);
         defaultParamsMap.put(TCR_MAX_ARG, DEFAULT_TCR_MAX_STRING);
+        defaultParamsMap.put(TIMEOUT_RATE_ARG, DEFAULT_TIMEOUT_RATE_STRING);
         return defaultParamsMap;
     }
 
@@ -451,15 +464,16 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
             long estimateTestTime = Long.parseLong(paramsMap.get(ESTIMATE_TEST_TIME_ARG));
             long accurateTestTime = Long.parseLong(paramsMap.get(ACCURATE_TEST_TIME_ARG));
             double dichotomyErrorRange = Double.parseDouble(paramsMap.get(DICHOTOMY_ERROR_RANGE_ARG));
-            double tcrLeft = Double.parseDouble(paramsMap.get(TCR_MIN_ARG));
-            double tcrRight = Double.parseDouble(paramsMap.get(TCR_MAX_ARG));
+            double tcrMin = Double.parseDouble(paramsMap.get(TCR_MIN_ARG));
+            double tcrMax = Double.parseDouble(paramsMap.get(TCR_MAX_ARG));
+            double timeoutRate = Double.parseDouble(paramsMap.get(TIMEOUT_RATE_ARG));
             boolean flushLog = Boolean.parseBoolean(paramsMap.get(FLUSH_LOG_ARG));
             return new ConsoleAndFileDriverConfiguration(paramsMap, mode, name, dbClassName, workloadClassName,
                 operationCount, threadCount, statusDisplayIntervalAsSeconds, timeUnit, resultDirPath,
                 timeCompressionRatio, validationParametersSize, validationSerializationCheck,
                 recordDelayedOperations, databaseValidationFilePath, spinnerSleepDurationAsMilli,
                 printHelp, ignoreScheduledStartTimes, warmupCount, skipCount, flushLog, estimateTestTime,
-                accurateTestTime, dichotomyErrorRange, tcrLeft, tcrRight);
+                accurateTestTime, dichotomyErrorRange, tcrMin, tcrMax, timeoutRate);
         } catch (DriverConfigurationException e) {
             throw new DriverConfigurationException(format("%s\n%s", e.getMessage(), commandlineHelpString()), e);
         }
@@ -616,6 +630,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
         paramsMap = replaceKey(paramsMap, DICHOTOMY_ERROR_RANGE_ARG_LONG, DICHOTOMY_ERROR_RANGE_ARG);
         paramsMap = replaceKey(paramsMap, TCR_MIN_ARG_LONG, TCR_MIN_ARG);
         paramsMap = replaceKey(paramsMap, TCR_MAX_ARG_LONG, TCR_MAX_ARG);
+        paramsMap = replaceKey(paramsMap, TIMEOUT_RATE_ARG_LONG, TIMEOUT_RATE_ARG);
         return paramsMap;
     }
 
@@ -788,19 +803,26 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
             .create(DICHOTOMY_ERROR_RANGE_ARG);
         options.addOption(dichotomyErrorRangeOption);
 
-        Option tcrLeftOption = OptionBuilder.hasArgs(1)
+        Option tcrMinOption = OptionBuilder.hasArgs(1)
             .withArgName("min")
             .withDescription(TCR_MIN_DESCRIPTION)
             .withLongOpt(TCR_MIN_ARG_LONG)
             .create(TCR_MIN_ARG);
-        options.addOption(tcrLeftOption);
+        options.addOption(tcrMinOption);
 
-        Option tcrRighOption = OptionBuilder.hasArgs(1)
+        Option tcrMaxOption = OptionBuilder.hasArgs(1)
             .withArgName("max")
             .withDescription(TCR_MAX_DESCRIPTION)
             .withLongOpt(TCR_MAX_ARG_LONG)
             .create(TCR_MAX_ARG);
-        options.addOption(tcrRighOption);
+        options.addOption(tcrMaxOption);
+
+        Option timeoutRateOption = OptionBuilder.hasArgs(1)
+            .withArgName("timeout")
+            .withDescription(TIMEOUT_RATE_DESCRIPTION)
+            .withLongOpt(TIMEOUT_RATE_ARG_LONG)
+            .create(TIMEOUT_RATE_ARG);
+        options.addOption(timeoutRateOption);
 
         Option printHelpOption = OptionBuilder.withDescription(HELP_DESCRIPTION)
             .create(HELP_ARG);
@@ -1009,13 +1031,18 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
     }
 
     @Override
-    public double tcrLeft() {
-        return tcrLeft;
+    public double tcrMin() {
+        return tcrMin;
     }
 
     @Override
-    public double tcrRight() {
-        return tcrRight;
+    public double tcrMax() {
+        return tcrMax;
+    }
+
+    @Override
+    public double timeoutRate() {
+        return timeoutRate;
     }
 
     @Override
@@ -1109,19 +1136,22 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
             ? Long.parseLong(paramsMap.get(ACCURATE_TEST_TIME_ARG)) : accurateTestTime;
         double newDichotomyErrorRange = (newParamsMapWithSimpleKeys.containsKey(DICHOTOMY_ERROR_RANGE_ARG))
             ? Double.parseDouble(paramsMap.get(DICHOTOMY_ERROR_RANGE_ARG)) : dichotomyErrorRange;
-        double newTcrLeft =
+        double newTcrMin =
             (newParamsMapWithSimpleKeys.containsKey(TCR_MIN_ARG)) ? Double.parseDouble(paramsMap.get(TCR_MIN_ARG))
-                : tcrLeft;
-        double newTcrRight =
-            (newParamsMapWithSimpleKeys.containsKey(TCR_MAX_ARG)) ? Double.parseDouble(paramsMap.get(TCR_MAX_ARG))
-                : tcrRight;
+                : tcrMin;
+        double newTcrMax =
+            (newParamsMapWithSimpleKeys.containsKey(TCR_MAX_ARG))? Double.parseDouble(paramsMap.get(TCR_MAX_ARG))
+                : tcrMax;
+        double newTimeoutRate = (newParamsMapWithSimpleKeys.containsKey(TIMEOUT_RATE_ARG))
+            ? Double.parseDouble(paramsMap.get(TIMEOUT_RATE_ARG))
+            : timeoutRate;
 
         return new ConsoleAndFileDriverConfiguration(newOtherParams, newMode, newName, newDbClassName,
             newWorkloadClassName, newOperationCount, newThreadCount, newStatusDisplayIntervalAsSeconds, newTimeUnit,
             newResultDirPath, newTimeCompressionRatio, newValidationParametersSize, newValidationSerializationCheck,
             newRecordDelayedOperations, newDatabaseValidationFilePath, newSpinnerSleepDurationAsMilli, newPrintHelp,
             newIgnoreScheduledStartTimes, newWarmupCount, newSkipCount, newFlushLog, newEstimateTestTime,
-            newAccurateTestTime, newDichotomyErrorRange, newTcrLeft, newTcrRight);
+            newAccurateTestTime, newDichotomyErrorRange, newTcrMin, newTcrMax, newTimeoutRate);
     }
 
     /**
