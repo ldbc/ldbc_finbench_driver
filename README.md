@@ -91,22 +91,24 @@ operation_count=10000
 
 Perform the performance test with `AUTOMATIC_TEST` mode.  Here are some crucial configuration parameters that need adjustment when operating the driver:
 
-1. **estimate**：Quickly estimate the duration of each test in the phase (millisecond). if -1, the operation to 
+1. **estimate**: Quickly estimate the duration of each test in the phase (millisecond). if -1, the operation to 
    complete the number of. (Default: 300000)
-2. **accurate**：The duration of each test in the precise tuning phase (millisecond). if -1, the operation to 
+2. **accurate**: The duration of each test in the precise tuning phase (millisecond). if -1, the operation to 
    complete the number of operation_count is finished (Default: 7200000)
-3. **error_range**：Binary end condition, tolerance range (Default: 1E-5)
-4. **tcr_min**：Minimum time compression ratio limit (Default: 1E-9)
-5. **tcr_max**：Maximum time compression ratio limit (Default: 1)
-6. **timeout_rate**：Specifies the fraction of the delay threshold that is allowed to be exceeded（默认是: 0.05）
+3. **error_range**: Binary end condition, tolerance range (Default: 1E-5)
+4. **tcr_min**: Minimum time compression ratio limit (Default: 1E-9)
+5. **tcr_max**:Maximum time compression ratio limit (Default: 1)
+6. **timeout_rate**: Specifies the fraction of the delay threshold that is allowed to be exceeded（Default: 0.05）
+7. **time_compression_ratio**: For the first round of testing, when time_compression_ratio is used, setting a value suitable for the machine can significantly reduce the total test time
 
 ```shell
-mode=EXECUTE_BENCHMARK
-thread_count=1
-time_compression_ratio=0.001
-ignore_scheduled_start_times=false
-warmup=5
-operation_count=10000
+estimate=300000
+accurate=7200000
+error_range=1E-5
+tcr_min=1E-9
+tcr_max=1
+timeout_rate=0.05
+time_compression_ratio=0.1
 ```
 
 ## 2. Quick Start
@@ -123,6 +125,10 @@ For a quick trial of the driver, utilize the DummyDB shipped with it by running 
 
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_driver_dummy.properties
+```
+For a quickly use time_compression_ratio to find the right time compression ratio for your machine, with it by running the following command:
+```bash
+java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_automatic_test_dummy.properties
 ```
 
 ## 3. Reference

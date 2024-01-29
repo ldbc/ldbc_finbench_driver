@@ -1140,7 +1140,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
             (newParamsMapWithSimpleKeys.containsKey(TCR_MIN_ARG)) ? Double.parseDouble(paramsMap.get(TCR_MIN_ARG))
                 : tcrMin;
         double newTcrMax =
-            (newParamsMapWithSimpleKeys.containsKey(TCR_MAX_ARG))? Double.parseDouble(paramsMap.get(TCR_MAX_ARG))
+            (newParamsMapWithSimpleKeys.containsKey(TCR_MAX_ARG)) ? Double.parseDouble(paramsMap.get(TCR_MAX_ARG))
                 : tcrMax;
         double newTimeoutRate = (newParamsMapWithSimpleKeys.containsKey(TIMEOUT_RATE_ARG))
             ? Double.parseDouble(paramsMap.get(TIMEOUT_RATE_ARG))
