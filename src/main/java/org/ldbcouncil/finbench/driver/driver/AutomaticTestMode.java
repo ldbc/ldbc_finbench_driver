@@ -128,8 +128,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
             } else {
                 l = tcr;
             }
-            // Based on the current throughput, determine the base operand per minute at tcr=1,
-            // then *1/3 to avoid accidents
+            // Based on the current throughput, determine the base operand per minute at tcr=1
             baseCnt = (long) (Math.ceil(currentResult.throughput()) * tcr * 60);
         }
 
@@ -183,9 +182,9 @@ public class AutomaticTestMode implements DriverMode<Object> {
         }
         loggingService.info("Workload completed successfully");
         loggingService.info(String.format("\n"
-                + "---------------------------------------------------------------------------\n"
-                + "----- time compression ratio suitable for the machine: %-10f-----\n"
-                + "---------------------------------------------------------------------------",
+                + "--------------------------------------------------------------------------\n"
+                + "------- time compression ratio suitable for the machine: %-10f-------\n"
+                + "--------------------------------------------------------------------------",
             controlService.configuration().timeCompressionRatio()));
         return successfulResult;
     }
@@ -193,14 +192,17 @@ public class AutomaticTestMode implements DriverMode<Object> {
     /**
      * Set the number of operations
      *
-     * @param baseCnt When tcr=1，estimateTestTime=300000 the number of base operations
+     * @param baseCnt Assuming that tcr=1, the approximate number of basic operations required in a minute
+     * @param sourceWaCnt Boot specified in the configuration source warmup count
+     * @param sourceOpCnt Boot specified in the configuration source operation count
      */
     public void computeRunOperationCount(long baseCnt,
                                          long sourceWaCnt,
                                          long sourceOpCnt) {
-
+        // Enlarge baseCnt by 30 times to prevent accidents and adjust the quantity according to tcr
         double perMinute = baseCnt * 30 / controlService.configuration().timeCompressionRatio();
         if (controlService.configuration().estimateTestTime() != -1) {
+            // baseCnt is one minute, now converted to estimate time
             controlService.configuration().setWarmupCount((long) Math.max(
                 perMinute * (controlService.configuration().estimateTestTime() / 60000.0), sourceWaCnt
             ));

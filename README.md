@@ -126,7 +126,7 @@ For a quick trial of the driver, utilize the DummyDB shipped with it by running 
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_driver_dummy.properties
 ```
-For a quickly use time_compression_ratio to find the right time compression ratio for your machine, with it by running the following command:
+For quickly find the right time compression ratio for your machine, with it by running the following command:
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_automatic_test_dummy.properties
 ```
