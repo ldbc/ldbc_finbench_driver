@@ -92,7 +92,7 @@ operation_count=10000
 Perform the performance test with `AUTOMATIC_TEST` mode.  Here are some crucial configuration parameters that need adjustment when operating the driver:
 
 1. **estimate**: Quickly estimate the duration of each test in the phase (millisecond). if -1, the operation to 
-   complete the number of. (Default: 300000)
+   complete the number of warmup is finished (Default: 300000)
 2. **accurate**: The duration of each test in the precise tuning phase (millisecond). if -1, the operation to 
    complete the number of operation_count is finished (Default: 7200000)
 3. **error_range**: Binary end condition, tolerance range (Default: 1E-5)
