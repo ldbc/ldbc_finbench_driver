@@ -25,8 +25,8 @@ public class Driver {
         // Initial loggin service
         LoggingServiceFactory loggingServiceFactory = new Log4jLoggingServiceFactory(detailedStatus);
         LoggingService loggingService = loggingServiceFactory.loggingServiceFor(Driver.class.getSimpleName());
+        loggingService.info("Driver Simple Name：" + Driver.class.getSimpleName());
 
-        //
         try {
             TimeSource systemTimeSource = new SystemTimeSource();
             ConsoleAndFileDriverConfiguration configuration = ConsoleAndFileDriverConfiguration.fromArgs(args);
@@ -47,11 +47,11 @@ public class Driver {
             System.exit(1);
         } catch (Exception e) {
             loggingService.info("Driver terminated unexpectedly\n" + ConcurrentErrorReporter.stackTraceToString(e));
-            System.exit(1);
         } finally {
             if (null != controlService) {
                 controlService.shutdown();
             }
+            System.exit(0);
         }
     }
 
@@ -63,7 +63,8 @@ public class Driver {
      * @throws DriverException When one or more required parameters are missing
      */
     public DriverMode<?> getDriverModeFor(ControlService controlService) throws DriverException {
-        if (controlService.configuration().shouldPrintHelpString()) {
+        if (controlService.configuration()
+            .shouldPrintHelpString()) {
             return new PrintHelpMode(controlService);
         }
 
@@ -73,7 +74,8 @@ public class Driver {
             throw new DriverException(format("Missing required parameters: %s", missingParams.toString()));
         }
 
-        OperationMode mode = OperationMode.valueOf(controlService.configuration().mode());
+        OperationMode mode = OperationMode.valueOf(controlService.configuration()
+            .mode());
 
         switch (mode) {
             case CREATE_VALIDATION:
@@ -82,6 +84,8 @@ public class Driver {
                 return new CalculateWorkloadStatisticsMode(controlService, RANDOM_SEED);
             case VALIDATE_DATABASE:
                 return new ValidateDatabaseMode(controlService);
+            case AUTOMATIC_TEST:
+                return new AutomaticTestMode(controlService, new SystemTimeSource(), RANDOM_SEED);
             case EXECUTE_BENCHMARK:
             default: // Execute benchmark is default behaviour
                 return new ExecuteWorkloadMode(controlService, new SystemTimeSource(), RANDOM_SEED);

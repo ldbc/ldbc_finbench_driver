@@ -115,6 +115,11 @@ public class PoolingOperationHandlerRunnerFactory implements OperationHandlerRun
         }
     }
 
+    public void shutdownAutomatic() throws OperationException {
+        innerOperationHandlerRunnerFactory.shutdown();
+        operationHandlerRunnerPool.shutdown();
+    }
+
     @Override
     public String toString() {
         return PoolingOperationHandlerRunnerFactory.class.getSimpleName() + "{"

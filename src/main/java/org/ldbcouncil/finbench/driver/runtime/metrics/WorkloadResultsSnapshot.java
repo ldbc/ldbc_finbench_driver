@@ -101,7 +101,8 @@ public class WorkloadResultsSnapshot {
 
     public String toJson() {
         try {
-            return new ObjectMapper().writer(new DefaultPrettyPrinter()).writeValueAsString(this);
+            return new ObjectMapper().writer(new DefaultPrettyPrinter())
+                .writeValueAsString(this);
         } catch (Exception e) {
             System.out.println(ConcurrentErrorReporter.stackTraceToString(e));
             throw new RuntimeException("Unable to generate parameter values string", e);

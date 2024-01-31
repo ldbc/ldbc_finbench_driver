@@ -11,6 +11,34 @@ public class ResultsLogValidationResult {
     }
 
     private boolean aboveThreshold = false;
+    private Double onTimeRatio;
+    private Double throughput;
+    private Long operationCount;
+
+    public void computeOnTimeRatio(Long excessiveDelayCount) {
+        onTimeRatio = (double) excessiveDelayCount / operationCount;
+        onTimeRatio = (1 - onTimeRatio) * 100;
+    }
+
+    public Double onTimeRatio() {
+        return onTimeRatio;
+    }
+
+    public void setThroughput(Double throughput) {
+        this.throughput = throughput;
+    }
+
+    public Double throughput() {
+        return throughput;
+    }
+
+    public void setOperationCount(Long operationCount) {
+        this.operationCount = operationCount;
+    }
+
+    public Long operationCount() {
+        return operationCount;
+    }
 
     public static class ValidationError {
         private final ValidationErrorType errorType;

@@ -46,6 +46,7 @@ The driver operates in three modes:
 - CREATE_VALIDATION
 - VALIDATE_DATABASE
 - EXECUTE_BENCHMARK
+- AUTOMATIC_TEST
 
 #### CREATE_VALIDATION
 
@@ -85,6 +86,30 @@ warmup=5
 operation_count=10000
 ```
 
+
+#### AUTOMATIC_TEST
+
+Perform the performance test automatically with the `AUTOMATIC_TEST` mode, utilizing an adaptive testing approach. This approach leverages pre-execution on hardware devices for initial parameter estimation and achieves optimal performance, meeting requirements through automatic tuning. The entire process is divided into two phases: **(1) Rapid Estimation Phase** and **(2) Precision Tuning Phase**.
+
+1. **estimate**: Quickly calculate the duration of each test phase (in milliseconds). If set to -1, it indicates the completion of operations to achieve the specified `warmup` value. If the parameter is not used, the default is 300,000 ms.
+2. **accurate**: Specifies the duration of each test in the precise tuning phase (in milliseconds). If set to -1, it indicates the completion of operations to reach the specified `operation_count`. If the parameter is not used, the default is 7,200,000 ms.
+3. **error_range**: Binary end condition, indicating the tolerance range. If the parameter is not used, the default is 1E-5.
+4. **tcr_min**: Minimum time compression ratio limit. If the parameter is not used, the default is 1E-9.
+5. **tcr_max**: Maximum time compression ratio limit. If the parameter is not used, the default is 1.
+6. **timeout_rate**: Specifies the ratio of timeouts to total operations at which the threshold is allowed to be exceeded. If the parameter is not used, the default is 0.05.
+7. **time_compression_ratio**: When utilized in the initial testing round, setting an appropriate value for the machine can significantly reduce the overall test duration. If the parameter is not used, the default is the average of (tcr_min + tcr_max) / 2.
+
+```shell
+mode=AUTOMATIC_TEST
+estimate=300000
+accurate=7200000
+error_range=1E-5
+tcr_min=1E-9
+tcr_max=1
+timeout_rate=0.05
+time_compression_ratio=0.1
+```
+
 ## 2. Quick Start
 
 To get started, clone the repository and build it with Maven:
@@ -99,6 +124,10 @@ For a quick trial of the driver, utilize the DummyDB shipped with it by running 
 
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_driver_dummy.properties
+```
+To automatically find the suitable time_compression_ratio for your system on this machine, execute the following command:
+```bash
+java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_automatic_test_dummy.properties
 ```
 
 ## 3. Reference

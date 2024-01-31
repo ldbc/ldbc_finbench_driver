@@ -46,6 +46,24 @@ public interface DriverConfiguration {
 
     boolean flushLog();
 
+    void setTimeCompressionRatio(double tcr);
+
+    void setWarmupCount(long warmupCount);
+
+    void setOperationCount(long operationCount);
+
+    long estimateTestTime();
+
+    long accurateTestTime();
+
+    double dichotomyErrorRange();
+
+    double tcrMin();
+
+    double tcrMax();
+
+    double timeoutRate();
+
     String toPropertiesString() throws DriverConfigurationException;
 
     Map<String, String> asMap();
