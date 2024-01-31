@@ -134,9 +134,9 @@ public class AutomaticTestMode implements DriverMode<Object> {
 
         loggingService.info("--------------------------Accurate adjust parameter phase--------------------------");
         // The theory is accurate tcr >= estimated tcr,
+        r = Math.min(l * 10, controlService.configuration().tcrMax());
         // to prevent accidents and give a little bit of room that may be smaller
         l = controlService.configuration().tcrMin() + (l - controlService.configuration().tcrMin()) * 0.7;
-        r = Math.min(l * 10, controlService.configuration().tcrMax());
         // Ensure that at least one precision tuning phase is performed
         tcr = 0;
         numberOfRounds = 1;
