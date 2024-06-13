@@ -74,6 +74,8 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.queries.Write9;
 
 public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator {
     public static final double THRESHOLD = 100;
+    // The duration of the average random number.
+    public static final long UNIFORMITY_DURATION = 1000L * 60 * 60 * 24 * 30;
     private final double initialProbability;
     private final LdbcSimpleQueryFactory[] simpleQueryFactories;
     private final double[] probabilityDegradationFactors;
@@ -703,11 +705,14 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
         long actualStartTimeAsMilli,
         long runDurationAsNano) throws WorkloadException {
         bufferReplenishFun.replenish(operation, result);
+        Tuple2<Date, Date> dates = gainOperationStartAndEndTime(operation);
         return simpleQueryFactories[operation.type()].create(
             accountIdBuffer,
             personIdBuffer,
             companyIdBuffer,
             operation,
+            dates._1(),
+            dates._2(),
             actualStartTimeAsMilli,
             runDurationAsNano,
             state
@@ -745,6 +750,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state);
@@ -895,6 +902,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -920,6 +929,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -956,16 +967,21 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
             double coinToss = random.nextUniform(min, max);
+            coinToss = generateExponentialRandomValue(coinToss, startTime, endTime);
             if (state > coinToss) {
                 return innerFactory.create(
                     accountIdBuffer,
                     personIdBuffer,
                     companyIdBuffer,
                     previousOperation,
+                    startTime,
+                    endTime,
                     previousOperationActualStartTimeAsMilli,
                     previousOperationRunDurationAsNano,
                     state
@@ -998,6 +1014,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1007,6 +1025,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 personIdBuffer,
                 companyIdBuffer,
                 previousOperation,
+                startTime,
+                endTime,
                 previousOperationActualStartTimeAsMilli,
                 previousOperationRunDurationAsNano,
                 state
@@ -1057,6 +1077,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1065,7 +1087,9 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                Operation operation = new SimpleRead1(id);
+                // Date startTime = tuple4._3();
+                // Date endTime = tuple4._4();
+                Operation operation = new SimpleRead1(id, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
                         previousOperation,
@@ -1114,6 +1138,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1122,8 +1148,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                Date startTime = tuple4._3();
-                Date endTime = tuple4._4();
+                // Date startTime = tuple4._3();
+                // Date endTime = tuple4._4();
                 Operation operation = new SimpleRead2(id, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1173,6 +1199,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1181,8 +1209,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                Date startTime = tuple4._3();
-                Date endTime = tuple4._4();
+                // Date startTime = tuple4._3();
+                // Date endTime = tuple4._4();
                 Operation operation = new SimpleRead3(id, 0, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1232,6 +1260,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1241,8 +1271,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             } else {
                 long id = tuple4._1();
                 double threshold = tuple4._2();
-                Date startTime = tuple4._3();
-                Date endTime = tuple4._4();
+                // Date startTime = tuple4._3();
+                // Date endTime = tuple4._4();
                 Operation operation = new SimpleRead4(id, threshold, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1292,6 +1322,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1301,8 +1333,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             } else {
                 long id = tuple4._1();
                 double threshold = tuple4._2();
-                Date startTime = tuple4._3();
-                Date endTime = tuple4._4();
+                // Date startTime = tuple4._3();
+                // Date endTime = tuple4._4();
                 Operation operation = new SimpleRead5(id, threshold, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1356,6 +1388,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
             Queue<Long> personIdBuffer,
             Queue<Long> companyIdBuffer,
             Operation previousOperation,
+            Date startTime,
+            Date endTime,
             long previousOperationActualStartTimeAsMilli,
             long previousOperationRunDurationAsNano,
             double state) {
@@ -1364,8 +1398,8 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                 return null;
             } else {
                 long id = tuple4._1();
-                Date startTime = tuple4._3();
-                Date endTime = tuple4._4();
+                // Date startTime = tuple4._3();
+                // Date endTime = tuple4._4();
                 Operation operation = new SimpleRead6(id, startTime, endTime);
                 operation.setScheduledStartTimeAsMilli(
                     scheduledStartTimeFactory.nextScheduledStartTime(
@@ -1410,5 +1444,111 @@ public class LdbcFinBenchSimpleReadGenerator implements ChildOperationGenerator 
                                            long previousOperationRunDurationAsNano) {
             return previousOperation.scheduledStartTimeAsMilli();
         }
+    }
+
+    public Tuple2<Date, Date> gainOperationStartAndEndTime(Operation operation) {
+        switch (operation.type()) {
+            case ComplexRead1.TYPE: {
+                ComplexRead1 complexRead1 = (ComplexRead1) operation;
+                return new Tuple2<>(complexRead1.getStartTime(), complexRead1.getEndTime());
+            }
+            case ComplexRead2.TYPE: {
+                ComplexRead2 complexRead2 = (ComplexRead2) operation;
+                return new Tuple2<>(complexRead2.getStartTime(), complexRead2.getEndTime());
+            }
+            case ComplexRead3.TYPE: {
+                ComplexRead3 complexRead3 = (ComplexRead3) operation;
+                return new Tuple2<>(complexRead3.getStartTime(), complexRead3.getEndTime());
+            }
+            case ComplexRead4.TYPE: {
+                ComplexRead4 complexRead4 = (ComplexRead4) operation;
+                return new Tuple2<>(complexRead4.getStartTime(), complexRead4.getEndTime());
+            }
+            case ComplexRead5.TYPE: {
+                ComplexRead5 complexRead5 = (ComplexRead5) operation;
+                return new Tuple2<>(complexRead5.getStartTime(), complexRead5.getEndTime());
+            }
+            case ComplexRead6.TYPE: {
+                ComplexRead6 complexRead6 = (ComplexRead6) operation;
+                return new Tuple2<>(complexRead6.getStartTime(), complexRead6.getEndTime());
+            }
+            case ComplexRead7.TYPE: {
+                ComplexRead7 complexRead7 = (ComplexRead7) operation;
+                return new Tuple2<>(complexRead7.getStartTime(), complexRead7.getEndTime());
+            }
+            case ComplexRead8.TYPE: {
+                ComplexRead8 complexRead8 = (ComplexRead8) operation;
+                return new Tuple2<>(complexRead8.getStartTime(), complexRead8.getEndTime());
+            }
+            case ComplexRead9.TYPE: {
+                ComplexRead9 complexRead9 = (ComplexRead9) operation;
+                return new Tuple2<>(complexRead9.getStartTime(), complexRead9.getEndTime());
+            }
+            case ComplexRead10.TYPE: {
+                ComplexRead10 complexRead10 = (ComplexRead10) operation;
+                return new Tuple2<>(complexRead10.getStartTime(), complexRead10.getEndTime());
+            }
+            case ComplexRead11.TYPE: {
+                ComplexRead11 complexRead11 = (ComplexRead11) operation;
+                return new Tuple2<>(complexRead11.getStartTime(), complexRead11.getEndTime());
+            }
+            case ComplexRead12.TYPE: {
+                ComplexRead12 complexRead12 = (ComplexRead12) operation;
+                return new Tuple2<>(complexRead12.getStartTime(), complexRead12.getEndTime());
+            }
+            case SimpleRead1.TYPE: {
+                SimpleRead1 simpleRead1 = (SimpleRead1) operation;
+                return new Tuple2<>(simpleRead1.getStartTime(), simpleRead1.getEndTime());
+            }
+            case SimpleRead2.TYPE: {
+                SimpleRead2 simpleRead2 = (SimpleRead2) operation;
+                return new Tuple2<>(simpleRead2.getStartTime(), simpleRead2.getEndTime());
+            }
+            case SimpleRead3.TYPE: {
+                SimpleRead3 simpleRead3 = (SimpleRead3) operation;
+                return new Tuple2<>(simpleRead3.getStartTime(), simpleRead3.getEndTime());
+            }
+            case SimpleRead4.TYPE: {
+                SimpleRead4 simpleRead4 = (SimpleRead4) operation;
+                return new Tuple2<>(simpleRead4.getStartTime(), simpleRead4.getEndTime());
+            }
+            case SimpleRead5.TYPE: {
+                SimpleRead5 simpleRead5 = (SimpleRead5) operation;
+                return new Tuple2<>(simpleRead5.getStartTime(), simpleRead5.getEndTime());
+            }
+            case SimpleRead6.TYPE: {
+                SimpleRead6 simpleRead6 = (SimpleRead6) operation;
+                return new Tuple2<>(simpleRead6.getStartTime(), simpleRead6.getEndTime());
+            }
+            default:
+                return new Tuple2<>(null, null);
+        }
+    }
+
+    /**
+     * Generates an exponential random value based on a uniform random value and the time duration.
+     *
+     * @param uniformRandomValue A uniformly distributed random value between 0 and 1.
+     * @param startTime The start time of the duration.
+     * @param endTime The end time of the duration.
+     * @return An exponentially adjusted random value between 0 and 1.
+     */
+    public double generateExponentialRandomValue(double uniformRandomValue, Date startTime, Date endTime) {
+        long duration = endTime.getTime() - startTime.getTime();
+        // Calculate the scale factor based on the duration and the uniformity duration
+        double scale;
+        if (UNIFORMITY_DURATION < duration) {
+            scale = 1.0 * UNIFORMITY_DURATION / duration;
+        } else {
+            scale = 1.0 * duration / UNIFORMITY_DURATION;
+        }
+        // Adjust the uniform random value based on the scale factor to create an exponential distribution
+        double adjustedValue;
+        if (UNIFORMITY_DURATION < duration) {
+            adjustedValue = 1 - Math.pow(uniformRandomValue, scale);
+        } else {
+            adjustedValue = Math.pow(uniformRandomValue, scale);
+        }
+        return adjustedValue;
     }
 }

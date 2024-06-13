@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -18,15 +19,25 @@ import org.ldbcouncil.finbench.driver.workloads.transaction.LdbcOperation;
 public class SimpleRead1 extends LdbcOperation<List<SimpleRead1Result>> {
     public static final int TYPE = 101;
     public static final String ID = "id";
+    public static final String START_TIME = "startTime";
+    public static final String END_TIME = "endTime";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private final long id;
+    private final Date startTime;
+    private final Date endTime;
 
-    public SimpleRead1(@JsonProperty(ID) long id) {
+    public SimpleRead1(@JsonProperty(ID) long id,
+                       @JsonProperty(START_TIME) Date startTime,
+                       @JsonProperty(END_TIME) Date endTime) {
         this.id = id;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public SimpleRead1(SimpleRead1 operation) {
         this.id = operation.id;
+        this.startTime = operation.startTime;
+        this.endTime = operation.endTime;
     }
 
     @Override
@@ -38,6 +49,14 @@ public class SimpleRead1 extends LdbcOperation<List<SimpleRead1Result>> {
         return id;
     }
 
+    public Date getStartTime() {
+        return startTime;
+    }
+
+    public Date getEndTime() {
+        return endTime;
+    }
+
     @Override
     public int type() {
         return TYPE;
@@ -46,8 +65,10 @@ public class SimpleRead1 extends LdbcOperation<List<SimpleRead1Result>> {
     @Override
     public Map<String, Object> parameterMap() {
         return ImmutableMap.<String, Object>builder()
-            .put(ID, id)
-            .build();
+                .put(ID, id)
+                .put(START_TIME, startTime)
+                .put(END_TIME, endTime)
+                .build();
     }
 
     @Override
