@@ -174,7 +174,7 @@ class LdbcFinBenchTransactionDbValidationParametersFilter implements DbValidatio
 
     private void injectAccountSimples(List<Operation> operationsToInject, long accountId, double threshold,
                                       Date startTime, Date endTime) {
-        injectSimple1(operationsToInject, accountId);
+        injectSimple1(operationsToInject, accountId, startTime, endTime);
         injectSimple2(operationsToInject, accountId, startTime, endTime);
         injectSimple3(operationsToInject, accountId, threshold, startTime, endTime);
         injectSimple4(operationsToInject, accountId, threshold, startTime, endTime);
@@ -182,10 +182,10 @@ class LdbcFinBenchTransactionDbValidationParametersFilter implements DbValidatio
         injectSimple6(operationsToInject, accountId, startTime, endTime);
     }
 
-    private void injectSimple1(List<Operation> operationsToInject, long accountId) {
+    private void injectSimple1(List<Operation> operationsToInject, long accountId, Date startTime, Date endTime) {
         if (enabledShortReadOperationTypes.contains(SimpleRead1.class)) {
             operationsToInject.add(
-                new SimpleRead1(accountId)
+                new SimpleRead1(accountId, startTime, endTime)
             );
         }
     }
