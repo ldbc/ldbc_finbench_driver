@@ -18,22 +18,32 @@ public class Write10 extends LdbcOperation<LdbcNoResult> {
     public static final String PERSON_ID1 = "personId1";
     public static final String PERSON_ID2 = "personId2";
     public static final String TIME = "time";
+    public static final String RELATION = "relation";
+    public static final String COMMENT = "comment";
     private final long personId1;
     private final long personId2;
     private final Date time;
+    private final String relation;
+    private final String comment;
 
     public Write10(@JsonProperty(PERSON_ID1) long personId1,
                    @JsonProperty(PERSON_ID2) long personId2,
-                   @JsonProperty(TIME) Date time) {
+                   @JsonProperty(TIME) Date time,
+                   @JsonProperty(RELATION) String relation,
+                   @JsonProperty(COMMENT) String comment) {
         this.personId1 = personId1;
         this.personId2 = personId2;
         this.time = time;
+        this.relation = relation;
+        this.comment = comment;
     }
 
     public Write10(Write10 operation) {
         this.personId1 = operation.personId1;
         this.personId2 = operation.personId2;
         this.time = operation.time;
+        this.relation = operation.relation;
+        this.comment = operation.comment;
     }
 
     @Override

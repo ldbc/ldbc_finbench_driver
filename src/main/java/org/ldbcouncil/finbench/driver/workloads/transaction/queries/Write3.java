@@ -17,22 +17,32 @@ public class Write3 extends LdbcOperation<LdbcNoResult> {
     public static final String MEDIUM_ID = "mediumId";
     public static final String MEDIUM_TYPE = "mediumType";
     public static final String IS_BLOCKED = "isBlocked";
+    public static final String LAST_LOGIN = "lastLogin";
+    public static final String RISK_LEVEL = "riskLevel";
     private final long mediumId;
     private final String mediumType;
     private final boolean isBlocked;
+    private final long lastLogin;
+    private final String riskLevel;
 
     public Write3(@JsonProperty(MEDIUM_ID) long mediumId,
                   @JsonProperty(MEDIUM_TYPE) String mediumType,
-                  @JsonProperty(IS_BLOCKED) boolean isBlocked) {
+                  @JsonProperty(IS_BLOCKED) boolean isBlocked,
+                  @JsonProperty(LAST_LOGIN) long lastLogin,
+                  @JsonProperty(RISK_LEVEL) String riskLevel) {
         this.mediumId = mediumId;
         this.mediumType = mediumType;
         this.isBlocked = isBlocked;
+        this.lastLogin = lastLogin;
+        this.riskLevel = riskLevel;
     }
 
     public Write3(Write3 operation) {
         this.mediumId = operation.mediumId;
         this.mediumType = operation.mediumType;
         this.isBlocked = operation.isBlocked;
+        this.lastLogin = operation.lastLogin;
+        this.riskLevel = operation.riskLevel;
     }
 
     @Override

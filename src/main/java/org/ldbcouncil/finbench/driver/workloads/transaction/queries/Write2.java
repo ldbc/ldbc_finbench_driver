@@ -17,22 +17,47 @@ public class Write2 extends LdbcOperation<LdbcNoResult> {
     public static final String COMPANY_ID = "companyId";
     public static final String COMPANY_NAME = "companyName";
     public static final String IS_BLOCKED = "isBlocked";
+    public static final String COUNTRY = "country";
+    public static final String CITY = "city";
+    public static final String BUSINESS = "business";
+    public static final String DESCRIPTION = "description";
+    public static final String URL = "url";
     private final long companyId;
     private final String companyName;
     private final boolean isBlocked;
+    private final String country;
+    private final String city;
+    private final String business;
+    private final String description;
+    private final String url;
 
     public Write2(@JsonProperty(COMPANY_ID) long companyId,
                   @JsonProperty(COMPANY_NAME) String companyName,
-                  @JsonProperty(IS_BLOCKED) boolean isBlocked) {
+                  @JsonProperty(IS_BLOCKED) boolean isBlocked,
+                  @JsonProperty(COUNTRY) String country,
+                  @JsonProperty(CITY) String city,
+                  @JsonProperty(BUSINESS) String business,
+                  @JsonProperty(DESCRIPTION) String description,
+                  @JsonProperty(URL) String url) {
         this.companyId = companyId;
         this.companyName = companyName;
         this.isBlocked = isBlocked;
+        this.country = country;
+        this.city = city;
+        this.business = business;
+        this.description = description;
+        this.url = url;
     }
 
     public Write2(Write2 operation) {
         this.companyId = operation.companyId;
         this.companyName = operation.companyName;
         this.isBlocked = operation.isBlocked;
+        this.country = operation.country;
+        this.city = operation.city;
+        this.business = operation.business;
+        this.description = operation.description;
+        this.url = operation.url;
     }
 
     @Override

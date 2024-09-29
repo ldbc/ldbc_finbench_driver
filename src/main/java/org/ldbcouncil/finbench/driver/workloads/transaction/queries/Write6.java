@@ -20,22 +20,38 @@ public class Write6 extends LdbcOperation<LdbcNoResult> {
     public static final String LOAN_AMOUNT = "loanAmount";
     public static final String BALANCE = "balance";
     public static final String TIME = "time";
+    public static final String LOAN_USAGE = "loanUsage";
+    public static final String LOAN_RATE = "loanRate";
+    public static final String LOAN_ORG = "loanOrg";
+    public static final String COMMENT = "comment";
     private final long personId;
     private final long loanId;
     private final double loanAmount;
     private final double balance;
     private final Date time;
+    private final String loanUsage;
+    private final double loanRate;
+    private final String loanOrg;
+    private final String comment;
 
     public Write6(@JsonProperty(PERSON_ID) long personId,
                   @JsonProperty(LOAN_ID) long loanId,
                   @JsonProperty(LOAN_AMOUNT) double loanAmount,
                   @JsonProperty(BALANCE) double balance,
-                  @JsonProperty(TIME) Date time) {
+                  @JsonProperty(TIME) Date time,
+                  @JsonProperty(LOAN_USAGE) String loanUsage,
+                  @JsonProperty(LOAN_RATE) double loanRate,
+                  @JsonProperty(LOAN_ORG) String loanOrg,
+                  @JsonProperty(COMMENT) String comment) {
         this.personId = personId;
         this.loanId = loanId;
         this.loanAmount = loanAmount;
         this.balance = balance;
         this.time = time;
+        this.loanUsage = loanUsage;
+        this.loanRate = loanRate;
+        this.loanOrg = loanOrg;
+        this.comment = comment;
     }
 
     public Write6(Write6 operation) {
@@ -44,6 +60,10 @@ public class Write6 extends LdbcOperation<LdbcNoResult> {
         this.loanAmount = operation.loanAmount;
         this.balance = operation.balance;
         this.time = operation.time;
+        this.loanUsage = operation.loanUsage;
+        this.loanRate = operation.loanRate;
+        this.loanOrg = operation.loanOrg;
+        this.comment = operation.comment;
     }
 
     @Override
