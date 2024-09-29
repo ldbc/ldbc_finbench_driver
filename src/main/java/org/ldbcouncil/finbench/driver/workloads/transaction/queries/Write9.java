@@ -19,19 +19,23 @@ public class Write9 extends LdbcOperation<LdbcNoResult> {
     public static final String COMPANY_ID2 = "companyId2";
     public static final String TIME = "time";
     public static final String RATIO = "ratio";
+    public static final String COMMENT = "comment";
     private final long companyId1;
     private final long companyId2;
     private final Date time;
     private final double ratio;
+    private final String comment;
 
     public Write9(@JsonProperty(COMPANY_ID1) long companyId1,
                   @JsonProperty(COMPANY_ID2) long companyId2,
                   @JsonProperty(TIME) Date time,
-                  @JsonProperty(RATIO) double ratio) {
+                  @JsonProperty(RATIO) double ratio,
+                  @JsonProperty(COMMENT) String comment) {
         this.companyId1 = companyId1;
         this.companyId2 = companyId2;
         this.time = time;
         this.ratio = ratio;
+        this.comment = comment;
     }
 
     public Write9(Write9 operation) {
@@ -39,6 +43,7 @@ public class Write9 extends LdbcOperation<LdbcNoResult> {
         this.companyId2 = operation.companyId2;
         this.time = operation.time;
         this.ratio = operation.ratio;
+        this.comment = operation.comment;
     }
 
     @Override

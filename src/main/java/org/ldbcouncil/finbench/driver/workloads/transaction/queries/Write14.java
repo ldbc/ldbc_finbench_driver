@@ -19,19 +19,23 @@ public class Write14 extends LdbcOperation<LdbcNoResult> {
     public static final String LOAN_ID = "loanId";
     public static final String TIME = "time";
     public static final String AMOUNT = "amount";
+    public static final String COMMENT = "comment";
     private final long accountId;
     private final long loanId;
     private final Date time;
     private final double amount;
+    private final String comment;
 
     public Write14(@JsonProperty(ACCOUNT_ID) long accountId,
                    @JsonProperty(LOAN_ID) long loanId,
                    @JsonProperty(TIME) Date time,
-                   @JsonProperty(AMOUNT) double amount) {
+                   @JsonProperty(AMOUNT) double amount,
+                   @JsonProperty(COMMENT) String comment) {
         this.accountId = accountId;
         this.loanId = loanId;
         this.time = time;
         this.amount = amount;
+        this.comment = comment;
     }
 
     public Write14(Write14 operation) {
@@ -39,6 +43,7 @@ public class Write14 extends LdbcOperation<LdbcNoResult> {
         this.loanId = operation.loanId;
         this.time = operation.time;
         this.amount = operation.amount;
+        this.comment = operation.comment;
     }
 
     @Override

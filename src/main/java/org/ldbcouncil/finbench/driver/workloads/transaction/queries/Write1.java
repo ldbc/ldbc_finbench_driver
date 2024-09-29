@@ -17,22 +17,42 @@ public class Write1 extends LdbcOperation<LdbcNoResult> {
     public static final String PERSON_ID = "personId";
     public static final String PERSON_NAME = "personName";
     public static final String IS_BLOCKED = "isBlocked";
+    public static final String Gender = "gender";
+    public static final String Birthday = "birthday";
+    public static final String Country = "country";
+    public static final String City = "city";
     private final long personId;
     private final String personName;
     private final boolean isBlocked;
+    private final String gender;
+    private final String birthday;
+    private final String country;
+    private final String city;
 
     public Write1(@JsonProperty(PERSON_ID) long personId,
                   @JsonProperty(PERSON_NAME) String personName,
-                  @JsonProperty(IS_BLOCKED) boolean isBlocked) {
+                  @JsonProperty(IS_BLOCKED) boolean isBlocked,
+                  @JsonProperty(Gender) String gender,
+                  @JsonProperty(Birthday) String birthday,
+                  @JsonProperty(Country) String country,
+                  @JsonProperty(City) String city) {
         this.personId = personId;
         this.personName = personName;
         this.isBlocked = isBlocked;
+        this.gender = gender;
+        this.birthday = birthday;
+        this.country = country;
+        this.city = city;
     }
 
     public Write1(Write1 operation) {
         this.personId = operation.personId;
         this.personName = operation.personName;
         this.isBlocked = operation.isBlocked;
+        this.gender = operation.gender;
+        this.birthday = operation.birthday;
+        this.country = operation.country;
+        this.city = operation.city;
     }
 
     @Override

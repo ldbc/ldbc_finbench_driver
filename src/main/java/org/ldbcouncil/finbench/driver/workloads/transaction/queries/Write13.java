@@ -19,19 +19,31 @@ public class Write13 extends LdbcOperation<LdbcNoResult> {
     public static final String ACCOUNT_ID2 = "accountId2";
     public static final String TIME = "time";
     public static final String AMOUNT = "amount";
+    public static final String FROM_TYPE = "fromType";
+    public static final String TO_TYPE = "toType";
+    public static final String COMMENT = "comment";
     private final long accountId1;
     private final long accountId2;
     private final Date time;
     private final double amount;
+    private final String fromType;
+    private final String toType;
+    private final String comment;
 
     public Write13(@JsonProperty(ACCOUNT_ID1) long accountId1,
                    @JsonProperty(ACCOUNT_ID2) long accountId2,
                    @JsonProperty(TIME) Date time,
-                   @JsonProperty(AMOUNT) double amount) {
+                   @JsonProperty(AMOUNT) double amount,
+                   @JsonProperty(FROM_TYPE) String fromType,
+                   @JsonProperty(TO_TYPE) String toType,
+                   @JsonProperty(COMMENT) String comment) {
         this.accountId1 = accountId1;
         this.accountId2 = accountId2;
         this.time = time;
         this.amount = amount;
+        this.fromType = fromType;
+        this.toType = toType;
+        this.comment = comment;
     }
 
     public Write13(Write13 operation) {
@@ -39,6 +51,9 @@ public class Write13 extends LdbcOperation<LdbcNoResult> {
         this.accountId2 = operation.accountId2;
         this.time = operation.time;
         this.amount = operation.amount;
+        this.fromType = operation.fromType;
+        this.toType = operation.toType;
+        this.comment = operation.comment;
     }
 
     @Override

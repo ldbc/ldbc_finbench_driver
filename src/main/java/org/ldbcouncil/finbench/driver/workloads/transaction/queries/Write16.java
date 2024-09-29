@@ -18,22 +18,32 @@ public class Write16 extends LdbcOperation<LdbcNoResult> {
     public static final String MEDIUM_ID = "mediumId";
     public static final String ACCOUNT_ID = "accountId";
     public static final String TIME = "time";
+    public static final String LOCATION = "location";
+    public static final String COMMENT = "comment";
     private final long mediumId;
     private final long accountId;
     private final Date time;
+    private final String location;
+    private final String comment;
 
     public Write16(@JsonProperty(MEDIUM_ID) long mediumId,
                    @JsonProperty(ACCOUNT_ID) long accountId,
-                   @JsonProperty(TIME) Date time) {
+                   @JsonProperty(TIME) Date time,
+                   @JsonProperty(LOCATION) String location,
+                   @JsonProperty(COMMENT) String comment) {
         this.mediumId = mediumId;
         this.accountId = accountId;
         this.time = time;
+        this.location = location;
+        this.comment = comment;
     }
 
     public Write16(Write16 operation) {
         this.mediumId = operation.mediumId;
         this.accountId = operation.accountId;
         this.time = operation.time;
+        this.location = operation.location;
+        this.comment = operation.comment;
     }
 
     @Override

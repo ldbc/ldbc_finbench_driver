@@ -19,19 +19,35 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
     public static final String ACCOUNT_ID2 = "accountId2";
     public static final String TIME = "time";
     public static final String AMOUNT = "amount";
+    public static final String ORDER_NUM = "orderNum";
+    public static final String COMMENT = "comment";
+    public static final String PAY_TYPE = "payType";
+    public static final String GOODS_TYPE = "goodsType";
     private final long accountId1;
     private final long accountId2;
     private final Date time;
     private final double amount;
+    private final String orderNum;
+    private final String comment;
+    private final String payType;
+    private final String goodsType;
 
     public Write12(@JsonProperty(ACCOUNT_ID1) long accountId1,
                    @JsonProperty(ACCOUNT_ID2) long accountId2,
                    @JsonProperty(TIME) Date time,
-                   @JsonProperty(AMOUNT) double amount) {
+                   @JsonProperty(AMOUNT) double amount,
+                   @JsonProperty(ORDER_NUM) String orderNum,
+                   @JsonProperty(COMMENT) String comment,
+                   @JsonProperty(PAY_TYPE) String payType,
+                   @JsonProperty(GOODS_TYPE) String goodsType) {
         this.accountId1 = accountId1;
         this.accountId2 = accountId2;
         this.time = time;
         this.amount = amount;
+        this.orderNum = orderNum;
+        this.comment = comment;
+        this.payType = payType;
+        this.goodsType = goodsType;
     }
 
     public Write12(Write12 operation) {
@@ -39,6 +55,10 @@ public class Write12 extends LdbcOperation<LdbcNoResult> {
         this.accountId2 = operation.accountId2;
         this.time = operation.time;
         this.amount = operation.amount;
+        this.orderNum = operation.orderNum;
+        this.comment = operation.comment;
+        this.payType = operation.payType;
+        this.goodsType = operation.goodsType;
     }
 
     @Override
