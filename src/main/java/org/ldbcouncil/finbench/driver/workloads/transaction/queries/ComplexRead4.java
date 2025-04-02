@@ -124,7 +124,7 @@ public class ComplexRead4 extends LdbcOperation<List<ComplexRead4Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id1, id2, startTime, endTime);
+        return Objects.hash(id1, id2, startTime.getTime(), endTime.getTime());
     }
 
     @Override

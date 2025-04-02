@@ -191,8 +191,8 @@ public class ReadWrite2 extends LdbcOperation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, time, amount, amountThreshold, startTime, endTime,
-            ratioThreshold, truncationLimit, truncationOrder);
+        return Objects.hash(srcId, dstId, time.getTime(), amount, amountThreshold, startTime.getTime(),
+                endTime.getTime(), ratioThreshold, truncationLimit, truncationOrder.ordinal());
     }
 
     @Override

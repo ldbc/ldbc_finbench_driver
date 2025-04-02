@@ -114,7 +114,7 @@ public class Write10 extends LdbcOperation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId1, personId2, time);
+        return Objects.hash(personId1, personId2, time.getTime());
     }
 
     @Override

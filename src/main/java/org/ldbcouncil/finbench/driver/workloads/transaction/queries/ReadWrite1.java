@@ -145,7 +145,7 @@ public class ReadWrite1 extends LdbcOperation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(srcId, dstId, time, amount, startTime, endTime);
+        return Objects.hash(srcId, dstId, time.getTime(), amount, startTime.getTime(), endTime.getTime());
     }
 
     @Override

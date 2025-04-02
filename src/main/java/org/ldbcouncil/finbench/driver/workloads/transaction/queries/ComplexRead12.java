@@ -133,7 +133,7 @@ public class ComplexRead12 extends LdbcOperation<List<ComplexRead12Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startTime, endTime, truncationLimit, truncationOrder);
+        return Objects.hash(id, startTime.getTime(), endTime.getTime(), truncationLimit, truncationOrder.ordinal());
     }
 
     @Override
