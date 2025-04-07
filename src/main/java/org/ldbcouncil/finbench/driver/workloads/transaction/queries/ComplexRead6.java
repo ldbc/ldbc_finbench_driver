@@ -157,7 +157,8 @@ public class ComplexRead6 extends LdbcOperation<List<ComplexRead6Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, threshold1, threshold2, startTime, endTime, truncationLimit, truncationOrder);
+        return Objects.hash(id, threshold1, threshold2, startTime.getTime(), endTime.getTime(),
+                truncationLimit, truncationOrder.ordinal());
     }
 
     @Override

@@ -111,7 +111,7 @@ public class SimpleRead2 extends LdbcOperation<List<SimpleRead2Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startTime, endTime);
+        return Objects.hash(id, startTime.getTime(), endTime.getTime());
     }
 
     @Override

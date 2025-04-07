@@ -480,7 +480,7 @@ public class GeneratorFactory {
                     } else if (o1.scheduledStartTimeAsMilli() < o2.scheduledStartTimeAsMilli()) {
                         return -1;
                     } else {
-                        return 0;
+                        return Integer.compare(o1.hashCode(), o2.hashCode());
                     }
                 }
             },
@@ -504,7 +504,7 @@ public class GeneratorFactory {
                     } else if (o1.timeStamp() < o2.timeStamp()) {
                         return -1;
                     } else {
-                        return 0;
+                        return Integer.compare(o1.hashCode(), o2.hashCode());
                     }
                 }
             },

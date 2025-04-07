@@ -120,7 +120,7 @@ public class Write9 extends LdbcOperation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(companyId1, companyId2, time, ratio);
+        return Objects.hash(companyId1, companyId2, time.getTime(), ratio);
     }
 
     @Override

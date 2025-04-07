@@ -146,7 +146,7 @@ public class Write6 extends LdbcOperation<LdbcNoResult> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(personId, loanId, loanAmount, balance, time);
+        return Objects.hash(personId, loanId, loanAmount, balance, time.getTime());
     }
 
     @Override

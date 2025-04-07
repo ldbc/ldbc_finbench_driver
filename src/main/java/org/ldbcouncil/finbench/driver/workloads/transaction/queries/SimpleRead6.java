@@ -109,7 +109,7 @@ public class SimpleRead6 extends LdbcOperation<List<SimpleRead6Result>> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, startTime, endTime);
+        return Objects.hash(id, startTime.getTime(), endTime.getTime());
     }
 
     @Override
