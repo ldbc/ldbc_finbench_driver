@@ -4,7 +4,15 @@
 
 ![Build status](https://github.com/ldbc/ldbc_finbench_driver/actions/workflows/ci.yml/badge.svg?branch=main)
 
-The LDBC FinBench Driver is a powerful tool designed for benchmarking the performance of graph databases. This is the alpha version of the FinBench driver, currently undergoing alpha testing.
+The LDBC FinBench Driver is a powerful tool designed for benchmarking the performance of graph databases.
+
+**Note: The main branch is a work-in-progress for the upcoming v0.2 release aiming scales larger than SF100. For the stable version, please refer to version 0.1.0 on the v0.1.0 branch.**
+
+Related repositories:
+- FinBench Specification: https://github.com/ldbc/ldbc_finbench_docs
+- FinBench DataGen: https://github.com/ldbc/ldbc_finbench_datagen
+- FinBench Driver: https://github.com/ldbc/ldbc_finbench_driver
+- FinBench Transaction Reference Implementation: https://github.com/ldbc/ldbc_finbench_transaction_impls 
 
 ## 1. Configurations
 
@@ -14,7 +22,7 @@ The Driver initiates by reading the configuration file. The default configuratio
 
 If required, the System Under Test (SUT) can customize the configuration parameters to connect to the database or read the query file. This can include the request host, port, path, etc.
 
-```shell
+``` shell
 host=localhost
 port=9091
 user=admin
@@ -26,7 +34,7 @@ path=cypher/
 
 For a new implementation of the SUT, update this configuration parameter accordingly.
 
-```shell
+``` shell
 db=org.ldbcouncil.finbench.impls.dummy.DummyDb
 ```
 
@@ -34,7 +42,7 @@ db=org.ldbcouncil.finbench.impls.dummy.DummyDb
 
 Please update based on your parameter path. The `parameters_dir` is the `ComplexRead` parameter path, and `updates_dir` is the `Write` and `ReadWrite` incremental data path.
 
-```shell
+``` shell
 ldbc.finbench.transaction.queries.parameters_dir=src/main/resources/example/data/read_params
 ldbc.finbench.transaction.queries.updates_dir=src/main/resources/example/data/incremental_data
 ```
@@ -51,7 +59,7 @@ The driver operates in three modes:
 
 With `CREATE_VALIDATION` mode, you create a database result. `validation_parameters_size` denotes the number of results created, while `validate_database` refers to the file where the created results are stored.
 
-```shell
+``` shell
 mode=CREATE_VALIDATION
 validation_parameters_size=100
 validate_database=validation_params.csv
@@ -61,7 +69,7 @@ validate_database=validation_params.csv
 
 `VALIDATE_DATABASE` mode allows you to verify the SUT. The `validate_database` is the result created by `CREATE_VALIDATION` mode.
 
-```shell
+``` shell
 mode=VALIDATE_DATABASE
 validate_database=validation_params.csv
 ```
@@ -76,7 +84,7 @@ Perform the performance test with `EXECUTE_BENCHMARK` mode.  Here are some cruci
 4. **warmup**: Denotes the number of preliminary test items processed before the actual benchmarking begins.
 5. **operation_count**: Sets the number of test items executed during the actual benchmarking phase after the warm-up. 
 
-```shell
+``` shell
 mode=EXECUTE_BENCHMARK
 thread_count=1
 time_compression_ratio=0.001
@@ -100,12 +108,3 @@ For a quick trial of the driver, utilize the DummyDB shipped with it by running 
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_driver_dummy.properties
 ```
-
-## 3. Reference
-
-- FinBench Specification: https://github.com/ldbc/ldbc_finbench_docs
-- FinBench DataGen: https://github.com/ldbc/ldbc_finbench_datagen
-- FinBench Driver: https://github.com/ldbc/ldbc_finbench_driver
-- FinBench Transaction Reference Implementation: https://github.com/ldbc/ldbc_finbench_transaction_impls 
-
-Please visit these links for further documentation and related resources.
