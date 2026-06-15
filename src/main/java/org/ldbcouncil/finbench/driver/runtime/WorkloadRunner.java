@@ -20,6 +20,8 @@ import static java.lang.String.format;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -45,42 +47,48 @@ import org.ldbcouncil.finbench.driver.temporal.TimeSource;
 
 public class WorkloadRunner {
     static final long RUNNER_POLLING_INTERVAL_AS_MILLI = 100;
+    static final long RUNNER_POLLING_INTERVAL_AS_MILLI_AUTOMATIC = 500;
     private static final CompletionTimeWriter DUMMY_COMPLETION_TIME_WRITER = new DummyCompletionTimeWriter();
 
     private final WorkloadRunnerFuture workloadRunnerFuture;
 
     public WorkloadRunner(
-        TimeSource timeSource,
-        Db db,
-        WorkloadStreams workloadStreams,
-        MetricsService metricsService,
-        ConcurrentErrorReporter errorReporter,
-        CompletionTimeService completionTimeService,
-        LoggingServiceFactory loggingServiceFactory,
-        int threadCount,
-        long statusDisplayIntervalAsSeconds,
-        long spinnerSleepDurationAsMilli,
-        boolean ignoreScheduleStartTimes,
-        int operationHandlerExecutorsBoundedQueueSize) throws WorkloadException, MetricsCollectionException {
+            TimeSource timeSource,
+            Db db,
+            WorkloadStreams workloadStreams,
+            MetricsService metricsService,
+            ConcurrentErrorReporter errorReporter,
+            CompletionTimeService completionTimeService,
+            LoggingServiceFactory loggingServiceFactory,
+            int threadCount,
+            long statusDisplayIntervalAsSeconds,
+            long spinnerSleepDurationAsMilli,
+            boolean ignoreScheduleStartTimes,
+            int operationHandlerExecutorsBoundedQueueSize) throws WorkloadException, MetricsCollectionException {
         this.workloadRunnerFuture = new WorkloadRunnerFuture(
-            timeSource,
-            db,
-            workloadStreams,
-            metricsService,
-            errorReporter,
-            completionTimeService,
-            loggingServiceFactory,
-            threadCount,
-            statusDisplayIntervalAsSeconds,
-            spinnerSleepDurationAsMilli,
-            ignoreScheduleStartTimes,
-            operationHandlerExecutorsBoundedQueueSize
+                timeSource,
+                db,
+                workloadStreams,
+                metricsService,
+                errorReporter,
+                completionTimeService,
+                loggingServiceFactory,
+                threadCount,
+                statusDisplayIntervalAsSeconds,
+                spinnerSleepDurationAsMilli,
+                ignoreScheduleStartTimes,
+                operationHandlerExecutorsBoundedQueueSize
         );
     }
 
     public Future<ConcurrentErrorReporter> getFuture() {
         workloadRunnerFuture.startThread();
         return workloadRunnerFuture;
+    }
+
+    public ConcurrentErrorReporter getFuture(long milli) {
+        workloadRunnerFuture.startThread(milli);
+        return workloadRunnerFuture.errorReporter;
     }
 
     private enum WorkloadRunnerThreadState {
@@ -98,31 +106,31 @@ public class WorkloadRunner {
         private boolean isDone = false;
 
         private WorkloadRunnerFuture(
-            TimeSource timeSource,
-            Db db,
-            WorkloadStreams workloadStreams,
-            MetricsService metricsService,
-            ConcurrentErrorReporter errorReporter,
-            CompletionTimeService completionTimeService,
-            LoggingServiceFactory loggingServiceFactory,
-            int threadCount,
-            long statusDisplayIntervalAsSeconds,
-            long spinnerSleepDurationAsMilli,
-            boolean ignoreScheduleStartTimes,
-            int operationHandlerExecutorsBoundedQueueSize) throws MetricsCollectionException, WorkloadException {
+                TimeSource timeSource,
+                Db db,
+                WorkloadStreams workloadStreams,
+                MetricsService metricsService,
+                ConcurrentErrorReporter errorReporter,
+                CompletionTimeService completionTimeService,
+                LoggingServiceFactory loggingServiceFactory,
+                int threadCount,
+                long statusDisplayIntervalAsSeconds,
+                long spinnerSleepDurationAsMilli,
+                boolean ignoreScheduleStartTimes,
+                int operationHandlerExecutorsBoundedQueueSize) throws MetricsCollectionException, WorkloadException {
             this.workloadRunnerThread = new WorkloadRunnerThread(
-                timeSource,
-                db,
-                workloadStreams,
-                metricsService,
-                errorReporter,
-                completionTimeService,
-                loggingServiceFactory,
-                threadCount,
-                statusDisplayIntervalAsSeconds,
-                spinnerSleepDurationAsMilli,
-                ignoreScheduleStartTimes,
-                operationHandlerExecutorsBoundedQueueSize
+                    timeSource,
+                    db,
+                    workloadStreams,
+                    metricsService,
+                    errorReporter,
+                    completionTimeService,
+                    loggingServiceFactory,
+                    threadCount,
+                    statusDisplayIntervalAsSeconds,
+                    spinnerSleepDurationAsMilli,
+                    ignoreScheduleStartTimes,
+                    operationHandlerExecutorsBoundedQueueSize
             );
             this.timeSource = timeSource;
             this.errorReporter = errorReporter;
@@ -135,6 +143,39 @@ public class WorkloadRunner {
                     Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI);
                 }
             }
+        }
+
+        private void startThread(long milli) {
+            if (!workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
+                workloadRunnerThread.shutdownEverything(WorkloadRunnerThread.ShutdownType.FORCED,
+                        new ConcurrentErrorReporter());
+            }
+            workloadRunnerThread.start();
+            // You cannot sleep(milli) directly, because if the execution finishes in the meantime, you will
+            // sleep for extra time
+
+            AtomicBoolean expire = new AtomicBoolean(false);
+            Timer timer = new Timer();
+            while (workloadRunnerThread.state().equals(WorkloadRunnerThreadState.NOT_STARTED)) {
+                Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI);
+            }
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    expire.set(true);
+                }
+            }, milli);
+            while (!expire.get() && workloadRunnerThread.state().equals(WorkloadRunnerThreadState.RUNNING)) {
+                Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI_AUTOMATIC);
+            }
+            timer.cancel();
+            if (isCancelled || isDone) {
+                throw new IllegalStateException("Can not call method after future has been cancelled or completed");
+            }
+            workloadRunnerThread.interrupt();
+            isCancelled = true;
+            isDone = true;
+            workloadRunnerThread.stateRef.set(WorkloadRunnerThreadState.COMPLETED_SUCCEEDED);
         }
 
         @Override
@@ -172,9 +213,9 @@ public class WorkloadRunner {
                 default:
                     // Fail because task has already completed
                     throw new IllegalStateException(
-                        format("Unrecognized %s: %s",
-                            workloadRunnerThread.state().getClass().getSimpleName(),
-                            workloadRunnerThread.state())
+                            format("Unrecognized %s: %s",
+                                    workloadRunnerThread.state().getClass().getSimpleName(),
+                                    workloadRunnerThread.state())
                     );
             }
         }
@@ -188,7 +229,7 @@ public class WorkloadRunner {
         public boolean isDone() {
             if (!isDone) {
                 if (workloadRunnerThread.state().equals(WorkloadRunnerThreadState.COMPLETED_FAILED)
-                    || workloadRunnerThread.state().equals(WorkloadRunnerThreadState.COMPLETED_SUCCEEDED)) {
+                        || workloadRunnerThread.state().equals(WorkloadRunnerThreadState.COMPLETED_SUCCEEDED)) {
                     isDone = true;
                 }
             }
@@ -211,7 +252,7 @@ public class WorkloadRunner {
 
         @Override
         public ConcurrentErrorReporter get(long timeout, TimeUnit unit)
-            throws InterruptedException, ExecutionException, TimeoutException {
+                throws InterruptedException, ExecutionException, TimeoutException {
             if (isCancelled || isDone) {
                 throw new IllegalStateException("Can not call method after future has been cancelled or completed");
             }
@@ -226,9 +267,9 @@ public class WorkloadRunner {
                 switch (workloadRunnerThread.state()) {
                     case NOT_STARTED:
                         throw new IllegalStateException(format(
-                            "%s is in %s state, but should have already started",
-                            WorkloadRunnerThread.class.getSimpleName(),
-                            WorkloadRunnerThreadState.NOT_STARTED.name()
+                                "%s is in %s state, but should have already started",
+                                WorkloadRunnerThread.class.getSimpleName(),
+                                WorkloadRunnerThreadState.NOT_STARTED.name()
                         ));
                     case RUNNING:
                         Spinner.powerNap(RUNNER_POLLING_INTERVAL_AS_MILLI);
@@ -239,9 +280,9 @@ public class WorkloadRunner {
                         return;
                     default:
                         throw new IllegalStateException(format(
-                            "Unknown %s: %s",
-                            WorkloadRunnerThreadState.class.getSimpleName(),
-                            WorkloadRunnerThreadState.NOT_STARTED.name()
+                                "Unknown %s: %s",
+                                WorkloadRunnerThreadState.class.getSimpleName(),
+                                WorkloadRunnerThreadState.NOT_STARTED.name()
                         ));
                 }
             }
@@ -272,7 +313,7 @@ public class WorkloadRunner {
                                     long spinnerSleepDurationAsMilli,
                                     boolean ignoreScheduleStartTimes,
                                     int operationHandlerExecutorsBoundedQueueSize)
-            throws WorkloadException, MetricsCollectionException {
+                throws WorkloadException, MetricsCollectionException {
             this.errorReporter = errorReporter;
             this.statusDisplayIntervalAsMilli = statusDisplayIntervalAsSeconds;
 
@@ -280,11 +321,11 @@ public class WorkloadRunner {
 
             if (statusDisplayIntervalAsSeconds > 0) {
                 this.workloadStatusThread = new WorkloadStatusThread(
-                    TimeUnit.SECONDS.toMillis(statusDisplayIntervalAsSeconds),
-                    metricsService.getWriter(),
-                    errorReporter,
-                    completionTimeService,
-                    loggingServiceFactory
+                        TimeUnit.SECONDS.toMillis(statusDisplayIntervalAsSeconds),
+                        metricsService.getWriter(),
+                        errorReporter,
+                        completionTimeService,
+                        loggingServiceFactory
                 );
             }
             // only create a completion time writer for an executor if it contains at least one READ_WRITE operation
@@ -293,29 +334,29 @@ public class WorkloadRunner {
             CompletionTimeWriter completionTimeWriterForAsynchronous;
             try {
                 completionTimeWriterForAsynchronous = (asynchronousStream.dependencyOperations().hasNext())
-                    ? completionTimeService.newCompletionTimeWriter()
-                    : DUMMY_COMPLETION_TIME_WRITER;
+                        ? completionTimeService.newCompletionTimeWriter()
+                        : DUMMY_COMPLETION_TIME_WRITER;
             } catch (CompletionTimeException e) {
                 throw new WorkloadException("Error while attempting to create completion time writer", e);
             }
             this.executorForAsynchronous = new ThreadPoolOperationExecutor(
-                threadCount,
-                operationHandlerExecutorsBoundedQueueSize,
-                db,
-                asynchronousStream,
-                completionTimeWriterForAsynchronous,
-                completionTimeService,
-                spinner,
-                timeSource,
-                errorReporter,
-                metricsService,
-                asynchronousStream.childOperationGenerator()
+                    threadCount,
+                    operationHandlerExecutorsBoundedQueueSize,
+                    db,
+                    asynchronousStream,
+                    completionTimeWriterForAsynchronous,
+                    completionTimeService,
+                    spinner,
+                    timeSource,
+                    errorReporter,
+                    metricsService,
+                    asynchronousStream.childOperationGenerator()
             );
             this.asynchronousStreamExecutorService = new OperationStreamExecutorService(
-                errorReporter,
-                asynchronousStream,
-                executorForAsynchronous,
-                completionTimeWriterForAsynchronous
+                    errorReporter,
+                    asynchronousStream,
+                    executorForAsynchronous,
+                    completionTimeWriterForAsynchronous
             );
             /*for ( WorkloadStreams.WorkloadStreamDefinition blockingStream :
             workloadStreams.blockingStreamDefinitions() )
@@ -420,17 +461,17 @@ public class WorkloadRunner {
             //
             // if normal shutdown all executors have completed by this stage
             long shutdownWait = (shutdownType.equals(ShutdownType.FORCED))
-                ? 1
-                : OperationStreamExecutorService.SHUTDOWN_WAIT_TIMEOUT_AS_MILLI;
+                    ? 1
+                    : OperationStreamExecutorService.SHUTDOWN_WAIT_TIMEOUT_AS_MILLI;
 
             try {
                 asynchronousStreamExecutorService.shutdown(shutdownWait);
             } catch (OperationExecutorException e) {
                 errorReporter.reportError(
-                    this,
-                    format("Encountered error while shutting down %s\n%s\n",
-                        asynchronousStreamExecutorService.getClass().getSimpleName(),
-                        ConcurrentErrorReporter.stackTraceToString(e))
+                        this,
+                        format("Encountered error while shutting down %s\n%s\n",
+                                asynchronousStreamExecutorService.getClass().getSimpleName(),
+                                ConcurrentErrorReporter.stackTraceToString(e))
                 );
             }
 
@@ -439,10 +480,10 @@ public class WorkloadRunner {
                     blockingStreamExecutorService.shutdown(shutdownWait);
                 } catch (OperationExecutorException e) {
                     errorReporter.reportError(
-                        this,
-                        format("Encountered error while shutting down %s\n%s\n",
-                            blockingStreamExecutorService.getClass().getSimpleName(),
-                            ConcurrentErrorReporter.stackTraceToString(e))
+                            this,
+                            format("Encountered error while shutting down %s\n%s\n",
+                                    blockingStreamExecutorService.getClass().getSimpleName(),
+                                    ConcurrentErrorReporter.stackTraceToString(e))
                     );
                 }
             }
@@ -454,12 +495,12 @@ public class WorkloadRunner {
                 executorForAsynchronous.shutdown(shutdownWait);
             } catch (OperationExecutorException e) {
                 errorReporter.reportError(
-                    this,
-                    format("Encountered error while waiting for asynchronous executor to shutdown\n"
-                            + "Handlers still running: %s\n"
-                            + "%s",
-                        executorForAsynchronous.uncompletedOperationHandlerCount(),
-                        ConcurrentErrorReporter.stackTraceToString(e))
+                        this,
+                        format("Encountered error while waiting for asynchronous executor to shutdown\n"
+                                        + "Handlers still running: %s\n"
+                                        + "%s",
+                                executorForAsynchronous.uncompletedOperationHandlerCount(),
+                                ConcurrentErrorReporter.stackTraceToString(e))
                 );
             }
 
@@ -476,12 +517,12 @@ public class WorkloadRunner {
                     uncompletedOperationHandlerCount += executorForBlocking.uncompletedOperationHandlerCount();
                 }
                 errorReporter.reportError(
-                    this,
-                    format("Encountered error while waiting for a synchronous executor to shutdown\n"
-                            + "Handlers still running: %s\n"
-                            + "%s",
-                        uncompletedOperationHandlerCount,
-                        ConcurrentErrorReporter.stackTraceToString(e))
+                        this,
+                        format("Encountered error while waiting for a synchronous executor to shutdown\n"
+                                        + "Handlers still running: %s\n"
+                                        + "%s",
+                                uncompletedOperationHandlerCount,
+                                ConcurrentErrorReporter.stackTraceToString(e))
                 );
             }
 
