@@ -49,12 +49,13 @@ ldbc.finbench.transaction.queries.updates_dir=src/main/resources/example/data/in
 
 ### 1.4 Mode
 
-The driver operates in four modes:
+The driver supports the following user-facing modes:
 
 - CREATE_VALIDATION
 - VALIDATE_DATABASE
 - EXECUTE_BENCHMARK
 - AUTOMATIC_TEST
+- OPTIMIZATION_RECOMMENDATION
 
 #### CREATE_VALIDATION
 
@@ -118,6 +119,32 @@ timeout_rate=0.05
 time_compression_ratio=0.1
 ```
 
+#### OPTIMIZATION_RECOMMENDATION
+
+Runs a normal benchmark as a baseline, ranks operation types by optimization recommendation score,
+profiles each selected operation through the optional SUT `OptimizationSupport` capability, then
+reruns the full workload for every selected operation and reduction step. During each scenario run,
+only the selected operation is replaced by the SUT synthetic execution hook; all other operations use
+their normal handlers. Existing benchmark modes do not require this capability.
+
+```properties
+mode=OPTIMIZATION_RECOMMENDATION
+results_dir=results/optimization
+operation_count=10000
+optimization.top_n=3
+optimization.reduction_steps=0.05,0.10,0.20,0.30
+optimization.profile_repetitions=3
+optimization.repetitions=3
+optimization.sample_interval_millis=50
+```
+
+The mode writes `optimization-report.json` and `optimization-report.md`. Scenario throughput gains
+are measured from those full-workload reruns and should be verified again after implementing the real
+SUT optimization.
+
+The DummyDB example configuration is available at
+`src/main/resources/example/ldbc_finbench_optimization_recommendation_dummy.properties`.
+
 ## 2. Quick Start
 
 To get started, clone the repository and build it with Maven:
@@ -138,4 +165,10 @@ To automatically find the suitable time_compression_ratio for your system on thi
 
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_automatic_test_dummy.properties
+```
+
+To run the optimization recommendation example:
+
+```bash
+java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_optimization_recommendation_dummy.properties
 ```

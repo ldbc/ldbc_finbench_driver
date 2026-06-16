@@ -102,6 +102,8 @@ public class Driver {
                 return new ValidateDatabaseMode(controlService);
             case AUTOMATIC_TEST:
                 return new AutomaticTestMode(controlService, new SystemTimeSource(), RANDOM_SEED);
+            case OPTIMIZATION_RECOMMENDATION:
+                return new OptimizationRecommendationMode(controlService, RANDOM_SEED);
             case EXECUTE_BENCHMARK:
             default: // Execute benchmark is default behaviour
                 return new ExecuteWorkloadMode(controlService, new SystemTimeSource(), RANDOM_SEED);

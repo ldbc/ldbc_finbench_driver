@@ -418,6 +418,7 @@ public class ConsoleAndFileDriverConfiguration implements DriverConfiguration {
                 }
                 break;
             case CREATE_VALIDATION:
+            case OPTIMIZATION_RECOMMENDATION:
             case EXECUTE_BENCHMARK:
             default: // Execute benchmark is default behaviour
                 if (null == configuration.dbClassName()) {

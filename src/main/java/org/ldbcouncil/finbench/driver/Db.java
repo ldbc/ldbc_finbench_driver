@@ -23,8 +23,12 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.ldbcouncil.finbench.driver.log.LoggingService;
+import org.ldbcouncil.finbench.driver.optimization.OptimizationSimulationConfig;
+import org.ldbcouncil.finbench.driver.optimization.OptimizationSupport;
+import org.ldbcouncil.finbench.driver.optimization.SyntheticOptimizationOperationHandler;
 import org.ldbcouncil.finbench.driver.util.ClassLoaderHelper;
 
 public abstract class Db implements Closeable {
@@ -34,6 +38,8 @@ public abstract class Db implements Closeable {
     private Map<Class<? extends Operation>, OperationHandler> operationHandlers = new HashMap<>();
     private OperationHandler[] operationHandlersArray = null;
     private OperationHandlerRunnerFactory operationHandlerRunnableContextFactory = null;
+    private Optional<OptimizationSimulationConfig> optimizationSimulationConfig = Optional.empty();
+    private Optional<OptimizationSupport> optimizationSupport = Optional.empty();
 
     public final synchronized void init(
             Map<String, String> params,
@@ -44,6 +50,8 @@ public abstract class Db implements Closeable {
             throw new DbException("DB may be initialized only once");
         }
         onInit(params, loggingService);
+        optimizationSimulationConfig = OptimizationSimulationConfig.from(params);
+        optimizationSupport = optimizationSimulationConfig.isPresent() ? optimizationSupport() : Optional.empty();
         dbConnectionState = getConnectionState();
         operationHandlerRunnableContextFactory = new PoolingOperationHandlerRunnerFactory(
                 new InstantiatingOperationHandlerRunnerFactory()
@@ -125,6 +133,14 @@ public abstract class Db implements Closeable {
         if (null == operationHandler) {
             throw new DbException(format("No handler registered for %s", operation.getClass()));
         }
+        if (optimizationSimulationConfig.isPresent()
+            && optimizationSupport.isPresent()
+            && optimizationSimulationConfig.get().matches(operation.getClass().getSimpleName())) {
+            operationHandler = new SyntheticOptimizationOperationHandler(
+                optimizationSupport.get(),
+                optimizationSimulationConfig.get()
+            );
+        }
         try {
             OperationHandlerRunnableContext operationHandlerRunnableContext =
                     operationHandlerRunnableContextFactory.newOperationHandlerRunner();
@@ -164,4 +180,11 @@ public abstract class Db implements Closeable {
      * reused by all operation handlers
      */
     protected abstract DbConnectionState getConnectionState() throws DbException;
+
+    /**
+     * Optional SUT capability used by optimization recommendation mode.
+     */
+    public Optional<OptimizationSupport> optimizationSupport() {
+        return Optional.empty();
+    }
 }
