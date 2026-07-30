@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import org.ldbcouncil.finbench.driver.log.LoggingService;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationSimulationConfig;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationSupport;
@@ -40,6 +41,7 @@ public abstract class Db implements Closeable {
     private OperationHandlerRunnerFactory operationHandlerRunnableContextFactory = null;
     private Optional<OptimizationSimulationConfig> optimizationSimulationConfig = Optional.empty();
     private Optional<OptimizationSupport> optimizationSupport = Optional.empty();
+    private Consumer<Operation> operationExecutionListener = null;
 
     public final synchronized void init(
             Map<String, String> params,
@@ -129,6 +131,9 @@ public abstract class Db implements Closeable {
 
     public final OperationHandlerRunnableContext getOperationHandlerRunnableContext(Operation operation)
             throws DbException {
+        if (operationExecutionListener != null) {
+            operationExecutionListener.accept(operation);
+        }
         OperationHandler operationHandler = operationHandlersArray[operation.type()];
         if (null == operationHandler) {
             throw new DbException(format("No handler registered for %s", operation.getClass()));
@@ -186,5 +191,12 @@ public abstract class Db implements Closeable {
      */
     public Optional<OptimizationSupport> optimizationSupport() {
         return Optional.empty();
+    }
+
+    /**
+     * Registers a listener invoked whenever an operation is dispatched to its handler.
+     */
+    public final void setOperationExecutionListener(Consumer<Operation> listener) {
+        operationExecutionListener = listener;
     }
 }

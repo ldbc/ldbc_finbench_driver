@@ -27,8 +27,10 @@ import java.nio.file.Files;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import org.ldbcouncil.finbench.driver.Db;
 import org.ldbcouncil.finbench.driver.DbException;
+import org.ldbcouncil.finbench.driver.Operation;
 import org.ldbcouncil.finbench.driver.Workload;
 import org.ldbcouncil.finbench.driver.WorkloadException;
 import org.ldbcouncil.finbench.driver.WorkloadStreams;
@@ -69,6 +71,7 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
     private final long randomSeed;
     private final TemporalUtil temporalUtil;
     private final ResultsDirectory resultsDirectory;
+    private final Consumer<Operation> operationExecutionListener;
 
     private Workload workload = null;
     private Db database = null;
@@ -81,6 +84,14 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         ControlService controlService,
         TimeSource timeSource,
         long randomSeed) throws DriverException {
+        this(controlService, timeSource, randomSeed, null);
+    }
+
+    public ExecuteWorkloadMode(
+        ControlService controlService,
+        TimeSource timeSource,
+        long randomSeed,
+        Consumer<Operation> operationExecutionListener) throws DriverException {
         this.controlService = controlService;
         this.timeSource = timeSource;
         this.loggingService = controlService.loggingServiceFactory()
@@ -88,6 +99,7 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         this.randomSeed = randomSeed;
         this.temporalUtil = new TemporalUtil();
         this.resultsDirectory = new ResultsDirectory(controlService.configuration());
+        this.operationExecutionListener = operationExecutionListener;
     }
 
     /*
@@ -244,6 +256,9 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
                             .getSimpleName()),
                     workload.operationTypeToClassMapping()
                 );
+                if (operationExecutionListener != null) {
+                    database.setOperationExecutionListener(operationExecutionListener);
+                }
             } catch (DbException e) {
                 throw new DriverException(
                     format("Error initializing DB: %s", controlService.configuration()

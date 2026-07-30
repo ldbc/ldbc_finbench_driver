@@ -17,8 +17,8 @@ public class OptimizationScenarioResult {
     private final double measuredThroughput;
     @JsonProperty("measured_throughput_gain")
     private final double measuredThroughputGain;
-    @JsonProperty("target_duration_millis")
-    private final double targetDurationMillis;
+    @JsonProperty("target_duration_nanos")
+    private final long targetDurationNanos;
     @JsonProperty("scenario_results_dir")
     private final String scenarioResultsDir;
     @JsonProperty("profile_average_cpu_cores")
@@ -33,7 +33,7 @@ public class OptimizationScenarioResult {
         double durationReduction,
         double measuredThroughput,
         double measuredThroughputGain,
-        double targetDurationMillis,
+        long targetDurationNanos,
         String scenarioResultsDir,
         double profileAverageCpuCores,
         double profileAverageMemoryBytes,
@@ -42,7 +42,7 @@ public class OptimizationScenarioResult {
         this.durationReduction = durationReduction;
         this.measuredThroughput = measuredThroughput;
         this.measuredThroughputGain = measuredThroughputGain;
-        this.targetDurationMillis = targetDurationMillis;
+        this.targetDurationNanos = targetDurationNanos;
         this.scenarioResultsDir = scenarioResultsDir;
         this.profileAverageCpuCores = profileAverageCpuCores;
         this.profileAverageMemoryBytes = profileAverageMemoryBytes;
@@ -66,7 +66,11 @@ public class OptimizationScenarioResult {
     }
 
     public double targetDurationMillis() {
-        return targetDurationMillis;
+        return targetDurationNanos / (double) 1_000_000;
+    }
+
+    public long targetDurationNanos() {
+        return targetDurationNanos;
     }
 
     public String scenarioResultsDir() {

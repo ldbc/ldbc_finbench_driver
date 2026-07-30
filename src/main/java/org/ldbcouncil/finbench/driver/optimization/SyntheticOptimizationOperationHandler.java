@@ -35,7 +35,8 @@ public class SyntheticOptimizationOperationHandler
         reportSyntheticResult(operation, resultReporter);
     }
 
-    private static void reportSyntheticResult(Operation operation, ResultReporter resultReporter) throws DbException {
+    private static void reportSyntheticResult(
+        Operation operation, ResultReporter resultReporter) throws DbException {
         String operationName = operation.getClass().getSimpleName();
         if (operationName.startsWith("Write") || operationName.startsWith("ReadWrite")) {
             resultReporter.report(0, LdbcNoResult.INSTANCE, operation);

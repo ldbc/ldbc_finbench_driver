@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +24,13 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import org.ldbcouncil.finbench.driver.Db;
 import org.ldbcouncil.finbench.driver.DbException;
+import org.ldbcouncil.finbench.driver.Operation;
+import org.ldbcouncil.finbench.driver.OperationHandlerRunnableContext;
+import org.ldbcouncil.finbench.driver.ResultReporter;
 import org.ldbcouncil.finbench.driver.control.ControlService;
 import org.ldbcouncil.finbench.driver.control.DriverConfiguration;
 import org.ldbcouncil.finbench.driver.control.DriverConfigurationException;
 import org.ldbcouncil.finbench.driver.control.LocalControlService;
-import org.ldbcouncil.finbench.driver.optimization.OperationProfileSpec;
 import org.ldbcouncil.finbench.driver.optimization.OperationResourceProfile;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationAnalyzer;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationCandidate;
@@ -37,9 +38,10 @@ import org.ldbcouncil.finbench.driver.optimization.OptimizationReport;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationScenarioResult;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationSimulationConfig;
 import org.ldbcouncil.finbench.driver.optimization.OptimizationSupport;
+import org.ldbcouncil.finbench.driver.optimization.RepresentativeOperationRecorder;
 import org.ldbcouncil.finbench.driver.optimization.ResourceSnapshot;
 import org.ldbcouncil.finbench.driver.optimization.SyntheticExecutionResult;
-import org.ldbcouncil.finbench.driver.optimization.SyntheticLoadSpec;
+import org.ldbcouncil.finbench.driver.runtime.ConcurrentErrorReporter;
 import org.ldbcouncil.finbench.driver.runtime.metrics.WorkloadResultsSnapshot;
 import org.ldbcouncil.finbench.driver.temporal.SystemTimeSource;
 import org.ldbcouncil.finbench.driver.util.ClassLoaderHelper;
@@ -55,7 +57,9 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
     private final long randomSeed;
     private final ResultsDirectory resultsDirectory;
 
-    public OptimizationRecommendationMode(ControlService controlService, long randomSeed) throws DriverException {
+    public OptimizationRecommendationMode(
+        ControlService controlService,
+        long randomSeed) throws DriverException {
         this.controlService = controlService;
         this.randomSeed = randomSeed;
         this.resultsDirectory = new ResultsDirectory(controlService.configuration());
@@ -70,7 +74,14 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
 
     @Override
     public OptimizationReport startExecutionAndAwaitCompletion() throws DriverException {
-        ExecuteWorkloadMode baseline = new ExecuteWorkloadMode(controlService, new SystemTimeSource(), randomSeed);
+        RepresentativeOperationRecorder operationRecorder =
+            new RepresentativeOperationRecorder();
+        ExecuteWorkloadMode baseline =
+            new ExecuteWorkloadMode(
+                controlService,
+                new SystemTimeSource(),
+                randomSeed,
+                operationRecorder::record);
         baseline.init();
         baseline.startExecutionAndAwaitCompletion();
 
@@ -78,16 +89,28 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         List<OptimizationCandidate> candidates = new OptimizationAnalyzer().rank(baselineResults);
         List<OperationResourceProfile> profiles = new ArrayList<>();
         List<OptimizationScenarioResult> scenarios = new ArrayList<>();
-        boolean simulationSupported = executeScenarios(baselineResults, candidates, profiles, scenarios);
+        boolean simulationSupported =
+            executeScenarios(
+                baselineResults,
+                candidates,
+                profiles,
+                scenarios,
+                operationRecorder);
         OptimizationReport report =
-            new OptimizationReport(baselineResults.throughput(), candidates, profiles, scenarios, simulationSupported);
+            new OptimizationReport(
+                baselineResults.throughput(),
+                candidates,
+                profiles,
+                scenarios,
+                simulationSupported);
         writeReport(report);
         return report;
     }
 
     private WorkloadResultsSnapshot readBaselineResults() throws DriverException {
         try {
-            return WorkloadResultsSnapshot.fromJson(resultsDirectory.getOrCreateResultsSummaryFile(false));
+            return WorkloadResultsSnapshot.fromJson(
+                resultsDirectory.getOrCreateResultsSummaryFile(false));
         } catch (IOException e) {
             throw new DriverException("Unable to read baseline results", e);
         }
@@ -97,20 +120,29 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         WorkloadResultsSnapshot baseline,
         List<OptimizationCandidate> candidates,
         List<OperationResourceProfile> profiles,
-        List<OptimizationScenarioResult> scenarios) throws DriverException {
+        List<OptimizationScenarioResult> scenarios,
+        RepresentativeOperationRecorder operationRecorder) throws DriverException {
         Db database = null;
         try {
             database = ClassLoaderHelper.loadDb(controlService.configuration().dbClassName());
             database.init(
                 controlService.configuration().asMap(),
-                controlService.loggingServiceFactory().loggingServiceFor(database.getClass().getSimpleName()),
-                Collections.emptyMap()
+                controlService.loggingServiceFactory()
+                    .loggingServiceFor(database.getClass().getSimpleName()),
+                operationRecorder.operationTypeToClassMapping()
             );
             Optional<OptimizationSupport> optionalSupport = database.optimizationSupport();
             if (!optionalSupport.isPresent()) {
                 return false;
             }
-            runScenarios(optionalSupport.get(), baseline, candidates, profiles, scenarios);
+            runScenarios(
+                database,
+                optionalSupport.get(),
+                baseline,
+                candidates,
+                profiles,
+                scenarios,
+                operationRecorder);
             return true;
         } catch (DbException e) {
             throw new DriverException("Unable to initialize optimization support", e);
@@ -126,11 +158,13 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
     }
 
     private void runScenarios(
+        Db database,
         OptimizationSupport support,
         WorkloadResultsSnapshot baseline,
         List<OptimizationCandidate> candidates,
         List<OperationResourceProfile> profiles,
-        List<OptimizationScenarioResult> scenarios) throws DbException, DriverException {
+        List<OptimizationScenarioResult> scenarios,
+        RepresentativeOperationRecorder operationRecorder) throws DbException, DriverException {
         Map<String, String> params = controlService.configuration().asMap();
         int topN = integerParam(params, TOP_N, 3);
         int repetitions = integerParam(params, REPETITIONS, 3);
@@ -138,22 +172,39 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         int sampleIntervalMillis = integerParam(params, SAMPLE_INTERVAL_MILLIS, 50);
         if (topN <= 0 || repetitions <= 0 || profileRepetitions <= 0 || sampleIntervalMillis <= 0) {
             throw new DbException(
-                "Optimization top_n, repetitions, profile_repetitions and sample_interval_millis must be positive"
+                "Optimization top_n, repetitions, profile_repetitions and sample_interval_millis"
+                    + " must be positive"
             );
         }
         List<Double> reductions = reductionSteps(params);
 
-        for (OptimizationCandidate candidate : candidates.subList(0, Math.min(topN, candidates.size()))) {
+        for (OptimizationCandidate candidate :
+            candidates.subList(0, Math.min(topN, candidates.size()))) {
+            Operation representativeOperation = operationRecorder.operation(candidate.operation())
+                .orElseThrow(() -> new DbException(
+                    "No representative operation captured for: " + candidate.operation()));
             OperationResourceProfile profile =
-                profileOperation(support, candidate, profileRepetitions, sampleIntervalMillis);
+                profileOperation(
+                    support,
+                    candidate,
+                    profileRepetitions,
+                    sampleIntervalMillis,
+                    () -> executeRepresentativeOperation(database, representativeOperation));
             profiles.add(profile);
             for (double reduction : reductions) {
-                long targetDuration = Math.max(1, Math.round(candidate.meanDurationMillis() * (1 - reduction)));
+                long targetDurationNanos = Math.max(
+                    1,
+                    Math.round(
+                        candidate.meanDurationMillis()
+                            * TimeUnit.MILLISECONDS.toNanos(1)
+                            * (1 - reduction)));
                 double totalThroughput = 0;
-                String scenarioResultsDirectory = scenarioDirectory(candidate.operation(), reduction).getAbsolutePath();
+                String scenarioResultsDirectory =
+                    scenarioDirectory(candidate.operation(), reduction).getAbsolutePath();
                 for (int repetition = 0; repetition < repetitions; repetition++) {
                     ScenarioExecution scenarioExecution =
-                        executeScenarioWorkload(candidate, profile, reduction, targetDuration, repetition);
+                        executeScenarioWorkload(
+                            candidate, profile, reduction, targetDurationNanos, repetition);
                     totalThroughput += scenarioExecution.results.throughput();
                 }
                 double measuredThroughput = totalThroughput / repetitions;
@@ -164,7 +215,7 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
                     reduction,
                     measuredThroughput,
                     measuredGain,
-                    targetDuration,
+                    targetDurationNanos,
                     scenarioResultsDirectory,
                     profile.averageCpuCores(),
                     profile.averageMemoryBytes(),
@@ -178,23 +229,29 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         OptimizationCandidate candidate,
         OperationResourceProfile profile,
         double reduction,
-        long targetDurationMillis,
+        long targetDurationNanos,
         int repetition) throws DriverException {
-        File scenarioDirectory = new File(scenarioDirectory(candidate.operation(), reduction), "run-" + repetition);
+        File scenarioDirectory =
+            new File(scenarioDirectory(candidate.operation(), reduction), "run-" + repetition);
         Map<String, String> overrides = new HashMap<>();
         overrides.put("mode", "EXECUTE_BENCHMARK");
         overrides.put("results_dir", scenarioDirectory.getAbsolutePath());
         overrides.put(OptimizationSimulationConfig.ENABLED, "true");
         overrides.put(OptimizationSimulationConfig.OPERATION, candidate.operation());
-        overrides.put(OptimizationSimulationConfig.TARGET_CPU_CORES, Double.toString(profile.averageCpuCores()));
+        overrides.put(
+            OptimizationSimulationConfig.TARGET_CPU_CORES,
+            Double.toString(profile.averageCpuCores()));
         overrides.put(
             OptimizationSimulationConfig.TARGET_MEMORY_BYTES,
             Long.toString(Math.round(profile.averageMemoryBytes()))
         );
-        overrides.put(OptimizationSimulationConfig.TARGET_DURATION_MILLIS, Long.toString(targetDurationMillis));
+        overrides.put(
+            OptimizationSimulationConfig.TARGET_DURATION_NANOS,
+            Long.toString(targetDurationNanos));
 
         try {
-            DriverConfiguration scenarioConfiguration = controlService.configuration().applyArgs(overrides);
+            DriverConfiguration scenarioConfiguration =
+                controlService.configuration().applyArgs(overrides);
             ControlService scenarioControlService = new LocalControlService(
                 controlService.timeSource().nowAsMilli() + TimeUnit.SECONDS.toMillis(5),
                 scenarioConfiguration,
@@ -224,17 +281,18 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
             "optimization-scenarios/" + operation + "/reduction-" + Math.round(reduction * 100)
         );
         if (!scenarioDirectory.exists() && !scenarioDirectory.mkdirs()) {
-            throw new DriverException("Unable to create optimization scenario directory: " + scenarioDirectory);
+            throw new DriverException(
+                "Unable to create optimization scenario directory: " + scenarioDirectory);
         }
         return scenarioDirectory;
     }
 
-    private static OperationResourceProfile profileOperation(
+    static OperationResourceProfile profileOperation(
         OptimizationSupport support,
         OptimizationCandidate candidate,
         int repetitions,
-        int sampleIntervalMillis) throws DbException {
-        long expectedDuration = Math.max(1, Math.round(candidate.meanDurationMillis()));
+        int sampleIntervalMillis,
+        RepresentativeOperationCallable representativeOperation) throws DbException {
         long totalDuration = 0;
         long sampleCount = 0;
         double totalCpuCores = 0;
@@ -243,50 +301,78 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         for (int repetition = 0; repetition < repetitions; repetition++) {
             SyntheticRun profileRun = executeAndSample(
                 support,
-                () -> support.executeRepresentativeOperation(
-                    new OperationProfileSpec(candidate.operation(), expectedDuration)
-                ),
+                representativeOperation::execute,
                 sampleIntervalMillis
             );
-            totalDuration += profileRun.result.actualDurationMillis();
+            totalDuration += profileRun.result.actualDurationNanos();
+            long runPeakMemoryBytes = profileRun.result.peakMemoryBytes();
             for (ResourceSnapshot sample : profileRun.samples) {
                 sampleCount++;
-                totalCpuCores += sample.cpuCores();
-                totalMemoryBytes += sample.memoryBytes();
-                peakMemoryBytes = Math.max(peakMemoryBytes, sample.memoryBytes());
+                totalCpuCores += Math.max(
+                    0,
+                    sample.cpuCores() - profileRun.baseline.cpuCores());
+                long memoryDelta = Math.max(
+                    0,
+                    sample.memoryBytes() - profileRun.baseline.memoryBytes());
+                runPeakMemoryBytes = Math.max(runPeakMemoryBytes, memoryDelta);
             }
+            totalMemoryBytes += runPeakMemoryBytes;
+            peakMemoryBytes = Math.max(peakMemoryBytes, runPeakMemoryBytes);
         }
         return new OperationResourceProfile(
             candidate.operation(),
-            totalDuration / (double) repetitions,
+            totalDuration
+                / (double) repetitions
+                / TimeUnit.MILLISECONDS.toNanos(1),
             sampleCount == 0 ? 0 : totalCpuCores / sampleCount,
-            sampleCount == 0 ? 0 : totalMemoryBytes / sampleCount,
+            totalMemoryBytes / repetitions,
             peakMemoryBytes,
             sampleCount
         );
     }
 
-    private static SyntheticRun executeAndSample(
-        OptimizationSupport support,
-        SyntheticLoadSpec spec,
-        int sampleIntervalMillis) throws DbException {
-        return executeAndSample(support, () -> support.executeSyntheticLoad(spec), sampleIntervalMillis);
+    private static SyntheticExecutionResult executeRepresentativeOperation(
+        Db database,
+        Operation representativeOperation) throws DbException {
+        Operation operation = representativeOperation.newInstance();
+        OperationHandlerRunnableContext handlerContext =
+            database.getOperationHandlerRunnableContext(operation);
+        ResultReporter.SimpleResultReporter resultReporter =
+            new ResultReporter.SimpleResultReporter(
+                new ConcurrentErrorReporter());
+        long start = System.nanoTime();
+        try {
+            handlerContext.operationHandler().executeOperation(
+                operation,
+                handlerContext.dbConnectionState(),
+                resultReporter);
+            if (resultReporter.result() == null) {
+                throw new DbException(
+                    "Representative operation returned no result: "
+                        + operation.getClass().getSimpleName());
+            }
+        } finally {
+            handlerContext.cleanup();
+        }
+        long durationNanos = System.nanoTime() - start;
+        return new SyntheticExecutionResult(durationNanos, 0);
     }
 
     private static SyntheticRun executeAndSample(
         OptimizationSupport support,
         SyntheticCallable callable,
         int sampleIntervalMillis) throws DbException {
+        ResourceSnapshot baseline = sampleResources(support);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         List<ResourceSnapshot> samples = new ArrayList<>();
         Future<SyntheticExecutionResult> future = executor.submit(callable::call);
         try {
             while (!future.isDone()) {
-                samples.add(support.sampleResources());
+                samples.add(sampleResources(support));
                 TimeUnit.MILLISECONDS.sleep(sampleIntervalMillis);
             }
-            samples.add(support.sampleResources());
-            return new SyntheticRun(future.get(), samples);
+            samples.add(sampleResources(support));
+            return new SyntheticRun(future.get(), baseline, samples);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             future.cancel(true);
@@ -296,6 +382,14 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         } finally {
             executor.shutdownNow();
         }
+    }
+
+    private static ResourceSnapshot sampleResources(OptimizationSupport support)
+        throws DbException {
+        return new ResourceSnapshot(
+            System.currentTimeMillis(),
+            support.getCurrentCpuCores(),
+            support.getCurrentMemoryBytes());
     }
 
     private void writeReport(OptimizationReport report) throws DriverException {
@@ -315,7 +409,9 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
     }
 
     private static List<Double> reductionSteps(Map<String, String> params) throws DbException {
-        String configured = params.containsKey(REDUCTION_STEPS) ? params.get(REDUCTION_STEPS) : "0.05,0.10,0.20,0.30";
+        String configured = params.containsKey(REDUCTION_STEPS)
+            ? params.get(REDUCTION_STEPS)
+            : "0.05,0.10,0.20,0.30";
         List<Double> values = new ArrayList<>();
         try {
             for (String value : configured.split(",")) {
@@ -339,12 +435,22 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         SyntheticExecutionResult call() throws DbException;
     }
 
+    @FunctionalInterface
+    interface RepresentativeOperationCallable {
+        SyntheticExecutionResult execute() throws DbException;
+    }
+
     private static class SyntheticRun {
         private final SyntheticExecutionResult result;
+        private final ResourceSnapshot baseline;
         private final List<ResourceSnapshot> samples;
 
-        SyntheticRun(SyntheticExecutionResult result, List<ResourceSnapshot> samples) {
+        SyntheticRun(
+            SyntheticExecutionResult result,
+            ResourceSnapshot baseline,
+            List<ResourceSnapshot> samples) {
             this.result = result;
+            this.baseline = baseline;
             this.samples = samples;
         }
     }

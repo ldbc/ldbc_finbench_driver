@@ -23,12 +23,15 @@ public class OptimizationAnalyzerTest {
         OperationMetricsSnapshot frequent = metric("Frequent", 100, 10, 12);
         OperationMetricsSnapshot slow = metric("Slow", 2, 100, 120);
         WorkloadResultsSnapshot results =
-            new WorkloadResultsSnapshot(Arrays.asList(frequent, slow), 0, 1000, 102, TimeUnit.MILLISECONDS);
+            new WorkloadResultsSnapshot(
+                Arrays.asList(frequent, slow), 0, 1000, 102, TimeUnit.MILLISECONDS);
 
         List<OptimizationCandidate> candidates = new OptimizationAnalyzer().rank(results);
 
         assertThat(candidates.get(0).operation(), equalTo("Frequent"));
-        assertThat(candidates.get(0).serviceTimeShare(), greaterThan(candidates.get(1).serviceTimeShare()));
+        assertThat(
+            candidates.get(0).serviceTimeShare(),
+            greaterThan(candidates.get(1).serviceTimeShare()));
     }
 
     private static OperationMetricsSnapshot metric(String name, long count, long mean, long p95) {

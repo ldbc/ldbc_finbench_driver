@@ -12,16 +12,18 @@ import org.ldbcouncil.finbench.driver.DbException;
  * Optional capability implemented by a system under test for optimization experiments.
  */
 public interface OptimizationSupport {
-    ResourceSnapshot sampleResources() throws DbException;
+    /**
+     * Returns the current CPU usage of the system under test in cores.
+     */
+    double getCurrentCpuCores() throws DbException;
 
-    default SyntheticExecutionResult executeRepresentativeOperation(OperationProfileSpec spec) throws DbException {
-        return executeSyntheticLoad(new SyntheticLoadSpec(
-            spec.operationName(),
-            0,
-            0,
-            spec.expectedDurationMillis()
-        ));
-    }
+    /**
+     * Returns the current memory usage of the system under test in bytes.
+     */
+    long getCurrentMemoryBytes() throws DbException;
 
+    /**
+     * Executes a synthetic operation using the CPU, memory and duration requested by the driver.
+     */
     SyntheticExecutionResult executeSyntheticLoad(SyntheticLoadSpec spec) throws DbException;
 }

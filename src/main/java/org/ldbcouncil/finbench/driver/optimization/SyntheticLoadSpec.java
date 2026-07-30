@@ -10,17 +10,17 @@ public class SyntheticLoadSpec {
     private final String operationName;
     private final double targetCpuCores;
     private final long targetMemoryBytes;
-    private final long targetDurationMillis;
+    private final long targetDurationNanos;
 
     public SyntheticLoadSpec(
         String operationName,
         double targetCpuCores,
         long targetMemoryBytes,
-        long targetDurationMillis) {
+        long targetDurationNanos) {
         this.operationName = operationName;
         this.targetCpuCores = targetCpuCores;
         this.targetMemoryBytes = targetMemoryBytes;
-        this.targetDurationMillis = targetDurationMillis;
+        this.targetDurationNanos = targetDurationNanos;
     }
 
     public String operationName() {
@@ -35,7 +35,7 @@ public class SyntheticLoadSpec {
         return targetMemoryBytes;
     }
 
-    public long targetDurationMillis() {
-        return targetDurationMillis;
+    public long targetDurationNanos() {
+        return targetDurationNanos;
     }
 }

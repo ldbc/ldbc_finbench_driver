@@ -14,12 +14,13 @@ public class OptimizationSimulationConfig {
     public static final String OPERATION = "optimization.simulation.operation";
     public static final String TARGET_CPU_CORES = "optimization.simulation.target_cpu_cores";
     public static final String TARGET_MEMORY_BYTES = "optimization.simulation.target_memory_bytes";
-    public static final String TARGET_DURATION_MILLIS = "optimization.simulation.target_duration_millis";
+    public static final String TARGET_DURATION_NANOS =
+        "optimization.simulation.target_duration_" + "nanos";
 
     private final String operationName;
     private final double targetCpuCores;
     private final long targetMemoryBytes;
-    private final long targetDurationMillis;
+    private final long targetDurationNanos;
 
     public static Optional<OptimizationSimulationConfig> from(Map<String, String> params) {
         if (!Boolean.parseBoolean(params.get(ENABLED)) || !params.containsKey(OPERATION)) {
@@ -29,7 +30,7 @@ public class OptimizationSimulationConfig {
             params.get(OPERATION),
             doubleParam(params, TARGET_CPU_CORES, 0),
             longParam(params, TARGET_MEMORY_BYTES, 0),
-            longParam(params, TARGET_DURATION_MILLIS, 1)
+            longParam(params, TARGET_DURATION_NANOS, 1)
         ));
     }
 
@@ -37,11 +38,11 @@ public class OptimizationSimulationConfig {
         String operationName,
         double targetCpuCores,
         long targetMemoryBytes,
-        long targetDurationMillis) {
+        long targetDurationNanos) {
         this.operationName = operationName;
         this.targetCpuCores = targetCpuCores;
         this.targetMemoryBytes = targetMemoryBytes;
-        this.targetDurationMillis = targetDurationMillis;
+        this.targetDurationNanos = targetDurationNanos;
     }
 
     public boolean matches(String operationName) {
@@ -49,7 +50,8 @@ public class OptimizationSimulationConfig {
     }
 
     public SyntheticLoadSpec toSyntheticLoadSpec() {
-        return new SyntheticLoadSpec(operationName, targetCpuCores, targetMemoryBytes, targetDurationMillis);
+        return new SyntheticLoadSpec(
+            operationName, targetCpuCores, targetMemoryBytes, targetDurationNanos);
     }
 
     private static long longParam(Map<String, String> params, String key, long defaultValue) {

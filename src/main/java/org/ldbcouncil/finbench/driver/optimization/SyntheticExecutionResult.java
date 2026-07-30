@@ -9,18 +9,18 @@ package org.ldbcouncil.finbench.driver.optimization;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class SyntheticExecutionResult {
-    @JsonProperty("actual_duration_millis")
-    private final long actualDurationMillis;
+    @JsonProperty("actual_duration_nanos")
+    private final long actualDurationNanos;
     @JsonProperty("peak_memory_bytes")
     private final long peakMemoryBytes;
 
-    public SyntheticExecutionResult(long actualDurationMillis, long peakMemoryBytes) {
-        this.actualDurationMillis = actualDurationMillis;
+    public SyntheticExecutionResult(long actualDurationNanos, long peakMemoryBytes) {
+        this.actualDurationNanos = actualDurationNanos;
         this.peakMemoryBytes = peakMemoryBytes;
     }
 
-    public long actualDurationMillis() {
-        return actualDurationMillis;
+    public long actualDurationNanos() {
+        return actualDurationNanos;
     }
 
     public long peakMemoryBytes() {

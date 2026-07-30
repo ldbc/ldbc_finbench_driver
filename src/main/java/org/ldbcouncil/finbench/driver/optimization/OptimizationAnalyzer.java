@@ -29,7 +29,8 @@ public class OptimizationAnalyzer {
         List<OptimizationCandidate> candidates = new ArrayList<>();
         for (OperationMetricsSnapshot metric : results.allMetrics()) {
             double meanMillis = toMillis(metric.runTimeMetric().mean(), metric.durationUnit());
-            double p95Millis = toMillis(metric.runTimeMetric().percentile95(), metric.durationUnit());
+            double p95Millis =
+                toMillis(metric.runTimeMetric().percentile95(), metric.durationUnit());
             double serviceTime = metric.count() * meanMillis;
             double share = totalServiceTimeMillis == 0 ? 0 : serviceTime / totalServiceTimeMillis;
             double normalizedP95 = maxP95Millis == 0 ? 0 : p95Millis / maxP95Millis;

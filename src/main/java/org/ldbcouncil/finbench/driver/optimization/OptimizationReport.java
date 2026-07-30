@@ -36,8 +36,10 @@ public class OptimizationReport {
         this.resourceProfiles = resourceProfiles;
         this.scenarios = scenarios;
         this.simulationSupported = simulationSupported;
-        this.notice = "Synthetic scenario results are measured by rerunning the full workload with only the target "
-            + "operation simulated. Verify recommendations again after implementing the real SUT optimization.";
+        this.notice =
+            "Synthetic scenario results are measured by rerunning the full workload with only the "
+                + "target operation simulated. Verify recommendations again after implementing the "
+                + "real SUT optimization.";
     }
 
     public String toJson() {
@@ -57,31 +59,54 @@ public class OptimizationReport {
         builder.append("|---:|---|---:|---:|---:|\n");
         int rank = 1;
         for (OptimizationCandidate candidate : rankedCandidates) {
-            builder.append("| ").append(rank++).append(" | ").append(candidate.operation()).append(" | ")
-                .append(candidate.count()).append(" | ").append(candidate.meanDurationMillis()).append(" | ")
-                .append(candidate.serviceTimeShare() * 100).append("% |\n");
+            builder.append("| ")
+                .append(rank++)
+                .append(" | ")
+                .append(candidate.operation())
+                .append(" | ")
+                .append(candidate.count())
+                .append(" | ")
+                .append(candidate.meanDurationMillis())
+                .append(" | ")
+                .append(candidate.serviceTimeShare() * 100)
+                .append("% |\n");
         }
         builder.append("\n## Resource Profiles\n\n");
-        builder.append("| Operation | Profile duration ms | Avg CPU cores | Avg memory bytes | Peak memory bytes |\n");
+        builder.append(
+            "| Operation | Profile duration ms | Avg CPU cores | Avg memory bytes | "
+                + "Peak memory bytes |\n");
         builder.append("|---|---:|---:|---:|---:|\n");
         for (OperationResourceProfile profile : resourceProfiles) {
-            builder.append("| ").append(profile.operation()).append(" | ")
-                .append(profile.averageDurationMillis()).append(" | ")
-                .append(profile.averageCpuCores()).append(" | ")
-                .append(profile.averageMemoryBytes()).append(" | ")
-                .append(profile.peakMemoryBytes()).append(" |\n");
+            builder.append("| ")
+                .append(profile.operation())
+                .append(" | ")
+                .append(profile.averageDurationMillis())
+                .append(" | ")
+                .append(profile.averageCpuCores())
+                .append(" | ")
+                .append(profile.averageMemoryBytes())
+                .append(" | ")
+                .append(profile.peakMemoryBytes())
+                .append(" |\n");
         }
         builder.append("\n## Synthetic Scenarios\n\n");
         builder.append("| Operation | Duration reduction | Measured throughput | Measured gain |")
             .append(" Target duration ms | Scenario results |\n");
         builder.append("|---|---:|---:|---:|---:|---|\n");
         for (OptimizationScenarioResult scenario : scenarios) {
-            builder.append("| ").append(scenario.operation()).append(" | ")
-                .append(scenario.durationReduction() * 100).append("% | ")
-                .append(scenario.measuredThroughput()).append(" | ")
-                .append(scenario.measuredThroughputGain() * 100).append("% | ")
-                .append(scenario.targetDurationMillis()).append(" | ")
-                .append(scenario.scenarioResultsDir()).append(" |\n");
+            builder.append("| ")
+                .append(scenario.operation())
+                .append(" | ")
+                .append(scenario.durationReduction() * 100)
+                .append("% | ")
+                .append(scenario.measuredThroughput())
+                .append(" | ")
+                .append(scenario.measuredThroughputGain() * 100)
+                .append("% | ")
+                .append(scenario.targetDurationMillis())
+                .append(" | ")
+                .append(scenario.scenarioResultsDir())
+                .append(" |\n");
         }
         builder.append("\n## Notice\n\n").append(notice).append("\n");
         return builder.toString();

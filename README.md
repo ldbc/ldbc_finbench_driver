@@ -124,8 +124,19 @@ time_compression_ratio=0.1
 Runs a normal benchmark as a baseline, ranks operation types by optimization recommendation score,
 profiles each selected operation through the optional SUT `OptimizationSupport` capability, then
 reruns the full workload for every selected operation and reduction step. During each scenario run,
-only the selected operation is replaced by the SUT synthetic execution hook; all other operations use
-their normal handlers. Existing benchmark modes do not require this capability.
+only the selected operation is replaced by the SUT synthetic execution hook; all other operations
+use their normal handlers. Existing benchmark modes do not require this capability.
+
+The driver captures one real operation, including its parameters, for every operation type during
+the baseline. It executes the selected operations through their normal database handlers while
+sampling resources. A SUT only needs to implement `getCurrentCpuCores`,
+`getCurrentMemoryBytes`, and `executeSyntheticLoad`;
+it does not need to construct or dispatch FinBench operations.
+
+CPU is expressed as cores, memory as bytes, and synthetic duration as nanoseconds. The SUT must
+release requested resources before `executeSyntheticLoad` returns. Generated scenario
+configuration stores duration in `optimization.simulation.target_duration_nanos`, while reports
+display fractional milliseconds. See the Dummy implementation for an integration example.
 
 ```properties
 mode=OPTIMIZATION_RECOMMENDATION
@@ -138,9 +149,9 @@ optimization.repetitions=3
 optimization.sample_interval_millis=50
 ```
 
-The mode writes `optimization-report.json` and `optimization-report.md`. Scenario throughput gains
-are measured from those full-workload reruns and should be verified again after implementing the real
-SUT optimization.
+The mode writes `optimization-report.json` and `optimization-report.md`. Scenario throughput
+gains are measured from those full-workload reruns and should be verified again after implementing
+the real SUT optimization.
 
 The DummyDB example configuration is available at
 `src/main/resources/example/ldbc_finbench_optimization_recommendation_dummy.properties`.
