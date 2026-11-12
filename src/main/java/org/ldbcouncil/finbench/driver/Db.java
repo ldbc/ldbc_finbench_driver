@@ -23,8 +23,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 import org.ldbcouncil.finbench.driver.log.LoggingService;
+import org.ldbcouncil.finbench.driver.optimization.OptimizationSimulationConfig;
+import org.ldbcouncil.finbench.driver.optimization.OptimizationSupport;
+import org.ldbcouncil.finbench.driver.optimization.SyntheticOptimizationOperationHandler;
 import org.ldbcouncil.finbench.driver.util.ClassLoaderHelper;
 
 public abstract class Db implements Closeable {
@@ -34,19 +39,24 @@ public abstract class Db implements Closeable {
     private Map<Class<? extends Operation>, OperationHandler> operationHandlers = new HashMap<>();
     private OperationHandler[] operationHandlersArray = null;
     private OperationHandlerRunnerFactory operationHandlerRunnableContextFactory = null;
+    private Optional<OptimizationSimulationConfig> optimizationSimulationConfig = Optional.empty();
+    private Optional<OptimizationSupport> optimizationSupport = Optional.empty();
+    private Consumer<Operation> operationExecutionListener = null;
 
     public final synchronized void init(
-        Map<String, String> params,
-        LoggingService loggingService,
-        Map<Integer, Class<? extends Operation>> operationTypeToClassMapping)
-        throws DbException {
+            Map<String, String> params,
+            LoggingService loggingService,
+            Map<Integer, Class<? extends Operation>> operationTypeToClassMapping)
+            throws DbException {
         if (isInitialized) {
             throw new DbException("DB may be initialized only once");
         }
         onInit(params, loggingService);
+        optimizationSimulationConfig = OptimizationSimulationConfig.from(params);
+        optimizationSupport = optimizationSimulationConfig.isPresent() ? optimizationSupport() : Optional.empty();
         dbConnectionState = getConnectionState();
         operationHandlerRunnableContextFactory = new PoolingOperationHandlerRunnerFactory(
-            new InstantiatingOperationHandlerRunnerFactory()
+                new InstantiatingOperationHandlerRunnerFactory()
         );
         operationHandlersArray = toOperationHandlerArray(operationTypeToClassMapping, operationHandlers);
         operationHandlers = null;
@@ -81,7 +91,18 @@ public abstract class Db implements Closeable {
             throw new DbException("Error shutting down operation handler runnable factory", e);
         }
         operationHandlerRunnableContextFactory = new PoolingOperationHandlerRunnerFactory(
-            new InstantiatingOperationHandlerRunnerFactory()
+                new InstantiatingOperationHandlerRunnerFactory()
+        );
+    }
+
+    public final synchronized void reInitAutomatic() throws DbException {
+        try {
+            ((PoolingOperationHandlerRunnerFactory) operationHandlerRunnableContextFactory).shutdownAutomatic();
+        } catch (OperationException e) {
+            throw new DbException("Error shutting down operation handler runnable factory", e);
+        }
+        operationHandlerRunnableContextFactory = new PoolingOperationHandlerRunnerFactory(
+                new InstantiatingOperationHandlerRunnerFactory()
         );
     }
 
@@ -91,7 +112,7 @@ public abstract class Db implements Closeable {
     protected abstract void onClose() throws IOException;
 
     public final <A extends Operation, H extends OperationHandler<A, ?>> void registerOperationHandler(
-        Class<A> operationType, Class<H> operationHandlerType) throws DbException {
+            Class<A> operationType, Class<H> operationHandlerType) throws DbException {
         if (operationHandlers.containsKey(operationType)) {
             throw new DbException(format("Client already has handler registered for %s", operationType.getClass()));
         }
@@ -100,23 +121,34 @@ public abstract class Db implements Closeable {
             operationHandlers.put(operationType, operationHandler);
         } catch (OperationException e) {
             throw new DbException(
-                format("%s could not instantiate instance of %s",
-                    getClass().getSimpleName(),
-                    operationHandlerType.getSimpleName()
-                ),
-                e);
+                    format("%s could not instantiate instance of %s",
+                            getClass().getSimpleName(),
+                            operationHandlerType.getSimpleName()
+                    ),
+                    e);
         }
     }
 
     public final OperationHandlerRunnableContext getOperationHandlerRunnableContext(Operation operation)
-        throws DbException {
+            throws DbException {
+        if (operationExecutionListener != null) {
+            operationExecutionListener.accept(operation);
+        }
         OperationHandler operationHandler = operationHandlersArray[operation.type()];
         if (null == operationHandler) {
             throw new DbException(format("No handler registered for %s", operation.getClass()));
         }
+        if (optimizationSimulationConfig.isPresent()
+            && optimizationSupport.isPresent()
+            && optimizationSimulationConfig.get().matches(operation.getClass().getSimpleName())) {
+            operationHandler = new SyntheticOptimizationOperationHandler(
+                optimizationSupport.get(),
+                optimizationSimulationConfig.get()
+            );
+        }
         try {
             OperationHandlerRunnableContext operationHandlerRunnableContext =
-                operationHandlerRunnableContextFactory.newOperationHandlerRunner();
+                    operationHandlerRunnableContextFactory.newOperationHandlerRunner();
             operationHandlerRunnableContext.setOperationHandler(operationHandler);
             operationHandlerRunnableContext.setDbConnectionState(dbConnectionState);
             return operationHandlerRunnableContext;
@@ -126,8 +158,8 @@ public abstract class Db implements Closeable {
     }
 
     private static OperationHandler[] toOperationHandlerArray(
-        Map<Integer, Class<? extends Operation>> operationTypeToClassMapping,
-        Map<Class<? extends Operation>, OperationHandler> operationHandlers) throws DbException {
+            Map<Integer, Class<? extends Operation>> operationTypeToClassMapping,
+            Map<Class<? extends Operation>, OperationHandler> operationHandlers) throws DbException {
         if (operationTypeToClassMapping.isEmpty()) {
             return new OperationHandler[] {};
         } else {
@@ -153,4 +185,18 @@ public abstract class Db implements Closeable {
      * reused by all operation handlers
      */
     protected abstract DbConnectionState getConnectionState() throws DbException;
+
+    /**
+     * Optional SUT capability used by optimization recommendation mode.
+     */
+    public Optional<OptimizationSupport> optimizationSupport() {
+        return Optional.empty();
+    }
+
+    /**
+     * Registers a listener invoked whenever an operation is dispatched to its handler.
+     */
+    public final void setOperationExecutionListener(Consumer<Operation> listener) {
+        operationExecutionListener = listener;
+    }
 }

@@ -49,11 +49,13 @@ ldbc.finbench.transaction.queries.updates_dir=src/main/resources/example/data/in
 
 ### 1.4 Mode
 
-The driver operates in three modes:
+The driver supports the following user-facing modes:
 
 - CREATE_VALIDATION
 - VALIDATE_DATABASE
 - EXECUTE_BENCHMARK
+- AUTOMATIC_TEST
+- OPTIMIZATION_RECOMMENDATION
 
 #### CREATE_VALIDATION
 
@@ -93,6 +95,67 @@ warmup=5
 operation_count=10000
 ```
 
+
+#### AUTOMATIC_TEST
+
+Perform the performance test automatically with the `AUTOMATIC_TEST` mode, utilizing an adaptive testing approach. This approach leverages pre-execution on hardware devices for initial parameter estimation and achieves optimal performance, meeting requirements through automatic tuning. The entire process is divided into two phases: **(1) Rapid Estimation Phase** and **(2) Precision Tuning Phase**.
+
+1. **estimate**: Quickly calculate the duration of each test phase (in milliseconds). If set to -1, it indicates the completion of operations to achieve the specified `warmup` value. If the parameter is not used, the default is 300,000 ms.
+2. **accurate**: Specifies the duration of each test in the precise tuning phase (in milliseconds). If set to -1, it indicates the completion of operations to reach the specified `operation_count`. If the parameter is not used, the default is 7,200,000 ms.
+3. **error_range**: Binary end condition, indicating the tolerance range. If the parameter is not used, the default is 1E-5.
+4. **tcr_min**: Minimum time compression ratio limit. If the parameter is not used, the default is 1E-9.
+5. **tcr_max**: Maximum time compression ratio limit. If the parameter is not used, the default is 1.
+6. **timeout_rate**: Specifies the ratio of timeouts to total operations at which the threshold is allowed to be exceeded. If the parameter is not used, the default is 0.05.
+7. **time_compression_ratio**: When utilized in the initial testing round, setting an appropriate value for the machine can significantly reduce the overall test duration. If the parameter is not used, the default is the average of (tcr_min + tcr_max) / 2.
+
+```shell
+mode=AUTOMATIC_TEST
+estimate=300000
+accurate=7200000
+error_range=1E-5
+tcr_min=1E-9
+tcr_max=1
+timeout_rate=0.05
+time_compression_ratio=0.1
+```
+
+#### OPTIMIZATION_RECOMMENDATION
+
+Runs a normal benchmark as a baseline, ranks operation types by optimization recommendation score,
+profiles each selected operation through the optional SUT `OptimizationSupport` capability, then
+reruns the full workload for every selected operation and reduction step. During each scenario run,
+only the selected operation is replaced by the SUT synthetic execution hook; all other operations
+use their normal handlers. Existing benchmark modes do not require this capability.
+
+The driver captures one real operation, including its parameters, for every operation type during
+the baseline. It executes the selected operations through their normal database handlers while
+sampling resources. A SUT only needs to implement `getCurrentCpuCores`,
+`getCurrentMemoryBytes`, and `executeSyntheticLoad`;
+it does not need to construct or dispatch FinBench operations.
+
+CPU is expressed as cores, memory as bytes, and synthetic duration as nanoseconds. The SUT must
+release requested resources before `executeSyntheticLoad` returns. Generated scenario
+configuration stores duration in `optimization.simulation.target_duration_nanos`, while reports
+display fractional milliseconds. See the Dummy implementation for an integration example.
+
+```properties
+mode=OPTIMIZATION_RECOMMENDATION
+results_dir=results/optimization
+operation_count=10000
+optimization.top_n=3
+optimization.reduction_steps=0.05,0.10,0.20,0.30
+optimization.profile_repetitions=3
+optimization.repetitions=3
+optimization.sample_interval_millis=50
+```
+
+The mode writes `optimization-report.json` and `optimization-report.md`. Scenario throughput
+gains are measured from those full-workload reruns and should be verified again after implementing
+the real SUT optimization.
+
+The DummyDB example configuration is available at
+`src/main/resources/example/ldbc_finbench_optimization_recommendation_dummy.properties`.
+
 ## 2. Quick Start
 
 To get started, clone the repository and build it with Maven:
@@ -107,4 +170,16 @@ For a quick trial of the driver, utilize the DummyDB shipped with it by running 
 
 ```bash
 java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_driver_dummy.properties
+```
+
+To automatically find the suitable time_compression_ratio for your system on this machine, execute the following command:
+
+```bash
+java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_automatic_test_dummy.properties
+```
+
+To run the optimization recommendation example:
+
+```bash
+java -cp target/driver-0.2.0-alpha.jar org.ldbcouncil.finbench.driver.driver.Driver -P src/main/resources/example/ldbc_finbench_optimization_recommendation_dummy.properties
 ```
