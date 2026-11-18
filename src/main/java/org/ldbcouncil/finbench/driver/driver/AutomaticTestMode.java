@@ -243,7 +243,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
                 + " --------------------\n"
                 + " --- Warmup Phase ---\n"
                 + " --------------------");
-            doInit(true);
+            doInit(true, true);
             result = doExecute(true, controlService.configuration().estimateTestTime());
             try {
                 // TODO remove in future
@@ -267,7 +267,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
                 + " -----------------\n"
                 + " --- Run Phase ---\n"
                 + " -----------------");
-            doInit(false);
+            doInit(false, controlService.configuration().warmupCount() == 0);
             result = doExecute(false, controlService.configuration().accurateTestTime());
             try {
                 // TODO remove in future
@@ -283,7 +283,7 @@ public class AutomaticTestMode implements DriverMode<Object> {
         return result;
     }
 
-    private void doInit(boolean warmup) throws DriverException {
+    private void doInit(boolean warmup, boolean resetBeforeRun) throws DriverException {
         ConcurrentErrorReporter errorReporter = new ConcurrentErrorReporter();
         GeneratorFactory gf = new GeneratorFactory(new RandomDataGeneratorFactory(randomSeed));
 
@@ -337,20 +337,6 @@ public class AutomaticTestMode implements DriverMode<Object> {
         }
         loggingService.info(format("Loaded workload: %s", workload.getClass().getName()));
 
-        loggingService.info(format("Retrieving workload stream: %s", workload.getClass().getSimpleName()));
-        controlService.setWorkloadStartTimeAsMilli(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
-        WorkloadStreams timeMappedWorkloadStreams;
-        try {
-            timeMappedWorkloadStreams = WorkloadStreams.timeOffsetAndCompressWorkloadStreams(
-                workloadStreams,
-                controlService.workloadStartTimeAsMilli(),
-                controlService.configuration().timeCompressionRatio(),
-                gf
-            );
-        } catch (WorkloadException e) {
-            throw new DriverException("Error while retrieving operation stream for workload", e);
-        }
-
         //  ---------------=
         //  ---==  DB  ---==
         //  ---------------=
@@ -367,6 +353,45 @@ public class AutomaticTestMode implements DriverMode<Object> {
                     format("Error initializing DB: %s", controlService.configuration().dbClassName()), e);
             }
             loggingService.info(format("Loaded DB: %s", database.getClass().getName()));
+        }
+
+        if (resetBeforeRun) {
+            loggingService.info("Resetting database state before benchmark round...");
+            try {
+                database.resetDatabaseState();
+            } catch (DbException e) {
+                try {
+                    database.close();
+                } catch (IOException closeError) {
+                    e.addSuppressed(closeError);
+                }
+                try {
+                    workload.close();
+                } catch (IOException closeError) {
+                    e.addSuppressed(closeError);
+                }
+                try {
+                    resultsLogWriter.close();
+                } catch (Exception closeError) {
+                    e.addSuppressed(closeError);
+                }
+                throw new DriverException("Unable to reset database state before benchmark round", e);
+            }
+            loggingService.info("Database state reset completed");
+        }
+
+        loggingService.info(format("Retrieving workload stream: %s", workload.getClass().getSimpleName()));
+        controlService.setWorkloadStartTimeAsMilli(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
+        WorkloadStreams timeMappedWorkloadStreams;
+        try {
+            timeMappedWorkloadStreams = WorkloadStreams.timeOffsetAndCompressWorkloadStreams(
+                workloadStreams,
+                controlService.workloadStartTimeAsMilli(),
+                controlService.configuration().timeCompressionRatio(),
+                gf
+            );
+        } catch (WorkloadException e) {
+            throw new DriverException("Error while retrieving operation stream for workload", e);
         }
 
         //  ------------------------

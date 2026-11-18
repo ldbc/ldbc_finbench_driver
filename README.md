@@ -156,6 +156,27 @@ the real SUT optimization.
 The DummyDB example configuration is available at
 `src/main/resources/example/ldbc_finbench_optimization_recommendation_dummy.properties`.
 
+#### Optional data recovery between rounds
+
+Adapters may override `Db.resetDatabaseState() throws DbException`. Its default implementation
+is a no-op, so existing adapters remain compatible. Recovery is independent of
+`OptimizationSupport`: restore a snapshot, reload data, or undo earlier inserts, deletes and
+updates in the adapter. Return only when recovery finishes and existing connections are usable;
+throw `DbException` to abort the run if recovery fails.
+
+The driver calls the hook after database initialization, before the first baseline and each
+full-workload optimization repetition, before each representative-operation profiling repetition,
+and before every rapid-estimate or accurate-adjustment round in `AUTOMATIC_TEST`.
+Warmup and measurement form one round: there is no recovery between them. Runs without warmup
+also call the hook. Recovery finishes before workload timestamps are mapped or profiling resource
+sampling starts, so its duration is excluded from benchmark measurements. Ordinary
+`EXECUTE_BENCHMARK`, validation modes and `Db.reInit()` do not invoke this hook.
+
+The adapter must restore the data needed by the configured workload (including any skipped
+prefix). Profiling replays an isolated recorded operation; if it depends on earlier writes,
+its prerequisites must also exist in the restored dataset. Recovery does not replay that prefix
+or recreate the logical effects of synthetic operations.
+
 ## 2. Quick Start
 
 To get started, clone the repository and build it with Maven:

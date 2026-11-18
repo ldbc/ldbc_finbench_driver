@@ -187,6 +187,18 @@ public abstract class Db implements Closeable {
     protected abstract DbConnectionState getConnectionState() throws DbException;
 
     /**
+     * Restores SUT data before an independent benchmark round or representative-operation
+     * profiling repetition. Called after init, before scheduling or resource sampling, with
+     * no workload operations running. Implementations must wait for recovery to complete,
+     * keep existing connections usable, and throw DbException on failure.
+     *
+     * <p>The default is a no-op for adapters that do not need or support recovery. This is
+     * not called between warmup and measurement, or by ordinary EXECUTE_BENCHMARK runs.
+     */
+    public void resetDatabaseState() throws DbException {
+    }
+
+    /**
      * Optional SUT capability used by optimization recommendation mode.
      */
     public Optional<OptimizationSupport> optimizationSupport() {

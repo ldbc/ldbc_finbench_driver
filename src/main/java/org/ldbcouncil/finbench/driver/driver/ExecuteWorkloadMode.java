@@ -75,6 +75,8 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
 
     private Workload workload = null;
     private Db database = null;
+    private final boolean resetBeforeRun;
+    private boolean databaseStateReset;
     private MetricsService metricsService = null;
     private CompletionTimeService completionTimeService = null;
     private WorkloadRunner workloadRunner = null;
@@ -92,6 +94,16 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         TimeSource timeSource,
         long randomSeed,
         Consumer<Operation> operationExecutionListener) throws DriverException {
+        this(controlService, timeSource, randomSeed, operationExecutionListener, false);
+    }
+
+    public ExecuteWorkloadMode(
+        ControlService controlService,
+        TimeSource timeSource,
+        long randomSeed,
+        Consumer<Operation> operationExecutionListener,
+        boolean resetBeforeRun) throws DriverException {
+        this.resetBeforeRun = resetBeforeRun;
         this.controlService = controlService;
         this.timeSource = timeSource;
         this.loggingService = controlService.loggingServiceFactory()
@@ -225,22 +237,6 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
         loggingService.info(format("Loaded workload: %s", workload.getClass()
             .getName()));
 
-        loggingService.info(format("Retrieving workload stream: %s", workload.getClass()
-            .getSimpleName()));
-        controlService.setWorkloadStartTimeAsMilli(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
-        WorkloadStreams timeMappedWorkloadStreams;
-        try {
-            timeMappedWorkloadStreams = WorkloadStreams.timeOffsetAndCompressWorkloadStreams(
-                workloadStreams,
-                controlService.workloadStartTimeAsMilli(),
-                controlService.configuration()
-                    .timeCompressionRatio(),
-                gf
-            );
-        } catch (WorkloadException e) {
-            throw new DriverException("Error while retrieving operation stream for workload", e);
-        }
-
         //  ================
         //  =====  DB  =====
         //  ================
@@ -266,6 +262,48 @@ public class ExecuteWorkloadMode implements DriverMode<Object> {
             }
             loggingService.info(format("Loaded DB: %s", database.getClass()
                 .getName()));
+        }
+
+        if (resetBeforeRun && !databaseStateReset) {
+            loggingService.info("Resetting database state before benchmark round...");
+            try {
+                database.resetDatabaseState();
+            } catch (DbException e) {
+                try {
+                    database.close();
+                } catch (IOException closeError) {
+                    e.addSuppressed(closeError);
+                }
+                try {
+                    workload.close();
+                } catch (IOException closeError) {
+                    e.addSuppressed(closeError);
+                }
+                try {
+                    resultsLogWriter.close();
+                } catch (Exception closeError) {
+                    e.addSuppressed(closeError);
+                }
+                throw new DriverException("Unable to reset database state before benchmark round", e);
+            }
+            databaseStateReset = true;
+            loggingService.info("Database state reset completed");
+        }
+
+        loggingService.info(format("Retrieving workload stream: %s", workload.getClass()
+            .getSimpleName()));
+        controlService.setWorkloadStartTimeAsMilli(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(5));
+        WorkloadStreams timeMappedWorkloadStreams;
+        try {
+            timeMappedWorkloadStreams = WorkloadStreams.timeOffsetAndCompressWorkloadStreams(
+                workloadStreams,
+                controlService.workloadStartTimeAsMilli(),
+                controlService.configuration()
+                    .timeCompressionRatio(),
+                gf
+            );
+        } catch (WorkloadException e) {
+            throw new DriverException("Error while retrieving operation stream for workload", e);
         }
 
         //  ========================

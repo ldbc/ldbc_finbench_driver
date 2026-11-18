@@ -81,7 +81,8 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
                 controlService,
                 new SystemTimeSource(),
                 randomSeed,
-                operationRecorder::record);
+                operationRecorder::record,
+                true);
         baseline.init();
         baseline.startExecutionAndAwaitCompletion();
 
@@ -189,6 +190,7 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
                     candidate,
                     profileRepetitions,
                     sampleIntervalMillis,
+                    database::resetDatabaseState,
                     () -> executeRepresentativeOperation(database, representativeOperation));
             profiles.add(profile);
             for (double reduction : reductions) {
@@ -259,7 +261,8 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
                 controlService.timeSource()
             );
             ExecuteWorkloadMode scenarioMode =
-                new ExecuteWorkloadMode(scenarioControlService, new SystemTimeSource(), randomSeed);
+                new ExecuteWorkloadMode(
+                    scenarioControlService, new SystemTimeSource(), randomSeed, null, true);
             scenarioMode.init();
             scenarioMode.startExecutionAndAwaitCompletion();
             ResultsDirectory resultsDirectory = new ResultsDirectory(scenarioConfiguration);
@@ -293,12 +296,24 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
         int repetitions,
         int sampleIntervalMillis,
         RepresentativeOperationCallable representativeOperation) throws DbException {
+        return profileOperation(support, candidate, repetitions, sampleIntervalMillis,
+            () -> { }, representativeOperation);
+    }
+
+    static OperationResourceProfile profileOperation(
+        OptimizationSupport support,
+        OptimizationCandidate candidate,
+        int repetitions,
+        int sampleIntervalMillis,
+        DatabaseResetCallable resetDatabaseState,
+        RepresentativeOperationCallable representativeOperation) throws DbException {
         long totalDuration = 0;
         long sampleCount = 0;
         double totalCpuCores = 0;
         double totalMemoryBytes = 0;
         long peakMemoryBytes = 0;
         for (int repetition = 0; repetition < repetitions; repetition++) {
+            resetDatabaseState.reset();
             SyntheticRun profileRun = executeAndSample(
                 support,
                 representativeOperation::execute,
@@ -433,6 +448,11 @@ public class OptimizationRecommendationMode implements DriverMode<OptimizationRe
 
     private interface SyntheticCallable {
         SyntheticExecutionResult call() throws DbException;
+    }
+
+    @FunctionalInterface
+    interface DatabaseResetCallable {
+        void reset() throws DbException;
     }
 
     @FunctionalInterface
